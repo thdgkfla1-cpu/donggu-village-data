@@ -53,7 +53,7 @@
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="font-bold text-lg text-gray-700">📌 핵심 비율 다각화 분석</h3>
                     <select id="barChartCategory" class="p-1.5 border border-emerald-300 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs outline-none cursor-pointer focus:border-emerald-500">
-                        <option value="theme1">마 마을 인구 및 가구 구조</option>
+                        <option value="theme1">마을 인구 및 가구 구조</option>
                         <option value="theme2">주거 형태 및 환경 노후도</option>
                         <option value="theme3">보건·복지 필수 수요층</option>
                         <option value="theme4">지역 경제 및 활력 지표</option>
@@ -144,8 +144,8 @@
                             <th class="px-3 py-2 clickable-th" onclick="openModal('여성 인구', 'female')">여성 인구(명)<span class="date-badge">(26. 5. 기준)</span></th>
                             <th class="px-3 py-2 text-blue-700 clickable-th" onclick="openModal('유소년 인구', 'youthPop')">유소년 인구(명)<span class="date-badge">(26. 5. 기준)</span></th>
                             <th class="px-3 py-2 text-red-700 clickable-th" onclick="openModal('고령 인구', 'eldPop')">고령 인구(명)<span class="date-badge">(26. 5. 기준)</span></th>
-                            <th class="px-3 py-2 clickable-th" onclick="openModal('세대당 인구수', 'ppHouse')">세대당 인구수<span class="date-badge">(26. 5. 기준)</span></th>
                             <th class="px-3 py-2 text-purple-700 clickable-th" onclick="openModal('1인가구', 'onePop')">1인가구(명)<span class="date-badge">(26. 5. 기준)</span></th>
+                            <th class="px-3 py-2 clickable-th" onclick="openModal('세대당 인구수', 'ppHouse')">세대당 인구수<span class="date-badge">(26. 5. 기준)</span></th>
                             <th class="px-3 py-2 border-l border-gray-300 clickable-th" onclick="openModal('단독 주택 비율', 'singleHousePct')">단독 주택 비율(%)<span class="date-badge">(24년 기준)</span></th>
                             <th class="px-3 py-2 border-l border-gray-300 clickable-th" onclick="openModal('연립/다세대 비율', 'multiHousePct')">연립/다세대 비율(%)<span class="date-badge">(24년 기준)</span></th>
                             <th class="px-3 py-2 border-l border-gray-300 clickable-th" onclick="openModal('아파트 비율', 'aptPct')">아파트 비율(%)<span class="date-badge">(24년 기준)</span></th>
@@ -185,23 +185,6 @@
 
     <script>
         const DONG_ORDER = ['충장동', '동명동', '계림1동', '계림2동', '산수1동', '산수2동', '지산1동', '지산2동', '서남동', '학동', '학운동', '지원1동', '지원2동'];
-        
-        const defaultOnePct = {
-            '충장동': 80.8,
-            '동명동': 72.6,
-            '계림1동': 0,
-            '계림2동': 0,
-            '산수1동': 53.9,
-            '산수2동': 0,
-            '지산1동': 66.4,
-            '지산2동': 0,
-            '서남동': 85.1,
-            '학동': 0,
-            '학운동': 0,
-            '지원1동': 0,
-            '지원2동': 0,
-            '동구 평균': 54.4
-        };
 
         let dongData = {}; 
         let barChartInst = null, radarChartInst = null, modalChartInst = null;
@@ -335,7 +318,7 @@
                             <li><strong>[자원 연계 및 조정]</strong> 가장 많은 표를 얻는 '골목 주차 문제'는 단순한 주민 계도나 캠페인만으로 해결될 수 없는 좁은 골목의 구조적 데이터 한계가 있습니다.<br><span class="action-point">구체적 실행방안</span> 캠페인에 예산을 쓰지 말고, 인근 대형 공공기관(법원, 검찰청 등) 및 대형 교회의 주차장을 야간 및 주말에 주민에게 개방하는 MOU(업무협약)를 체결하는 데 자치회의 행정력과 로비력을 총동원해야 합니다.</li>
                          </ul>`,
                 phase3: `<ul class="agenda-list list-disc pl-5">
-                            <li><strong>[취약점 기반 선제적 의제]</strong> 통계상 녹지비율이 동구 전체 압도적 1위(73.7%)임에도 불구하고, 실질적인 거주지 내 '1인당 공원면적'은 0에 수렴하는 극단적이고 기형적인 생활 인프라 불균형 지표를 보이고 있습니다.<br><span class="action-point">구체적 실행방안</span> 산이나 외곽 녹지가 아닌, 주민들이 집 앞에서 슬리퍼를 신고 나갈 수 있는 '마을 구유지 및 국립공원 진입로 자투리땅을 전수조사하여 소규모 쌈지 쉼터(벤치, 파고라)를 조성하는 사업'이 최우선 선제 의제로 발굴되어야 합니다.</li>
+                            <li><strong>[취약점 기반 선제적 의제]</strong> 통계상 녹지비율이 동구 전체 압도적 1위(73.7%)임에도 불구하고, 실질적인 거주지 내 '1인당 공원면적'은 0에 수렴하는 극단적이고 기형적인 생활 인프라 불균형 지표를 보이고 있습니다.<br><span class="action-point">구체적 실행방안</span> 산이나 외곽 녹지가 아닌, 주민들이 집 앞에서 슬리퍼를 신고 나갈 수 있는 '마 마을 구유지 및 국립공원 진입로 자투리땅을 전수조사하여 소규모 쌈지 쉼터(벤치, 파고라)를 조성하는 사업'이 최우선 선제 의제로 발굴되어야 합니다.</li>
                             <li><strong>[자치 체질 개선]</strong> 구청을 향해 하드웨어 개선 민원만을 제기하는 수동적 태도를 넘어, 주민들 스스로 마을의 의제를 기획하고 실행 플랜을 짜보는 '주민자치위원 디자인 씽킹(Design Thinking) 역량 강화 교육'을 1년 과정으로 의무 이수하도록 해야 합니다.</li>
                          </ul>`
             },
@@ -475,11 +458,11 @@
                             
                             let val6 = cleanNum(row[6]); 
                             let val7 = cleanNum(row[7]); 
-                            let ppHouse = val7 < 10 ? val7 : val6 < 10 ? val6 : 0; 
                             
-                            let onePct = defaultOnePct[dong] || 0;
-                            let onePop = Math.round(pop * (onePct / 100));
-
+                            // 1인가구(명)은 10 이상의 정수, 세대당 인구수는 10 미만의 소수점임을 활용해 스마트하게 분류
+                            let onePop = val6 > 10 ? val6 : (val7 > 10 ? val7 : 0);
+                            let ppHouse = (val6 > 0 && val6 < 10) ? val6 : ((val7 > 0 && val7 < 10) ? val7 : 0);
+                            
                             let singleHousePct = cleanNum(row[8]);
                             let multiHousePct = cleanNum(row[9]);
                             let aptPct = cleanNum(row[10]);
@@ -504,12 +487,14 @@
 
                             let youthPct = pop > 0 ? parseFloat(((youthPop / pop) * 100).toFixed(1)) : 0;
                             let eldPct = pop > 0 ? parseFloat(((eldPop / pop) * 100).toFixed(1)) : 0;
+                            let onePct = pop > 0 ? parseFloat(((onePop / pop) * 100).toFixed(1)) : 0;
 
                             if (dong === '동구 평균') {
                                 pop = 8056; male = 3939; female = 4118;
                                 youthPop = 960; eldPop = 2015; ppHouse = 1.82;
                                 youthPct = 11.9; eldPct = 25.0;
-                                onePct = 54.4; onePop = 2172;
+                                if (onePop === 0) onePop = 2172;
+                                if (onePct === 0) onePct = 54.4;
                             }
 
                             const ai = aiReports[dong] || {};
@@ -548,7 +533,7 @@
                 getData: (d) => [
                     d.youthPct, 
                     d.eldPct, 
-                    d.pop > 0 ? parseFloat(((d.onePop / d.pop) * 100).toFixed(1)) : 0, 
+                    d.onePct, 
                     d.pop > 0 ? parseFloat(((d.forgn / d.pop) * 100).toFixed(1)) : 0
                 ]
             },
@@ -673,8 +658,8 @@
                     <td class="px-3 py-2">${Number(d.female).toLocaleString()}명</td>
                     <td class="px-3 py-2 text-blue-700 font-bold">${Number(d.youthPop).toLocaleString()}명</td>
                     <td class="px-3 py-2 text-red-700 font-bold">${Number(d.eldPop).toLocaleString()}명</td>
-                    <td class="px-3 py-2">${d.ppHouse}명</td>
                     <td class="px-3 py-2 text-purple-700 font-bold">${Number(d.onePop).toLocaleString()}명</td>
+                    <td class="px-3 py-2">${d.ppHouse}명</td>
                     <td class="px-3 py-2 border-l border-gray-100 font-medium">${d.singleHousePct}%</td>
                     <td class="px-3 py-2 border-l border-gray-100 font-medium">${d.multiHousePct}%</td>
                     <td class="px-3 py-2 border-l border-gray-100 font-medium">${d.aptPct}%</td>
