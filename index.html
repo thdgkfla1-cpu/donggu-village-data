@@ -26,6 +26,12 @@
         .main-tab { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 999px; color: #64748b; font-weight: 800; display: flex; align-items: center; justify-content: center; }
         .main-tab:hover { color: #0f172a; background-color: #f1f5f9; }
         .main-tab.active { color: white; background-color: #10b981; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4), 0 2px 4px -1px rgba(16, 185, 129, 0.06); transform: translateY(-1px); }
+        
+        .action-box { background-color: #f0f7ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-top: 10px; color: #0369a1; font-size: 0.95rem; }
+        .action-box strong { color: #0284c7; display: block; margin-bottom: 4px; font-size: 0.9rem; }
+
+        .agenda-list li { margin-bottom: 2rem; list-style: none; }
+        .agenda-list li > strong { color: #1e293b; font-size: 1.1rem; border-left: 4px solid #4338ca; padding-left: 10px; margin-bottom: 8px; }
 
         ::-webkit-scrollbar { height: 8px; width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -98,26 +104,28 @@
         </section>
 
         <section id="section-tab2" class="hidden space-y-6">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-indigo-100 flex items-center gap-4">
-                <label class="font-bold text-gray-700 whitespace-nowrap"><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> 분석할 행정동 선택</label>
-                <select id="reportSelect" class="flex-grow max-w-sm p-2.5 border border-indigo-200 rounded-xl font-bold bg-indigo-50 text-indigo-900 focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm text-base"></select>
-                <div id="reportType" class="ml-auto px-3 py-1.5 bg-blue-100 text-blue-800 rounded-lg text-sm font-black hidden md:block"></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-4">
+                <div class="w-full md:w-2/3 lg:w-1/2">
+                    <label class="block text-sm font-bold text-gray-600 mb-2 text-center"><i class="fa-solid fa-map-location-dot text-indigo-500"></i> 분석할 행정동 선택</label>
+                    <select id="reportSelect" class="w-full p-3.5 border border-indigo-200 rounded-xl font-bold bg-indigo-50 text-indigo-900 focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm text-lg text-center cursor-pointer"></select>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[700px]">
-                    <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-5 pb-4 border-b border-gray-100 flex-shrink-0 gap-3">
-                        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-book-open text-blue-500"></i> 마을 종합 분석 리포트</h2>
-                        <div class="flex items-center gap-2 w-full xl:w-auto">
-                            <i class="fa-solid fa-filter text-emerald-500 hidden xl:block"></i>
-                            <select id="reportCategorySelect" class="w-full xl:w-auto p-2.5 border border-emerald-200 rounded-lg font-bold bg-emerald-50 text-emerald-900 outline-none shadow-sm text-sm focus:ring-2 focus:ring-emerald-500">
-                                <option value="strategy">주민자치 및 공동체 활성화 전략</option>
-                                <option value="festival">맞춤형 마을 축제 및 문화 기획</option>
-                                <option value="welfare">타겟 복지 및 돌봄 수요 체감도</option>
-                                <option value="media">미디어 홍보 및 소통 채널 제안</option>
-                                <option value="safety">공간 정비 및 생활 안전 체계</option>
-                            </select>
-                        </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[650px]">
+                    <div class="flex justify-between items-center mb-3 flex-shrink-0">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-book-open text-blue-500"></i> 마을 종합 분석 리포트</h2>
+                        <div id="reportType" class="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-lg text-xs font-black"></div>
+                    </div>
+                    
+                    <div class="mb-4 pb-4 border-b border-gray-100 flex-shrink-0">
+                        <select id="reportCategorySelect" class="w-full p-3 border border-emerald-200 rounded-lg font-bold bg-emerald-50 text-emerald-900 outline-none shadow-sm text-sm focus:ring-2 focus:ring-emerald-500 transition-colors cursor-pointer hover:bg-emerald-100">
+                            <option value="strategy">🔍 심층 테마 : 주민자치 및 공동체 활성화 전략</option>
+                            <option value="festival">🔍 심층 테마 : 맞춤형 마을 축제 및 문화 기획</option>
+                            <option value="welfare">🔍 심층 테마 : 타겟 복지 및 돌봄 수요 체감도</option>
+                            <option value="media">🔍 심층 테마 : 미디어 홍보 및 소통 채널 제안</option>
+                            <option value="safety">🔍 심층 테마 : 공간 정비 및 생활 안전 체계</option>
+                        </select>
                     </div>
                     
                     <div class="flex flex-col gap-4 flex-grow overflow-y-auto pr-1">
@@ -129,14 +137,15 @@
                             <strong class="text-orange-800 block mb-1 text-sm"><i class="fa-solid fa-triangle-exclamation"></i> 취약점 및 개선과제</strong>
                             <span id="weaknessText" class="text-gray-700 text-sm leading-relaxed"></span>
                         </div>
-                        <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-200 shadow-sm min-h-[180px] mt-2 flex flex-col justify-center">
-                            <strong id="themeTitle" class="text-emerald-800 block mb-3 text-base font-black"></strong>
+                        <div class="bg-emerald-50/60 p-5 rounded-xl border border-emerald-200 shadow-sm min-h-[160px] mt-2 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                            <strong id="themeTitle" class="text-emerald-900 block mb-2 text-base font-black"></strong>
                             <span id="themeText" class="text-gray-800 text-sm leading-relaxed font-medium"></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[700px]">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[650px]">
                     <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100 flex-shrink-0">
                         <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-magnifying-glass-chart text-indigo-500"></i> 5개년도 마을의제 심층 분석</h2>
                     </div>
@@ -167,36 +176,36 @@
                         <thead class="border-b-2 border-gray-400">
                             <tr>
                                 <th class="px-4 py-4 sticky-col bg-gray-100 text-gray-800 border-r border-gray-300 font-black">행정동</th>
-                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('총 인구', 'pop')">총 인구(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
-                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('남성', 'male')">남성(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
-                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('여성', 'female')">여성(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
-                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('유소년', 'youthPop')">유소년(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
-                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('고령', 'eldPop')">고령(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
-                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('1인가구', 'onePop')">1인가구(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
-                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('세대당 인구수', 'ppHouse')">세대당 인구수(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('총 인구', 'pop')">총 인구(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('남성', 'male')">남성(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('여성', 'female')">여성(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('유소년', 'youthPop')">유소년(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('고령', 'eldPop')">고령(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('1인가구', 'onePop')">1인가구(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('세대당 인구수', 'ppHouse')">세대당 인구수(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-amber-50 text-amber-900 border-b-2 border-amber-200 clickable-th hover:bg-amber-100 transition" onclick="openModal('단독주택', 'singleHousePct')">단독주택(%)<span class="date-badge text-amber-500/80">24년</span></th>
-                                <th class="px-4 py-4 bg-amber-50 text-amber-900 border-b-2 border-amber-200 clickable-th hover:bg-amber-100 transition" onclick="openModal('연립다세대', 'multiHousePct')">연립다세대(%)<span class="date-badge text-amber-500/80">24년</span></th>
-                                <th class="px-4 py-4 bg-amber-50 text-amber-900 border-b-2 border-amber-200 clickable-th hover:bg-amber-100 transition" onclick="openModal('아파트', 'aptPct')">아파트(%)<span class="date-badge text-amber-500/80">24년</span></th>
-                                <th class="px-4 py-4 bg-amber-50 text-amber-900 border-b-2 border-amber-200 clickable-th hover:bg-amber-100 transition" onclick="openModal('노후주택', 'oldPct')">노후주택(%)<span class="date-badge text-amber-500/80">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-amber-50 text-amber-900 border-b-2 border-amber-200 cursor-pointer hover:bg-amber-100 transition" onclick="openModal('단독주택', 'singleHousePct')">단독주택(%)<span class="date-badge text-amber-500/80">24년</span></th>
+                                <th class="px-4 py-4 bg-amber-50 text-amber-900 border-b-2 border-amber-200 cursor-pointer hover:bg-amber-100 transition" onclick="openModal('연립다세대', 'multiHousePct')">연립다세대(%)<span class="date-badge text-amber-500/80">24년</span></th>
+                                <th class="px-4 py-4 bg-amber-50 text-amber-900 border-b-2 border-amber-200 cursor-pointer hover:bg-amber-100 transition" onclick="openModal('아파트', 'aptPct')">아파트(%)<span class="date-badge text-amber-500/80">24년</span></th>
+                                <th class="px-4 py-4 bg-amber-50 text-amber-900 border-b-2 border-amber-200 cursor-pointer hover:bg-amber-100 transition" onclick="openModal('노후주택', 'oldPct')">노후주택(%)<span class="date-badge text-amber-500/80">24년</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('사업체', 'bizCount')">사업체(개)<span class="date-badge text-purple-400/80">24년</span></th>
-                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('종사자', 'bizWorker')">종사자(명)<span class="date-badge text-purple-400/80">24년</span></th>
-                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('사회연대경제', 'socEco')">사회연대경제(개)<span class="date-badge text-purple-400/80">26년</span></th>
-                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('문화체육시설', 'cult')">문화체육시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
-                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('유치원/보육시설', 'kin')">유치원/보육시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
-                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('사회복지시설', 'wel')">사회복지시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-purple-50 text-purple-900 border-b-2 border-purple-200 cursor-pointer hover:bg-purple-100 transition" onclick="openModal('사업체', 'bizCount')">사업체(개)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 cursor-pointer hover:bg-purple-100 transition" onclick="openModal('종사자', 'bizWorker')">종사자(명)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 cursor-pointer hover:bg-purple-100 transition" onclick="openModal('사회연대경제', 'socEco')">사회연대경제(개)<span class="date-badge text-purple-400/80">26년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 cursor-pointer hover:bg-purple-100 transition" onclick="openModal('문화체육시설', 'cult')">문화체육시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 cursor-pointer hover:bg-purple-100 transition" onclick="openModal('유치원/보육시설', 'kin')">유치원/보육시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 cursor-pointer hover:bg-purple-100 transition" onclick="openModal('사회복지시설', 'wel')">사회복지시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('기초연금수급', 'pen')">기초연금수급(명)<span class="date-badge text-rose-400/80">25. 1.</span></th>
-                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('장애인 등록', 'dis')">장애인 등록(명)<span class="date-badge text-rose-400/80">25. 1.</span></th>
-                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('외국인 등록', 'forgn')">외국인 등록(명)<span class="date-badge text-rose-400/80">26. 3.</span></th>
-                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('병상수', 'beds')">병상수(개)<span class="date-badge text-rose-400/80">24년</span></th>
-                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('병원수', 'hosp')">병원수(개)<span class="date-badge text-rose-400/80">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-rose-50 text-rose-900 border-b-2 border-rose-200 cursor-pointer hover:bg-rose-100 transition" onclick="openModal('기초연금수급', 'pen')">기초연금수급(명)<span class="date-badge text-rose-400/80">25. 1.</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 cursor-pointer hover:bg-rose-100 transition" onclick="openModal('장애인 등록', 'dis')">장애인 등록(명)<span class="date-badge text-rose-400/80">25. 1.</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 cursor-pointer hover:bg-rose-100 transition" onclick="openModal('외국인 등록', 'forgn')">외국인 등록(명)<span class="date-badge text-rose-400/80">26. 3.</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 cursor-pointer hover:bg-rose-100 transition" onclick="openModal('병상수', 'beds')">병상수(개)<span class="date-badge text-rose-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 cursor-pointer hover:bg-rose-100 transition" onclick="openModal('병원수', 'hosp')">병원수(개)<span class="date-badge text-rose-400/80">24년</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-emerald-50 text-emerald-900 border-b-2 border-emerald-200 clickable-th hover:bg-emerald-100 transition" onclick="openModal('녹지비율', 'greenPct')">녹지비율(%)<span class="date-badge text-emerald-500/70">24년</span></th>
-                                <th class="px-4 py-4 bg-emerald-50 text-emerald-900 border-b-2 border-emerald-200 clickable-th hover:bg-emerald-100 transition" onclick="openModal('공원면적', 'parkArea')">공원면적(㎡)<span class="date-badge text-emerald-500/70">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-emerald-50 text-emerald-900 border-b-2 border-emerald-200 cursor-pointer hover:bg-emerald-100 transition" onclick="openModal('녹지비율', 'greenPct')">녹지비율(%)<span class="date-badge text-emerald-500/70">24년</span></th>
+                                <th class="px-4 py-4 bg-emerald-50 text-emerald-900 border-b-2 border-emerald-200 cursor-pointer hover:bg-emerald-100 transition" onclick="openModal('공원면적', 'parkArea')">공원면적(㎡)<span class="date-badge text-emerald-500/70">24년</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-orange-50 text-orange-900 border-b-2 border-orange-200 clickable-th hover:bg-orange-100 transition" onclick="openModal('보행사고', 'acc')">보행사고(건)<span class="date-badge text-orange-500/80">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-orange-50 text-orange-900 border-b-2 border-orange-200 cursor-pointer hover:bg-orange-100 transition" onclick="openModal('보행사고', 'acc')">보행사고(건)<span class="date-badge text-orange-500/80">24년</span></th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-gray-200 bg-white"></tbody>
@@ -257,376 +266,526 @@
             '동구 평균': { type: '통계 분석 기본 지표선', strength: '13개 행정동 분석의 기초가 되는 평균치 지표', weakness: '편차가 큰 항목들의 중심값 도출', strategy: '행정동 간 편차를 최소화하고 균형 발전을 유도하는 정책 기본 지표로 참조하기 좋습니다.', festival: '동구 전역의 평균적 문화 수용도를 나타내며 종합 축제 기획의 표준선으로 작용합니다.', welfare: '복지 사각지대 발굴을 위한 상대적 빈곤 및 인프라 과부족 분석의 기초 기준값입니다.', media: '구정 전반의 보편적 행정 홍보 도달률 분석을 위한 통합 데이터 표준선입니다.', safety: '생활 안전 지수 전국 표준 대비 동구의 객관적인 위험 수준을 진단하는 베이스라인입니다.' }
         };
 
-        // 3단계 프레임워크 템플릿 생성 함수 -------------------------
-        function makePhase1(review, feedback) {
-            return `
-                <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm transition hover:shadow-md">
-                        <span class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-md border border-indigo-200 mb-2">
-                            <i class="fa-solid fa-magnifying-glass"></i> 과거 의제 점검
-                        </span>
-                        <p class="text-gray-700 text-sm leading-relaxed font-medium">${review}</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-rose-100 shadow-sm transition hover:shadow-md">
-                        <span class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 text-xs font-bold px-2.5 py-1 rounded-md border border-rose-200 mb-2">
-                            <i class="fa-solid fa-comment-dots"></i> 종합 피드백
-                        </span>
-                        <p class="text-gray-700 text-sm leading-relaxed font-medium">${feedback}</p>
-                    </div>
+        // 📌 템플릿 로직 수정 (마을 주도 우선, 부서명 교정, 개선방안 동적 추가)
+        function makeTemplate(communityLed, govPolicy, complaintFeedback, improvementPlan = '') {
+            let villageLedHtml = `
+                <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm transition hover:shadow-md">
+                    <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-200 mb-2">
+                        <i class="fa-solid fa-people-roof text-[11px]"></i> 🤝 마을 주도 및 협력
+                    </span>
+                    <p class="text-gray-700 text-sm leading-relaxed font-medium">${communityLed}</p>
                 </div>
             `;
-        }
-
-        function makePhase2(review, feedback, improvement) {
-            return `
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm transition hover:shadow-md">
-                            <span class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-md border border-indigo-200 mb-2">
-                                <i class="fa-solid fa-list-check"></i> 26년 상정의제 점검
-                            </span>
-                            <p class="text-gray-700 text-sm leading-relaxed font-medium">${review}</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-rose-100 shadow-sm transition hover:shadow-md">
-                            <span class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 text-xs font-bold px-2.5 py-1 rounded-md border border-rose-200 mb-2">
-                                <i class="fa-regular fa-comments"></i> 피드백
-                            </span>
-                            <p class="text-gray-700 text-sm leading-relaxed font-medium">${feedback}</p>
-                        </div>
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm transition hover:shadow-md">
-                        <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-300 mb-2">
-                            <i class="fa-solid fa-lightbulb"></i> 금년도 개선방안 제안
-                        </span>
-                        <p class="text-blue-950 text-sm leading-relaxed font-bold">${improvement}</p>
-                    </div>
+            
+            let govPolicyHtml = `
+                <div class="bg-white p-4 rounded-xl border border-blue-100 shadow-sm transition hover:shadow-md">
+                    <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-200 mb-2">
+                        <i class="fa-solid fa-building-flag text-[11px]"></i> 🏛️ 행정 연계 및 정책 제안
+                    </span>
+                    <p class="text-gray-700 text-sm leading-relaxed font-medium">${govPolicy}</p>
                 </div>
             `;
-        }
+            
+            let feedbackHtml = `
+                <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 text-xs text-amber-900 shadow-inner">
+                    <strong class="block font-bold text-amber-950 mb-1 flex items-center gap-1">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> 단순 민원성 안건 격상 가이드 피드백
+                    </strong>
+                    <p class="leading-relaxed font-medium">${complaintFeedback}</p>
+                </div>
+            `;
 
-        function makePhase3(communityLed, govPolicy, complaintFeedback) {
+            let improvementHtml = improvementPlan ? `
+                <div class="bg-indigo-50 p-3.5 rounded-xl border border-indigo-200 text-xs text-indigo-900 shadow-inner mt-2">
+                    <strong class="block font-bold text-indigo-950 mb-1 flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-indigo-600"></i> 금년도 개선방안 제안
+                    </strong>
+                    <p class="leading-relaxed font-medium">${improvementPlan}</p>
+                </div>
+            ` : '';
+
             return `
                 <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm transition hover:shadow-md">
-                        <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-200 mb-2">
-                            <i class="fa-solid fa-people-roof text-[11px]"></i> 🤝 마을 주도 및 협력
-                        </span>
-                        <p class="text-gray-700 text-sm leading-relaxed font-medium">${communityLed}</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-blue-100 shadow-sm transition hover:shadow-md">
-                        <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-200 mb-2">
-                            <i class="fa-solid fa-building-flag text-[11px]"></i> 🏛️ 행정 연계 및 정책 제안
-                        </span>
-                        <p class="text-gray-700 text-sm leading-relaxed font-medium">${govPolicy}</p>
-                    </div>
-                    
-                    <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 text-xs text-amber-900 shadow-inner">
-                        <strong class="block font-bold text-amber-950 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> 단순 민원성 안건 격상 가이드 피드백
-                        </strong>
-                        <p class="leading-relaxed font-medium">${complaintFeedback}</p>
-                    </div>
+                    ${villageLedHtml}
+                    ${govPolicyHtml}
+                    ${feedbackHtml}
+                    ${improvementHtml}
                 </div>
             `;
         }
 
         const agendaReports = {
             '충장동': {
-                phase1: makePhase1(
-                    "1인 가구 및 고령화에 대응하여 복지와 기후환경 캠페인(제로 웨이스트 챌린지 등) 중심의 의제가 지속 상정되었습니다.",
-                    "단발성 행사에 그치는 경향이 있어 실질적인 시스템 구축과 거주민 외 생활인구(상인, 직장인)의 참여 유도가 시급합니다."
+                phase1: makeTemplate(
+                    "충장로 소상공인 상인연합회와 주민자치회가 협약을 맺고, 마을 소통 거점인 '사랑채'를 공동 활용하여 취약층을 위한 공유장터 및 나눔 복지 플랫폼을 가동했습니다.",
+                    "초고령화 및 1인 가구 비율(80.8%)에 대응하여 무연고 고독사 어르신을 위한 복지정책과 연계형 공공 안심 지원 사업 조례 마련 및 예산 정례화를 추진해 왔습니다.",
+                    "단순히 '골목길이 어두우니 가로등을 고쳐달라'는 소모성 민원 안건을 직접 처리하는 대신, 구청 도시재생과에 일괄 상정하고 자치회는 야간 안심 골목 디자인 규칙 수립 의제로 고도화했습니다."
                 ),
-                phase2: makePhase2(
-                    "1인 가구 고독사 예방 및 친환경 다회용기 도입 등 인구구조 특성을 반영한 타당성 높은 의제가 다수 포진해 있습니다.",
-                    "캠페인 타겟을 거주민에만 한정하지 않고 관내 7천여 개 상가로 확대하면 성과가 극대화될 것입니다.",
-                    "상인연합회와 공동으로 '다회용기 사용 동참 매장' 인증 제도를 실시하고, 취약가구 밀착형 야간 순찰단 운영을 구체화하는 방안을 제안합니다."
+                phase2: makeTemplate(
+                    "상인회-주민 공동으로 관내 사업장에 '지구 플러스 다회용기 챌린지' 동참 매장 인증제를 선포하여 골목 상권 자체가 기후 위기에 참여하는 연대 플랫폼을 구축했습니다.",
+                    "위기 독거 가구 사각지대 발굴을 위한 노인장애인복지과 맞춤형 AI 스마트 안심 센서 보급망 확충 및 긴급 연락망 시스템의 정책화를 총회 핵심 건의안으로 채택했습니다.",
+                    "단순한 '쓰레기 상습 투기지역 무단단속 카메라 설치 요청' 민원 건은 청소행정과로 이관하고, 주민 환경보안관 분과를 신설하여 자율 순찰 유도 및 업사이클링 미관 개선 의제로 고도화했습니다.",
+                    "올해는 상인들과의 거버넌스를 한 단계 끌어올려, 상업지 빈 점포를 활용한 '충장로 청년 창업 실험실'을 구축하고 일자리경제과와 연계한 공공 임대료 지원 모델을 시범 운영하여 도심 상권의 체질 개선을 도모해야 합니다."
                 ),
-                phase3: makePhase3(
-                    "상주 정주 인구 한계를 극복하기 위해 충장로 상인 및 상업지 근로자들을 특별 분과 위원으로 포용하는 개방형 소통 채널 자치 거버넌스를 구축합니다.",
-                    "보행사고 다발 구역 특성을 반영해 구청 건설과 및 교통과에 '고령자 스마트 바닥신호등 및 무장애 횡단보도 전면 정비'를 정책 제안합니다.",
-                    "단순 불법 주정차 단속 요구 민원은 배제하고, 소상공인 조업 차량을 위한 시간제 조업 주차 구역 지정 등 상생 공론화 의제로 격상하여 상정합니다."
+                phase3: makeTemplate(
+                    "상주 정주 인구 부족 한계를 극복하기 위해 충장로 상인 및 상업지 근로자들을 '생활인구' 형태의 자치회 특별 분과 위원으로 포용하는 개방형 소통 채널 거버넌스를 구축합니다.",
+                    "보행사고 건수가 동구 내 최상위권인 데이터에 근거하여 중심 상업 가로변의 '고령 보행자 스마트 LED 바닥신호등 및 무장애 횡단보도 전면 정비'를 교통과 정책 과제로 제안합니다.",
+                    "단순 불법 주정차 단속 요구 민원은 지양하고 소상공인 조업 차량 우선 주차 구역 지정 및 시간제 요일 분배에 관한 상생 공론화 의제로 격상하여 상정합니다."
                 )
             },
             '동명동': {
-                phase1: makePhase1(
-                    "커피축제 등 상권 활성화 의제와 주차난, 쓰레기 등 상업지 확대에 따른 주거 불편 해소 의제가 팽팽하게 대립해왔습니다.",
-                    "관광 상권 중심의 예산 편중 우려가 있으며, 원주민 주거 환경 개선 간의 밸런스 조정이 핵심 과제로 대두되었습니다."
+                phase1: makeTemplate(
+                    "주민자치회가 플랫폼이 되어 '커피축제' 등 로컬 상권 이익의 일부를 구도심 취약 가구 주거환경 개선 기금으로 환원하는 상생 자치 모금 협약을 성사시켰습니다.",
+                    "카페거리 활성화로 인한 젠트리피케이션 갈등 제어 정책의 일환으로 상생 거버넌스 조례 제정 및 일자리경제과 연계 공공 주차 부지 행정 매입 조치를 유도해 왔습니다.",
+                    "단순 '관광객 주차 단속 전면 확대' 민원 요구는 배제하고, 상가 유휴 시간대 주차장 개방 및 야간 공유 주차 규칙 제정 등 주민-상인 상생 의제로 전환했습니다."
                 ),
-                phase2: makePhase2(
-                    "높은 노후주택 비율(65%) 지표에 비해 실제적인 방범 및 노후 환경 개선을 위한 인프라 보강 의제가 다소 부족합니다.",
-                    "마을 축제의 수익 일부를 구도심 주거 정비 기금으로 환원하는 등 실질적 안전망 개선으로의 의제 이동이 필요합니다.",
-                    "원주민과 청년 상인이 주차 공간을 상호 공유하는 자율 룰을 제정하고, 골목길 스마트 안심 가로등 점검을 금년도 핵심 사업으로 추진할 것을 제안합니다."
+                phase2: makeTemplate(
+                    "동네 청년 크리에이터 및 디자이너 분과를 활용하여 노후 주택가 안심 스마트 가로등 위치 맵핑 및 야간 안전 지킴이 로드 구축 프로그램을 자치회 주도로 실행했습니다.",
+                    "노후 주택 비율이 65.0%로 동구 최고 수준인 정주 주거지의 슬럼화 방지를 위해 도시재생과의 뉴딜 공모 및 노후 가로주택 정비사업 연계 협력을 정책적으로 추진했습니다.",
+                    "단순 '보도블록 교체 및 공폐가 즉시 철거' 민원을 지양하고, 유휴 공터를 청년 팝업 로드샵 및 골목길 예술제 무대로 리모델링하는 공간 업사이클링 의제로 격상했습니다.",
+                    "금년에는 동명동 내 공가 및 폐가를 마을자치과와 협력하여 전수조사하고, 해당 유휴 공간을 청년 1인가구와 원주민이 함께 요리하고 소통할 수 있는 '동네 오픈 키친'으로 탈바꿈시키는 구체적인 활성화 프로젝트를 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "청년 크리에이터와 어르신이 함께 모이는 '청년-시니어 공유 밥상 공동체' 및 폐자원 활용 골목길 디자인 기획을 주도합니다.",
-                    "구청 도시재생과와 연계하여 빈집을 우선 매입하고, 청년·어르신 공유 쌈지 공원 및 문화 거점으로 탈바꿈하는 마스터플랜을 건의합니다.",
-                    "단순 방문객 주차 단속 민원을 넘어, 상가 유휴 시간대 주차장 개방 및 야간 공유 주차 자율 규칙 제정 등 거버넌스형 상생 의제로 전환합니다."
+                phase3: makeTemplate(
+                    "유입 청년층과 원주민 어르신 세대 간의 정서적 고립감을 해소하기 위해 청년 공유 주방을 매개로 한 세대 융합형 '시니어-청년 밥상 공동체' 모임을 주민자치회에 상설화합니다.",
+                    "구도심 빈집 전수 조사를 바탕으로 푸른도시과가 부지를 매입하여 '1인가구 공유 커뮤니티 도심 쌈지 공원 및 청년 문화 예술 거점 공간'을 확충하는 마스터플랜을 제안합니다.",
+                    "단순 '담배꽁초 투기 단속' 민원은 차단하고, 자원순환가게 정착 및 청년 자원순환 해설사 일자리 연계를 위한 자치 규약 수립 의제로 발전시켰습니다."
                 )
             },
             '계림1동': {
-                phase1: makePhase1(
-                    "구도심 고령 주민들의 성인 문해 격차 해소를 위한 한글놀이터 및 스마트폰 교육 등 밀착형 복지 의제가 탄탄히 안착되었습니다.",
-                    "참여자가 고령층에 편중되어 있어, 신축 아파트 단지로 유입된 젊은 층과 아동이 함께 어울릴 수 있는 통합 기획이 절실합니다."
+                phase1: makeTemplate(
+                    "관내 청년 인적 자원과 시니어를 1:1로 매칭하는 'Young&Old 디지털 스마트폰·키오스크 상생 멘토링' 자율 봉사단을 주민자치회 주도로 안착시켰습니다.",
+                    "구도심 고령 주민들의 성인 문해 격차 해소를 위한 동구 미래교육과 매칭 정책 사업을 확보하고 '한글놀이터' 예산 지원 정례화를 유도했습니다.",
+                    "단순 '노인정 에어컨 수리 및 비품 교체' 민원성 안건은 상정에서 제외하여 노인장애인복지과 소모품 예산으로 이관하고, 어르신 치매 예방 문화 프로그램 다각화 의제에 집중했습니다."
                 ),
-                phase2: makePhase2(
-                    "야간 보행 안심을 위한 태양광 가로등 설치 및 자원순환가게 운영 등 데이터에 부합하는 타당성 높은 의제가 상정되었습니다.",
-                    "환경정화 및 스마트폰 교육 운영에 있어 기존 강사 위주에서 벗어나 청년층 자원봉사자 재능 기부 연계를 강화해야 합니다.",
-                    "스마트폰 교육을 관내 청년-시니어 1:1 멘토링으로 고도화하고, 재개발 구역과 구도심 보행로 단절 구간에 안전 펜스를 우선 확보할 것을 제안합니다."
+                phase2: makeTemplate(
+                    "주민들이 자율 참여하는 '개미자원순환가게' 플랫폼을 자치회 분과로 운영하고, 축제 시 다회용기 의무 도입을 통한 친환경 자원순환 동네 표준 모델을 확립했습니다.",
+                    "재개발 정비 구역과 구도심 주택 구역 간의 생활 인프라 격차 완화를 위해 야간 보행 취약로 태양광 가로등 증설 및 건설과 연계 지붕 쿨루프 사업을 정책 제안했습니다.",
+                    "단순 '상습 쓰레기 무단 투기 수거' 민원 요청은 기각하고, 방치된 골목 공터에 플라스틱 병뚜껑을 업사이클링한 주민 참여형 '스토리 벽화 정원 조성' 의제로 전격 격상했습니다.",
+                    "올해는 신축 아파트 입주민과 원도심 거주민 간의 교류를 촉진하기 위해 마을자치과와 협력하여 '계림1동 한마음 어울림 문화제'를 신설하고, 공동 자원순환 캠페인을 통해 생활권 통합을 가속화하는 방안을 추진합니다."
                 ),
-                phase3: makePhase3(
-                    "신규 전입 가구와 원주민이 융화될 수 있도록 주민자치회 주관 '동네 환영 워크숍' 및 가족 연합 전통 골목 놀이마당을 상설화합니다.",
-                    "구청 건설과 및 기후환경과와 협력하여 보행 취약로 태양광 가로등 증설 및 지붕 쿨루프 매칭 사업 예산을 지속 확보합니다.",
-                    "단순 쓰레기 무단 투기 수거 민원을 지양하고, 해당 구역을 플라스틱 업사이클링 참여형 정원으로 가꾸는 환경 개선 의제로 격상합니다."
+                phase3: makeTemplate(
+                    "신규 전입 세대와 기존 구도심 세대의 사회적 융합을 돕기 위한 주민자치회 주관 '동네 환영 워크숍' 및 '가족 연합 전통 골목 놀이마당' 소모임을 플랫폼화합니다.",
+                    "신축 아파트 대규모 입주로 유소년 비율이 상승함에 따라 여성아동과에 신구 주민 공동 육아 및 아동 전용 실내 여가 문화 공간 조성을 위한 인프라 확충 정책을 제안합니다.",
+                    "단순 '아파트 정문 과속방지턱 추가' 민원은 교통과 상설 접수로 이관하고, 스쿨존 전체 통학 안전을 위한 옐로카펫 확대 및 안심 보행 유도 도색 의제를 수립합니다."
                 )
             },
             '계림2동': {
-                phase1: makePhase1(
-                    "유소년 인구 비율 동구 1위 특성에 맞게 어린이 교육, 마을 축제, 아파트 화합 등 대규모 단지 맞춤형 사업이 주를 이룹니다.",
-                    "인구 1만 명 규모 대비 대면 회의 장소가 협소하여, 다수 주민의 정책 체감도를 높이기 위한 비대면 참여 채널 도입이 필요합니다."
+                phase1: makeTemplate(
+                    "아파트 비율이 93%에 달하는 주거 특성을 살려, 대단지 입주자대표회의 연합회를 자치회 분과로 엮어 '낮 시간대 아파트 주차장 외부 주민 공유 협약'을 주도했습니다.",
+                    "동구 내 유소년 비율 1위 데이터에 기반하여, 어린이 보호구역 내 보행 안전 확보를 위한 '대각선 횡단보도 전면 설치'를 동구 교통과 및 경찰서에 제안·도입했습니다.",
+                    "단순 '불법 쓰레기 투기 단속 과태료 부과' 민원 요구는 접수하지 않고, 주민 스스로 순찰하고 자율 계도하는 '주민 환경 보안관' 분과 조직화 의제로 격상시켰습니다."
                 ),
-                phase2: makePhase2(
-                    "어린이 안전 및 대각선 횡단보도 설치 등 인구 구조(유소년) 밀집도에 부합하는 훌륭한 실생활 개선 의제들이 점검됩니다.",
-                    "대규모 아파트 비율(93%)의 인프라 이점을 살려 입주자대표회의의 자산과 자치회 소통 채널을 유기적으로 결합해야 합니다.",
-                    "단지별 관리 앱 공지 시스템을 자치회 공론장과 연동시키고, 대각선 횡단보도 외에도 옐로카펫 확대 설치 캠페인을 우선 병행할 것을 제안합니다."
+                phase2: makeTemplate(
+                    "학부모 자치 네트워크를 대폭 활성화하여 단지 내 유휴 커뮤니티 룸을 활용한 '공동 육아 품앗이 및 아동 청소년 자치 의제 발굴단'을 상설 운영했습니다.",
+                    "대단지 인구 과밀에 따른 교육·복지 수요 폭증에 능동 대응하기 위해 문화관광과 및 미래교육과에 복합 문화 커뮤니티 센터 조기 건립 및 프로그램 배정을 건의했습니다.",
+                    "단순 '단지 외부 보행로 낙엽 청소 요청' 민원은 관리사무소 협조 사항으로 처리하고, 주민 화합을 위한 대규모 '가을 버스킹 및 플리마켓 축제' 의제로 상정했습니다.",
+                    "금년에는 대단지 아파트의 관리 앱(아파트너 등)과 동구 소통 채널을 연동하여 마을총회 투표율을 끌어올리고, 유휴 상가를 활용한 방과 후 아동 돌봄 스테이션을 시범 구축하는 모델을 확립해야 합니다."
                 ),
-                phase3: makePhase3(
-                    "아파트 단지 연합회를 자치회 분과로 영입하여 주간 주차장 외부 공유 협약을 체결하고 방과후 육아 품앗이 생태계를 활성화합니다.",
-                    "구청 교통과에 스쿨존 보행 안전 동선 전면 정비를 요청하고, 푸른도시과에 단지 외곽 유휴 공간을 복합 숲 공원으로 리모델링하는 사업을 건의합니다.",
-                    "단순 단지 내 조경 가지치기 민원은 관리사무소로 이관하고, 주민이 직접 참여하여 도심 열섬을 제어하는 '탄소 없는 공용 식재 숲' 의제로 발전시킵니다."
+                phase3: makeTemplate(
+                    "1만 8천 명의 주민 참여 도달율을 극대화하기 위해 자치회 전용 스마트 모바일 앱 공지 시스템 및 상시 온라인 자치 의제 투표 공론장을 아파트 관리 앱과 연동 가동합니다.",
+                    "부족한 문화·체육 인프라 결핍을 보완하기 위해 학교 운동장 야간 개방 협력 공공화 및 아파트 유휴 공간의 청년체육과 연계 리모델링 지원 사업을 추진합니다.",
+                    "단순 '가로수 수형 전정' 요구 민원은 푸른도시과로 이관하고, 주민이 직접 참여하여 도심 열섬을 제어하는 '탄소 없는 활짝마을 가꾸기 공용 식재 숲' 의제로 격상합니다."
                 )
             },
             '산수1동': {
-                phase1: makePhase1(
-                    "재개발 구역 및 노후 구도심 특성이 혼재되어 갤러리 골목 조성, 빈터 텃밭 등 물리적 주거 환경 개선(하드웨어) 의제가 핵심을 이룹니다.",
-                    "하드웨어 시설 조성 이후 전담 유지관리 주체 및 사후 예산 부재로 인해 시설물이 흉물로 방치될 리스크가 상존합니다."
+                phase1: makeTemplate(
+                    "산수초등학교에서 푸른길로 이어지는 주택가 골목 전체를 주민 참여형 '마을 예술길 아따 갤러리 4구간'으로 지정하고 자치회 주도로 하드웨어 정비를 실행했습니다.",
+                    "전통 단독주택 중심 노후 주거지의 주차난 및 소방도로 확보를 위해 동구 교통과 및 도시재생과의 '공폐가 철거 주차장 조성' 매칭 사업 연계를 지속 유도했습니다.",
+                    "단순 '골목길 잡초 제거' 민원 안건은 기각하고 가로수 아래 벤치 및 미니 화단 설치를 연계하는 '구도심 어르신 쌈지 쉼터 조성' 의제로 고도화하여 해결했습니다."
                 ),
-                phase2: makePhase2(
-                    "노인 보행 쉼터 의자 설치, 통학로 환경 정비 등 노후 주거지와 고령화 특성을 반영한 우수한 의제들이 발굴되었습니다.",
-                    "단순히 벤치를 설치하는 것을 넘어 어르신들의 소통 쉼터로서 실질적 기능이 유지되도록 인적 프로그램의 결합이 필요합니다.",
-                    "산수시장 상인회와 협력해 아치형 조명 포토존을 활성화하고, 기 조성된 마을 예술길 관리를 전담할 '주민 자율 관리단'을 공식 위촉할 것을 제안합니다."
+                phase2: makeTemplate(
+                    "전통 산수시장 상인회와의 상생 협의체를 통해 시장 활성화를 위한 아치형 조명길 설치 및 시장 특색 연계 포토존 인프라를 자치회 주도로 구축했습니다.",
+                    "재개발 지역 이면도로 및 초등학교 주변 통학로 안전을 위해 교통과와 합동으로 '통학로 유해요인 전수 제거' 및 불법 주정차 스마트 단속망 연계 정책을 관철했습니다.",
+                    "단순 '시장 주변 불법 주정차 단속 요망' 민원은 자치회 차원에서 '골목길 배려 주차 표지판 설치 및 주민 자율 차량 서행 구역 설정' 의제로 상정했습니다.",
+                    "올해는 산수시장을 거점으로 구도심 노인 가구에 신선한 식재료를 배달하는 '어르신 장보기 대행 청년 봉사단'을 조직하고 일자리경제과 전통시장 활성화 기금을 매칭하여 복지와 경제를 결합하는 프로젝트를 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "조손 관계 회복을 위한 1-3세대 바둑·장기 교실을 운영하고 전통 시장 상인회와 협력한 마을 예술 골목길 상시 관리 체계를 다집니다.",
-                    "구청 노인장애인복지과 및 도시재생과에 구도심 취약가구 화재 방재 시설 일제 교체 및 빈집 활용 시니어 쉐어하우스 모델을 제안합니다.",
-                    "단순 골목길 잡초 제거 민원은 배제하고, 어르신 쌈지 쉼터 조성 공간 기획안으로 자치회가 수용하여 쾌적한 마을 거점 의제로 고도화합니다."
+                phase3: makeTemplate(
+                    "오랜 거주 원주민들의 네트워크를 활용하여 세대 격차를 극복하는 '조손 관계 회복 바둑·장기 교실' 및 자치회 주도의 빈집 활용 '골목 시니어 쉐어하우스'를 구체화합니다.",
+                    "노후 주택 비율(41.9%) 및 고령 1인 가구 지표에 선제 대응하기 위해 복지정책과와 연계한 '구도심 취약 가구 노후 배선 및 화재 재난 방재 시설 전면 교체' 사업을 제안합니다.",
+                    "단순 '반찬 배달 독려' 민원성 요청은 지양하고 통반장 조직과 자치회 복지 분과를 유기적으로 엮는 '생활 밀착형 지속 가능 온기 돌봄 플랫폼' 구축 의제로 승격합니다."
                 )
             },
             '산수2동': {
-                phase1: makePhase1(
-                    "랜드마크 시계탑 설치, 환경 플로깅, 버스킹 음악회 등 하드웨어와 소프트웨어가 고르게 섞인 밸런스 있는 의제가 기획되어 왔습니다.",
-                    "시계탑 등 대형 조형물 건립에 예산과 행정력이 쏠릴 경우, 고령층(31.5%)을 위한 실질적 체감 복지 예산이 축소될 수 있습니다."
+                phase1: makeTemplate(
+                    "도시공원 녹지 인프라가 풍부한 강점을 살려 단지 대표들과 주택가 통장단이 주민자치회를 매개로 연대하여 '아파트로 찾아가는 숲속 버스킹 음악회' 문화를 정착시켰습니다.",
+                    "구축 공동주택 블록과 구도심 단독주택 가구 간의 균형 발전을 위해 건설과 주도의 도심 방재 정비 및 주차장 조성 예산 확보를 정책 과제로 유도했습니다.",
+                    "단순 '단지 내 시계 보수' 민원 건은 배제하고, 동네 정체성을 상징하는 '산수2동 랜드마크 소원 시계탑 설치' 공동 의제로 승격하여 관철했습니다."
                 ),
-                phase2: makePhase2(
-                    "영유아 실내놀이터 조성 의제가 있으나, 유소년(7.6%) 대비 고령 인구 비율이 4배 가까이 높은 불균형을 고려해야 합니다.",
-                    "놀이터의 대상을 유소년에만 국한하지 말고 어르신도 함께 즐길 수 있는 세대 통합형 공간으로 수정·발전시키는 것이 바람직합니다.",
-                    "영유아 놀이터에 실버 체육 기구를 접목한 '1-3세대 통합 쉼터'로 설계를 변경하고, 고령자 대상 혹한기 단열 점검을 금년도 핵심 복지로 추가 제안합니다."
+                phase2: makeTemplate(
+                    "구도심 소외계층 노인 고립 예방을 위해 주민자치회 사랑방을 거점으로 한 '호랑꼬두메 가마솥 데이' 나눔 밥상 네트워크를 민간 협력 주도로 정기 가동했습니다.",
+                    "여성 안심 귀갓길 조성 및 방범 강화를 위해 공공 예산 매칭형 '고화질 방범 CCTV 및 골목 반사경 집중 설치' 정책 사업을 건설과(안전총괄)에 제안했습니다.",
+                    "단순 '겨울철 제설 작업 요청' 민원은 기각하고, 폭설 발생 시 공동 대응을 위한 '자율 방재 제설 장비 보관함 설치 및 주민 긴급 순찰단' 조직 의제로 격상했습니다.",
+                    "올해는 풍부한 녹지를 활용하여 단독주택과 아파트 주민들이 함께 가꾸는 '게릴라 가드닝' 구역을 지정하고, 기후환경과와 협력하여 마을 빗물 저금통을 설치하는 생태 마을 모델을 강화해야 합니다."
                 ),
-                phase3: makePhase3(
-                    "구축 아파트 대표와 구도심 주택 통장단이 연대해 동네 찾아가는 숲속 버스킹을 활성화하고 주택가 잉여 주차 공간 공유에 나섭니다.",
-                    "구청 건설과 및 안전총괄 관련 부서에 급경사 노후 주택 블록의 해빙기 옹벽 일제 점검 및 동결 방지 그루빙 포장을 강력 건의합니다.",
-                    "단순 동절기 눈 쓸기 요청 민원은 배제하고, 주택가 블록별 자율 제설 장비 보관함 전면 설치 및 주민 야간 순찰대 신설 의제로 격상합니다."
+                phase3: makeTemplate(
+                    "풍부한 공원 면적을 생산적으로 환원하기 위해 자투리 부지 전수 조사를 기반으로 한 '주민 참여형 Green 공유 주차장 조성' 및 '1-3세대 통합 실내 놀이터 기획'을 추진합니다.",
+                    "초고령 인구 비율 진입 지표를 바탕으로 노후 단독주택 블록의 해빙기 축대 붕괴 위험을 선제 방어하는 건설과 합동 '재난 방재 인프라 전수 진단' 정책을 제안합니다.",
+                    "단순 '가로수 낙엽 수거 민원'은 청소행정과로 이관하고, 주민 1인 1그루 나무 심기 및 '탄소 없는 청정 마을 숲 가꾸기' 자율 실천 행동 의제로 격상하여 추진합니다."
                 )
             },
             '지산1동': {
-                phase1: makePhase1(
-                    "미로마을 방송국 운영, 스마트폰 교육, 움직임 감지 센서 등 타 동에 비해 디지털 및 스마트 정보 복지 의제가 선진적으로 안착했습니다.",
-                    "방송 미디어 운영 등 고도화된 기술 업무가 극소수 활동가에게만 집중되어 번아웃 리스크가 크며 참여 다각화가 절실합니다."
+                phase1: makeTemplate(
+                    "극소수 활동가 중심의 한계를 극복하고자 '미로마을 방송국' 디지털 플랫폼을 출범하여 공론장을 대중화하고, 기금 조성을 위한 마을 장터를 정기 운영했습니다.",
+                    "조선대 원룸촌 밀집 구역의 여가 공간 확보를 위해 행정 유휴 부지 활용 '미로마을 사랑채' 구축 예산 및 마을자치과 운영 관리 조례안 연계를 추진했습니다.",
+                    "단순 '생필품 후원 요청' 민원은 복지센터로 이관하고, '밑반찬 나눔 및 취약 가구 빨래·이미용 통합 자치 복지 체계' 구축 의제로 고도화했습니다."
                 ),
-                phase2: makePhase2(
-                    "독거 어르신 안심 케어 시스템 및 원룸촌 분리배출 캠페인 등 청년 1인가구(66.4%)에 최적화된 맞춤형 사업이 배치되었습니다.",
-                    "조선대 상권 배후지라는 대학가 인프라 자원을 십분 활용해 학생 자원봉사자 그룹을 자치회 활동에 적극 끌어들일 필요가 있습니다.",
-                    "미디어 전공 대학생을 '마을 인턴'으로 섭외해 방송 기술을 전담하게 하고, 금년에는 원룸촌 야간 안심 귀가 로드(조명 집중 설치) 사업에 우선 착수할 것을 제안합니다."
+                phase2: makeTemplate(
+                    "조선대 자원봉사단과 자치회 청년 분과를 연계하여 어르신 대상 'Young&Old 디지털 배움터(스마트폰·키오스크 교육단)'를 상설 가동했습니다.",
+                    "청년 1인가구 및 독거노인 고립 위험에 대응하여 고독사 예방을 위한 노인장애인복지과 '움직임 감지 센서 보급' 정책 사업을 발굴하여 관철했습니다.",
+                    "단순 '쓰레기 단속 카메라 증설' 민원은 지양하고, 대학생 서포터즈와 연계한 '원룸촌 분리배출 자율 캠페인 및 LED 조명 조도 개선' 패키지 의제로 격상했습니다.",
+                    "올해는 대학가 원룸촌의 만성적인 분리수거 문제를 해결하기 위해 청소행정과 및 자원순환 단체와 협력하여 '원룸촌 전용 투명 페트병 무인 수거기'를 선도적으로 배치하는 자원순환 마을을 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "청년 대학생과 시니어를 1:1로 엮는 스마트폰 및 키오스크 배움터를 상설 운영하고, 미디어 소통 창구를 통해 상시 공론장을 활성화합니다.",
-                    "구청 건설과 및 교통과에 원룸촌 이면도로 고화질 방범 CCTV 및 야간 비상 스마트 벨 인프라 대폭 확충을 정책 건의합니다.",
-                    "단순 치안 불안 신고 민원 접수에 그치지 않고, 원룸촌 안심 귀가 로드맵 설계 및 주민-청년 연합 자율 방범 순찰 규약 제정으로 고도화합니다."
+                phase3: makeTemplate(
+                    "청년 인적 자산의 축적을 위해 미디어·디자인 전공 대학생들을 '마을 인턴'으로 섭외, 자치회 미디어 소통 창구(유튜브 숏폼 등) 운영을 고도화합니다.",
+                    "아파트 비율이 극히 낮아 주거 방범이 취약한 지표를 개선하기 위해 교통과 및 건설과에 '원룸촌 이면도로 방범 CCTV 및 야간 비상 알림 인프라 확충'을 강력 건의합니다.",
+                    "단순 '치안 불안 신고'에 그치지 않고, 청년-소상공인-어르신 합동 '원룸촌 야간 안심 귀가 스마트 로드맵' 자치 규약 제정 의제로 격상하여 추진합니다."
                 )
             },
             '지산2동': {
-                phase1: makePhase1(
-                    "법원 주변 만성 주차난, 좁은 인도 확보, 하수구 악취 등 행정에 호소하는 물리적 인프라 개선 및 민원 해소형 의제가 주를 이룹니다.",
-                    "단기간에 해결하기 힘든 대규모 관급 공사 의제에만 매몰될 경우, 실행 지연 시 주민들의 총회와 자치회에 대한 불신이 가중될 수 있습니다."
+                phase1: makeTemplate(
+                    "법원 주변 역사 자원 및 문화유산 인프라를 활용한 '장원봉 옛길 복원' 및 도심 속 둘레길 인문학 스탬프 투어 자치 콘텐츠를 브랜딩하여 주민 참여를 다각화했습니다.",
+                    "주택가 만성 주차난 해결 대안으로 교통과와 연계하여 법원, 검찰청, 대형 교회 등 공공 기관의 '야간 및 주말 주차장 민관 공유 개방 MOU' 체결을 유도했습니다.",
+                    "단순 '주차 단속 현수막 부착' 민원은 철거하고, 주민 스스로 대문을 개방해 주차 공간을 확보하면 혜택을 주는 '골목길 공유 주차제' 실천 의제로 전환했습니다."
                 ),
-                phase2: makePhase2(
-                    "어린이 안전 공간 조성, 다복마을 건강사업 등 타당한 의제가 발굴되었으나, 골목 주차난 해법은 여전히 피상적 캠페인에 머물고 있습니다.",
-                    "캠페인 예산을 실질적인 행동에 투입하여, 인근 관공서 및 종교 시설 주차장 야간 개방 업무 협약(MOU) 도출에 행정력을 쏟아야 합니다.",
-                    "주민이 당장 실천할 수 있는 룰 제정과 구청 건의 의제를 엄격히 분리 상정하고, 금년도에는 구유지를 활용한 쌈지 쉼터 최우선 조성을 제안합니다."
+                phase2: makeTemplate(
+                    "관내 전문 의료 인적 인프라 자원을 영리하게 결합하여 취약 주민 건강을 상시 케어하는 '다복마을 주민 건강 결연 사업' 체계를 자치회에 안착시켰습니다.",
+                    "통계상 녹지비율은 1위이나 체감형 공원은 부족한 지표를 해결하기 위해 푸른도시과에 '구유지·자투리땅 조사를 통한 쌈지 쉼터 파고라 조성' 정책을 제안했습니다.",
+                    "단순 '보도블록 노후 수리' 민원은 건설과로 이관하고, 보행 약자를 위한 보차분리 및 '걷기 편한 무장애 안심 인도 확보' 계획 수립 의제로 고도화했습니다.",
+                    "금년에는 법조타운 직원들의 골목 상권 이용률을 높이기 위해 일자리경제과와 협력하여 '지산2동 로컬 식당 스탬프 투어'를 기획하여 경제 선순환 구조를 구축하는 방안을 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "법조타운 거주 전문 직장인들의 재능 기부를 연계한 마을 무료 행정·법률 상담 센터를 구축하고 장원봉 역사 둘레길을 주도적으로 기획합니다.",
-                    "구청 푸른도시과에 자투리땅 전수조사를 통한 파고라 쌈지 쉼터 건립을 요청하고, 교통과에 보차분리 및 무장애 인도 전면 정비를 건의합니다.",
-                    "단순 하수구 악취 민원 접수를 넘어, 구청 건설과 맨홀 교체 공사 요구와 함께 주민자치회가 주도하는 '여름철 골목 배수로 자율 청소 구간제' 의제로 격상합니다."
+                phase3: makeTemplate(
+                    "의제 실행의 현실성을 담보하기 위해 총회 투표 전, 주민 자율 실천 의제와 행정 예산 건의 의제를 엄격히 분리 표기하는 '투트랙 공론화 시스템'을 도입합니다.",
+                    "법조타운 인프라를 자치 자원으로 변환하기 위해 행정지원과와 협의하여 '전문가 재능 기부 연계 공공 법률·행정 마을 상담 센터' 유치 정책을 건의합니다.",
+                    "단순 '하수구 악취 민원'은 지양하고, 하수관 맨홀뚜껑 전면 교체 행정 건의와 연계하여 '여름철 골목 배수로 주민 자율 청소 규칙' 의제로 격상 상정합니다."
                 )
             },
             '서남동': {
-                phase1: makePhase1(
-                    "인쇄거리 상권 특성을 반영한 동네책방, 뉴트로 캐릭터 굿즈 등 일자리와 지역 문화를 엮은 훌륭한 상생 의제가 돋보입니다.",
-                    "주간 종사자가 많고 야간 체류 1인가구(85.1%)가 압도적인 구조상, 의제를 실행할 끈끈한 '거주민 주체' 확보에 상당한 제약이 따릅니다."
+                phase1: makeTemplate(
+                    "지역 인쇄 문화 자산을 디자인 요소와 결합하여 '뉴트로 캐릭터 굿즈 개발' 및 독립출판 복합문화공간 '동네책방' 자치 인프라를 안착시켰습니다.",
+                    "인쇄거리 소상공인 상권 활성화를 위해 일자리경제과에 경제구역 지정 매칭 및 로컬 소상공인 특화 경제 진흥 기금 편성을 지속 건의해 왔습니다.",
+                    "단순 '상가 앞 쓰레기 투기 즉시 수거' 민원은 기각하고, 상인회와 연계하여 점포 앞 책임 관리 구역을 설정하는 '내 점포 앞 내가 쓸기 가이드라인' 의제로 전환했습니다."
                 ),
-                phase2: makePhase2(
-                    "마을 문화 교실, 이웃 건강 지킴이 등 의제는 좋으나 아파트가 전혀 없는 도심 산업지의 야간 방범 및 화재 대책이 누락되어 있습니다.",
-                    "전통적인 낮 시간대 거주민 소통방 중심의 틀을 깨고, 3040 청년 소상공인들의 퇴근 시간에 맞춘 야간 중심 자치 모임으로 유연화해야 합니다.",
-                    "상인-거주민 상생 복지 기금을 조성하여 독거노인 정기 돌봄과 연계하고, 인쇄가로 야간 공동화 대비 '자율 안심 순찰대' 발족을 핵심으로 제안합니다."
+                phase2: makeTemplate(
+                    "인쇄 가로 근로자 및 소상공인 대표들이 자치회의 핵심 주체로 참여하는 '상인-거주민 상생 복지 협의회'를 다지고, 취약 독거노인 정기 돌봄 서비스망을 가동했습니다.",
+                    "아파트 0%, 1인가구 85.1%로 야간 도심 공동화 리스크가 심각함에 따라, 건설과 및 관할 경찰서와 협력하여 '야간 방범 스마트 가로등 정비' 정책을 실행했습니다.",
+                    "단순 '조업 차량 주차 위반 단속' 민원은 지양하고, 산업지 특성을 반영한 시간제 조업 주차 구역 설정 및 동선 분리에 관한 '상생 골목 공간 디자인' 공론화 의제로 승격했습니다.",
+                    "올해는 야간 유휴 주차 공간을 청년 푸드트럭 야시장 부지로 개방하는 조례를 일자리경제과 및 교통과와 협의 추진하여 야간 상권에 활력을 불어넣는 방안을 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "인쇄업체 청년 상인들과 야간 거주민이 교류하는 '야간 펍(Pub) 주민자치 모임' 모델을 가동해 자율 순찰 및 골목 문화 기금을 융합합니다.",
-                    "구청 복지정책과 및 도시재생과에 야간 체류 1인가구 대상 24시간 스마트 비상 호출 복지망 지원 및 특화거리 인프라 조성을 정책 제안합니다.",
-                    "단순 조업 차량의 불법 주차 불편 민원에 그치지 않고, 상권 시간제 조업 주차 구역 설정 및 보행 동선 분리 상생 공론화 의제로 승격시킵니다."
+                phase3: makeTemplate(
+                    "주간 인구 집중형 지구 한계를 타개하기 위해 청년 소상공인들의 퇴근 시간에 맞춘 '야간 펍(Pub) 회의 체계' 도입 및 연합 '야간 자율 순찰대'를 공식 가동합니다.",
+                    "야간 체류 독거 가구의 위급 상황 발생에 실시간 대응하기 위해 복지정책과와 결합한 '24시간 스마트 비상 호출 기기 통합 지원망' 구축 정책을 제안합니다.",
+                    "단순 '가로등 증설' 민원에 그치지 않고 공동화 방지를 위한 스마트 인프라 안전망 설계 및 야간 도심 예술 조명길 연계 마스터플랜 의제로 격상 상정합니다."
                 )
             },
             '학동': {
-                phase1: makePhase1(
-                    "학동 이음길 등 압도적인 동네 녹지 인프라(공원면적 1위)를 활용한 경관 조성, 마을 브랜드 BI 개발 등 자연 특화 의제가 훌륭히 안착 중입니다.",
-                    "'학반장 서비스' 등 일부 우수한 소규모 수리 봉사 사업이 특정 주민의 무상 헌신에 의존하고 있어 장기 지속 가능성에 한계가 보입니다."
+                phase1: makeTemplate(
+                    "마을 거점인 '마을사랑채'의 문화 기능을 내실화하고, 로컬 브랜드 BI 개발 및 주민 주도 마을 밴드 축제를 정착시켰습니다.",
+                    "학동 이음길 등 관내 압도적 친환경 인프라 확장을 위해 푸른도시과와 매칭하여 경관 녹화 사업 예산을 정책적으로 연계 확보했습니다.",
+                    "단순 '골목 파손 교체' 민원 해결을 위해 행정력을 소모하는 대신, 주민 소규모 수리 봉사단인 '떴다! 학반장 관리소' 자생 의제로 고도화했습니다."
                 ),
-                phase2: makePhase2(
-                    "둘러보며 걷기 좋은 학동 이음길 경관 확장 의제는 동구 최고 수준인 녹지 환경 데이터와 일치하는 타당성 최상위 사업입니다.",
-                    "관내 대형 병원이 위치한 의료 인프라 이점이 단순 건강 동아리 운영에만 머물고 있어 자원 융합이 더욱 밀도 있게 이뤄져야 합니다.",
-                    "단순 자원봉사를 구청의 공공 일자리 예산과 매칭해 보상 체계를 마련하고, 병원 측과 협력한 '마을 전문 헬스케어 동아리'로의 격상 추진을 제안합니다."
+                phase2: makeTemplate(
+                    "가장 풍부한 보건·의료 종사 인력 거주 지표를 전문 위원으로 엮어 주민 자율 '건강 공동체 올래 동아리' 고도화 및 이음길 숲속 맨발 걷기 대회를 주도했습니다.",
+                    "대형 의료기관 인프라를 레버리지 삼아, 취약계층 주민을 위한 보건소 및 복지정책과 연계형 '정기 종합 무료 검진 사업' 정책 협약을 이끌어냈습니다.",
+                    "단순 '공원 잔디 훼손 단속' 민원은 차단하고, 공원을 주민이 스스로 가꾸는 '장애인-어르신 배리어프리 작은 문화 공원 가꾸기' 실천 의제로 격상했습니다.",
+                    "금년에는 대형 병원 유동 인구를 동네 골목 상권으로 유인하기 위해 마을자치과와 협력하여 '학동 힐링 워크' 테마 거리를 조성하고 치유 정원을 확충하는 방안을 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "마을사랑채를 거점으로 한 주민 주도 수리 봉사단(학반장)을 체계화하고 의료인이 참여하는 건강 웰니스 힐링 모임을 활성화합니다.",
-                    "구청 교통과에 대형 병원 정문 주변 차량-보행 동선 완전 분리 펜스 확보 및 무장애 대각선 횡단보도 정비 마스터플랜을 강력 건의합니다.",
-                    "단순 쓰레기 무단 투기 처리 민원을 자치회가 상설 대청소 분과 활동으로 수용하고 올바른 자원순환 규약을 제정하는 자립형 의제로 승화시킵니다."
+                phase3: makeTemplate(
+                    "일부 봉사자에만 의존하던 복지 활동의 번아웃 방지를 위해 일자리경제과의 '공공 일자리 예산'과 자치회를 매칭하는 자생적 경제 순환 구조를 설계합니다.",
+                    "보행자 교통사고 데이터를 타격하기 위해, 정문 주변 보행 동선 분리 펜스 확보 및 '교통 보행 환경 리모델링 마스터플랜' 도입을 교통과에 강력 건의합니다.",
+                    "단순 '쓰레기 즉시 청소' 민원은 기각하고, 자치회 상설 대청소 분과 가동 및 청소행정과 연계 올바른 자원재활용 규칙 수립 의제로 격상하여 추진합니다."
                 )
             },
             '학운동': {
-                phase1: makePhase1(
-                    "무등산 국립공원 인접 생태 거주지의 강점을 살린 동적골 정화 활동과 어르신 여가 동아리(난타, 요가 등) 중심으로 양분화되어 운영 중입니다.",
-                    "특정 세대의 친목 활동에 예산이 편중된다는 우려를 불식시키기 위해 지역 사회로의 재능 환원(공연, 봉사) 규정화가 시급합니다."
+                phase1: makeTemplate(
+                    "청소년들이 직접 기획하고 전 세대가 함께 참여하는 '세대 어울림 동적골 건강 축제' 구축 및 공동체 주도 마을 공헌 펀드 활동을 가동했습니다.",
+                    "무등산 생태 거주지의 특성을 살려 동적골 보존 구역 지정 및 문화관광과와 연계한 상권 활성화 지원 조례를 이끌어왔습니다.",
+                    "단순 '등산로 쓰레기 청소' 민원은 지양하고, 은퇴 주민을 '시니어 생태 수목 해설사'로 육성하는 일자리 창출 의제로 고도화했습니다."
                 ),
-                phase2: makePhase2(
-                    "삼대가 함께하는 놀이 등 세대 통합 의제가 시도되었으나 노후주택 비율(60.1%) 지표에 대처하는 실내 방재 및 화재 안전 의제가 전무합니다.",
-                    "무등산 생태계 브랜드를 단순 쓰레기 수거 정화 활동에만 소모하지 말고, 시니어 생태 해설사 양성 등 양질의 마을 일자리와 결합해야 합니다.",
-                    "동아리 참여 시 분기별 복지 재능기부를 의무화하고, 초고령 독거 가구를 타겟으로 한 '실내 가스·난방 시설 일제 점검단' 가동을 금년 의제로 제안합니다."
+                phase2: makeTemplate(
+                    "디지털 소외 극복 및 노인 고립 예방을 위해 경로당을 순회하는 '요가·난타 문화 동아리 배움터' 및 사계절 모종 나눔 프로그램을 실행했습니다.",
+                    "고령 인구 1위 지표에 대응하여, 노인장애인복지과와 협력하여 혹서기·혹한기 '마을 안심 대피소 지정' 및 전기 안전 점검을 연계 관철했습니다.",
+                    "단순 '미끄럼 방지 보수' 민원은 배제하고, 건설과와 연계한 동결 방지 특수 그루빙 포장 및 고령 약자용 '안전 손잡이 난간 전면 설치' 건의로 승격했습니다.",
+                    "올해는 초고령화에 맞서 지역 빈집을 활용해 인지강화 학습을 제공하는 '기억채움 마을학교'를 보건소 치매안심센터와 연계 설립하는 맞춤형 돌봄 인프라 확장을 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "청소년이 축제를 기획하고 어르신이 주연으로 결합하는 세대 융합 건강 축제를 운영하며 동적골 전문 생태 해설사 등 마을 일자리를 발굴합니다.",
-                    "구청 복지정책과 및 건설과에 노후 옹벽 위험 구역 전수조사, 미끄럼 방지 그루빙 포장 공사 및 취약계층 가스 타이머콕 일괄 보급을 제안합니다.",
-                    "단순 의재로 화단 잡초 제거 민원은 지양하고, 주민과 국립공원공단이 협약을 맺는 생태 보존 구역 지정 및 자율 관리 의제로 고도화합니다."
+                phase3: makeTemplate(
+                    "정보 격차 소통을 해결하기 위해 행정 방송 마이크 시스템 효율화와 더불어, 가독성을 극대화한 자치회 주관 '왕글씨 종이 소식지' 배포 체계를 구축합니다.",
+                    "노후 주택 비율이 60%를 초과하는 위험 지표에 대처하기 위해 도시재생과와 연계하여 취약 가구 실내 집수리를 지원하는 '주거 안전망 구축 예산' 정책을 제안합니다.",
+                    "단순 '꽃길 가꾸기' 민원은 차단하고 산수오거리 노후 옹벽 전수조사 및 벽면 안전 보강과 연계한 '주민 자율 재난 방재단 신설' 의제로 격상 추진합니다."
                 )
             },
             '지원1동': {
-                phase1: makePhase1(
-                    "머굴마을, 소원마을 등 마을의 가치와 인권을 바로 세우는 선진적인 브랜딩 의제가 잘 안착되어 동네 정체성을 탄탄히 구축했습니다.",
-                    "가치 중심의 관념적 사업에 머무르지 않고 일반 주민들이 시각적, 체험적으로 직접 즐길 수 있는 체감형 실천 프로그램의 보완이 요망됩니다."
+                phase1: makeTemplate(
+                    "머굴마을 브랜드를 확장하기 위해 주민 창업학교를 개설하고, 텃밭 수확물을 판매하는 '주말 팝업 머굴 장터' 토대를 다졌습니다.",
+                    "관내 유휴 자원 활용을 위해 폐교 부지 등 휴식공간 전환 확보 및 수익을 환원하는 기후환경과 주도 '마을 햇빛 발전소 건립'을 추진했습니다.",
+                    "단순 '공가 방치 불만' 민원은 철거하고, 소유주 협약을 통해 '공유 주차장 및 정원 부지 변환 공유 의제'로 고도화했습니다."
                 ),
-                phase2: makePhase2(
-                    "기후위기 대응, 마을 도서관 조성, 틈새 발굴단 등 행정동의 균형 발전을 유도하는 다방면의 우수한 의제가 훌륭히 상정되었습니다.",
-                    "주차장 확보, 공폐가 철거 등 행정 매칭이 절대적인 하드웨어 사업은 자치회의 자체 추진만으로는 한계에 부딪힐 수 있습니다.",
-                    "인권 교육을 '무장애 배리어프리 마을 지도 그리기' 식의 현장형으로 전환하고, 하드웨어 사업에 관할 부서 실무진을 워킹그룹으로 의무 초빙할 것을 제안합니다."
+                phase2: makeTemplate(
+                    "전통 주민 결속력을 기반으로 복지 사각지대를 직접 발굴하는 '머굴마을 틈새 발굴단'을 거점으로 가동하고 주민 합창단을 상설 운영했습니다.",
+                    "공원 면적이 결핍된 통계를 개선하기 위해, 푸른도시과에 공폐가 철거 부지 연계형 '마을 도서관 및 공공 쌈지 쉼터 조성' 예산을 청구 관철했습니다.",
+                    "단순 '청소년 탈선 구역 단속' 민원은 이관하고, 방과 후 여가 인프라 확충을 위한 '청소년 문화 공간 개설 행정 건의' 의제로 격상했습니다.",
+                    "금년에는 다인가구의 안정성을 바탕으로 가족 단위 탄소중립 실천 포인트를 상권 할인권으로 교환해주는 '그린 리워드 앱' 제도를 기후환경과 함께 도입해 볼 것을 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "단독주택지 통반장과 아파트 부녀회 네트워크를 엮어 '이웃 사촌 통합 반상회'를 열고 머굴마을 공유 텃밭 수확물 장터를 수익형 기업으로 확장합니다.",
-                    "구청 도시재생과에 구 지원중학교 부지 전면 공원화 및 공익형 햇빛발전소 건립을 통한 에너지 수익 마을 복지 환원 정책을 지속 건의합니다.",
-                    "단순 불법 주정차 단속 민원 이첩에 그치지 않고, 빈집 소유주를 자치회가 직접 설득해 동네 자율 주차장으로 전환하는 상생 주차 공간 확보 의제로 고도화합니다."
+                phase3: makeTemplate(
+                    "골목 통반장 조직과 아파트 부녀회 간의 주거 단절을 극복하기 위해, 자치회를 중심 플랫폼으로 삼는 '소태골 이웃 사촌 통합 반상회' 거버넌스를 정례 가동합니다.",
+                    "보행자 사고 지표를 개선하기 위해, 교통과에 학원가 서행 유도 색채 도색 및 '스쿨존 어린이 안심 보행 시스템 포인팅' 정책을 제안합니다.",
+                    "단순 '단속 카메라 설치 요구' 민원은 지양하고, 주민이 직접 맵핑하는 '배리어프리 안심 상가 지도 직접 그리기' 실천 의제로 격상 상정합니다."
                 )
             },
             '지원2동': {
-                phase1: makePhase1(
-                    "동구 최대 정주 인구(1만 8천)의 대단지 아파트 밀집 특성에 맞춰 가족 단위 여가, 안전, 통합 축제 의제가 다방면으로 기획되었습니다.",
-                    "정지선 지키기 캠페인 등 캠페인성 의제는 실행은 쉽지만 실질적인 교통사고 감소 및 물리적 인프라 변화 효과를 검증하기 어렵습니다."
+                phase1: makeTemplate(
+                    "아파트 거주민 간의 소통 단절을 극복하는 '우리마을 공유 영화관' 가동 및 입주자 연합회를 자치회 분과로 엮어 대규모 축제를 성사시켰습니다.",
+                    "구 너릿재 주변 환경 개선을 위한 조형물 설치 및 문화관광과와 연계한 역사가 숨 쉬는 주남마을 명품 마을화 사업 예산을 대폭 추진해 왔습니다.",
+                    "단순 '아파트 소음 및 주차 단속' 요구는 배제하고, '상호 배려 주차 룰 및 층간소음 이웃 중재단 출범' 자율 의제로 격상했습니다."
                 ),
-                phase2: makePhase2(
-                    "소원길 둘레길 조성, 공유 영화관 등 공간 활용안은 탁월하나 집중호우 배수구 정비 등은 자치회의 자체 인력으로 해결하기 힘든 방재 영역입니다.",
-                    "쓰레기 수거 단순 노역에 활동가들의 역량을 소모하기보다 구청 재난 대응 프로세스와 적극 결합하는 제도 개선에 앞장서야 합니다.",
-                    "교통 캠페인 대신 스쿨존 '옐로카펫 및 스마트 바닥 신호등' 강제 설치 촉구 서명 운동으로 노선을 변경하고, 단지 간 층간소음 자율 중재 기구 출범을 제안합니다."
+                phase2: makeTemplate(
+                    "대규모 아동 거주 인프라에 대응하여 학부모 위원회가 중심이 된 '영유아 공동 육아 공동체 쉼터 공간 구축'을 지원하고 온가족 동네 운동회를 실행했습니다.",
+                    "정체 유발 교차로에 스마트 신호 체계 도입을 교통과에 제안하고, 통학로 주변 고성능 불법 주정차 단속 카메라 확대를 관철했습니다.",
+                    "단순 '등굣길 펜스 보수' 민원은 상설 접수로 처리하고, 자치회는 '노랑노랑 안전 등굣길 조성을 위한 1만 명 서명 운동 캠페인' 의제로 승격했습니다.",
+                    "올해는 대규모 베드타운의 한계를 넘어 단지 내 유휴 커뮤니티 시설을 미래교육과 평생학습 포털과 연동한 '지원2동 동네 캠퍼스'로 공식 인가받는 프로젝트를 제안합니다."
                 ),
-                phase3: makePhase3(
-                    "대단지 입주자대표 연합회를 자치회 분과로 영입하여 아파트 간 상호 주차 배려 룰을 정착시키고 영유아 공동 육아 쉼터 생태계를 구축합니다.",
-                    "구청 푸른도시과 및 교통과에 유휴 공공 기부채납 부지의 숲 복합 공원화 리모델링 및 스쿨존 불법 주정차 고성능 단속 장비 대폭 확충을 건의합니다.",
-                    "단순 폭우 시 낙엽 처리 민원은 구청 상설 접수로 이관하고, 입주민이 참여하는 '동별 배수로 자율 점검 책임구역제' 환경 의제로 격상합니다."
+                phase3: makeTemplate(
+                    "만성적인 베드타운 성격을 극복하고 내부 활력을 다지기 위해 전통 문화를 전면 복원하고 '청소년 방과 후 자치 창의 교실 연계 플랫폼'을 상설 가동합니다.",
+                    "취약한 도시공원 인프라를 맞추기 위해 푸른도시과에 아파트 내 기부채납 부지를 활용한 '복합 여가 체육 공원 전면 리모델링' 정책을 제안합니다.",
+                    "단순 '빗물 유입구 청소' 민원은 지양하고, 건설과 하수관거 공사 연계 및 '아파트 동별 배수구 청소 책임 규칙 제정' 의제로 격상합니다."
                 )
             },
             '동구 평균': {
-                phase1: makePhase1(
-                    "안전, 기후위기, 복지 3대 메가 트렌드를 기반으로 의제의 80%가 수렴되며 5년간 자치 활동의 양적, 질적 성숙이 관찰됩니다.",
-                    "기획 주체가 5060 특정 세대에 편중되어 수혜 당사자(아동, 청소년, 초고령층)의 목소리가 배제된 공급자 중심의 획일화가 우려됩니다."
+                phase1: makeTemplate(
+                    "안전, 기후위기, 복지 트렌드 의제 비율 80% 달성에 발맞추어, 개별 동 우수 사례를 연동하고 상호 벤치마킹을 지원하는 '동구 자치 연합 플랫폼'을 가동했습니다.",
+                    "13개 행정동 간의 인프라 편차를 최소화하고 균형 발전을 위해 행정지원과와 협력하여 '동별 자치 균등 예산 배정 지침' 수립 및 기준 설정을 추진했습니다.",
+                    "단순 시설물 개보수 민원은 건설과 및 청소행정과로 이관 체계화하고, 자치회는 커뮤니티 연대 등 소프트웨어 의제에 집중하도록 구조를 조정했습니다."
                 ),
-                phase2: makePhase2(
-                    "각 동별 인구 및 거주 환경 데이터의 편차가 큼에도 불구하고 화단 가꾸기, 줍깅 등 판박이성 의제가 반복 남발되는 경향이 있습니다.",
-                    "하드웨어 시설 파손 및 보수 단순 민원은 구청 행정으로 완전히 이관하고, 자치회는 단절된 주민 간 연결망(소프트웨어) 복원에 집중해야 합니다.",
-                    "주민총회 연단에 당사자(청년/노인)를 직접 올려 발언권을 보장하고, 각 동의 취약 데이터를 정확히 타격하는 '맞춤형 테마 심층 의제 상정제' 도입을 제안합니다."
+                phase2: makeTemplate(
+                    "특정 연령대 편중 기획을 깨고 청소년, 1인가구가 직접 총회 연단에 올라 의제를 브리핑하는 '당사자 중심 자치 거버넌스'를 실행했습니다.",
+                    "하향식 구조 극복을 위해 주민참여예산제 지침 쇄신 및 마을자치과와 협력한 총회 모바일 투표 인프라 제도화 정책을 다각도로 제안했습니다.",
+                    "단순 쓰레기 줍기 캠페인을 지양하고, 각 동의 취약 지표를 타격하는 '테마별 심층 의제 의무 상정 프로세스'를 도입했습니다.",
+                    "올해는 '동구 통합 데이터 대시보드' 활용을 정례화하여, 감이 아닌 실증적 통계에 기반하여 의제를 도출하는 과학적 데이터 자치 문화를 행정 전반에 정착시켜야 합니다."
                 ),
-                phase3: makePhase3(
-                    "13개 동 자치회장단 연합 플랫폼을 기반으로 행정동 경계를 허문 '고립 가구 선제적 발굴 및 사회적 패밀리 관계망 매칭' 소프트웨어 사업을 확산합니다.",
-                    "주민참여예산제 운영 지침 개선, 모바일 디지털 투표 제도화, 전 동 통합 'AI 긴급 안심 구호 네트워크' 공공 예산 편성을 구청 관련 부서들에 정책 제안합니다.",
-                    "일시적 불편 신고 민원을 시스템 단에서 필터링하고, 본 대시보드 데이터 마이닝에 기반한 중장기 선제적 마을 의제 상정 로드맵으로 전면 개편합니다."
+                phase3: makeTemplate(
+                    "13개 동 자치회 연대 체계를 구축하여 행정 경계를 넘어서는 '광역 고립 가구 발굴 및 사회적 패밀리 관계망 매칭' 네트워크를 발굴합니다.",
+                    "동구 1인가구 비율 54.4% 지표에 근거하여, 고독사를 원천 방어하는 복지정책과 주관 'AI 기반 스마트 긴급 안심 구호 네트워크'를 전역에 제안합니다.",
+                    "단순 불편 신고 민원을 철저히 필터링하고, 본 대시보드 마이닝에 기반한 '5개년 중장기 지속 가능 선제적 마을 의제 프로세스'로 완전 격상하여 추진합니다."
                 )
             }
         };
 
         const rawAgendas = {
-            '충장동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;마을에 지구를 '+' 더하다&gt;<br> · 그린라이프 실천교육 : 절전, 분리배출 등 친환경 생활습관 확산<br> · 제로충장 30일 챌린지 : 일회용품 줄이기 도전 캠페인</li><li>&lt;일상에 배움을 ‘+’ 더하다&gt;<br> · 세대공감 테라피 : 어르신과 아이들이 전통차, 음식으로 세대교류<br> · 충장 재능나눔학교 : 주민 재능을 나누는 평생학습 공동체</li><li>&lt;이웃에 온기를 ‘+’ 더하다&gt;<br> · 마음정원 화분나눔 : 독거어르신, 1인가구에 화분전달, 안부확인<br> · 안심골목 만들기 : 방범, 환경정비로 안전, 깨끗 골목 조성</li><li>&lt;마을에 소통을 ‘+’ 더하다&gt;<br> · 충장 소통한마당 : 주민, 단체가 모여 동네 문제 함께 해결<br> · 우리동네 골목길 밥상 : 음식을 나누며 이웃과 정을 나눔</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;주민자치에 협치를 '+' 더하다&gt;<br> · 마을 내 다양한 조직 간 네트워크 구축<br> · 생활 속 기초질서 지키기 캠페인 추진<br> · 우리동네 홍보미디어 제작</li><li>&lt;마을역사에 미래를 '+' 더하다&gt;<br> · 교육공동체 마을역사탐방, 마을자원 연구<br> · 시내로마을돌아보기 프로그램 확대<br> · 행복한 아이로 키우는 ‘마을교육’ 실시</li><li>&lt;충장골목에 향기를 ‘+’ 더하다&gt;<br>· 충장골목 환경 정화활동(줍깅, 캠페인, 교육)<br>· ‘내 집(점포) 앞 내가 쓸기’ 캠페인 추진<br>· 교통사고 제로! 안전한 마을 만들기</li><li>&lt;마을복지에 희망을 ‘+’ 더하다&gt;<br>· 마을에 마음을 잇는 봉사활동 실시<br>· 독거어르신 대상 집수리, 빨래방 봉사<br>· 사회적 고립 1인 가구 관계 맺기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;건강한 충장동, 걸음을 ‘+’ 더하다&gt;<br>  · 탄소중립캠페인과 지구환경교육 실시<br>  · 오래된 골목에 새빛 밝히기</li><li>&lt;마을행복에 나눔을 ‘+’ 더하다&gt;<br>  · 여성친화마을사업 – 여성상인 3번째 책자 발간<br>  · 행복나눔공동체 – 사랑채를 활용한 나눔 활동</li><li>&lt;마음과 기억에 예술을 ‘+’ 더하다&gt;<br>  · 그린마을 교육공동체 운영 – 마을돌아보기, 환경교육<br>  · 충장주민이 원하는 마을축제</li><li>&lt;주민자치에 새빛을 ‘+’ 더하다&gt;<br>  · 충장동의 다양한 색을 찾다 – 지속가능한 공동체 만들기<br>  · 충장자치위원 워크숍 – 위원 역량강화</li></ul></div>
-                       <div class='mb-6'><h4 class='font-bold text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;마을행복에 나눔을 ‘+’ 더하다&gt;<br>  · 여성친화마을사업 · 1인가구 행복만들기</li><li>&lt;마음과 기억에 예술을 ‘+’ 더하다&gt;<br>  · 충장 마음박물관 운영 · 그린마을 교육공동체 운영</li><li>&lt;오래된 골목에 새빛을 ‘+’ 더하다&gt;<br>  · 충장동의 다양한 색을 찾다 · 충장 마을사랑채 운영</li><li>&lt;예쁘고 건강한 충장동, 걸음을 ‘+’ 더하다&gt;<br>  · 상인회와 네트워크 형성 및 공동사업 구상</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;마을행복에 나눔을 ‘+’ 더하다&gt;<br>  · 1인가구 무연고 고독사 ‘마지막 배웅’ 장례절차 지원<br>  · 충장당근마켓, 공유장터 진행 등 마을나눔복지 시스템 만들기</li><li>&lt;오래된 골목에 새빛을 ‘+’ 더하다&gt;<br>  · 걷고싶은 마을 만들기 *생활속 탄소중립실천*<br>  · 마을청년작가 연계, 주민 원데이 클래스 운영</li><li>&lt;예쁘고 건강한 충장동, 걸음을 ‘+’ 더하다&gt;<br>  · 마을 전반적인 자치, 상권, 교육, 복지 활성화<br>  · 우리동네 건강마을 만들기</li><li>&lt;충장동 주민자치에 쓸모를 ‘+’ 더하다&gt;<br>  · 마을 온라인 플랫폼 구축(미니홈피)으로 공동체 홍보 활성화<br>  · 마을소통 거점공간 마련 및 주민 여가·취미·교육 프로그램 운영</li><li>&lt;마음과 기억에 예술을 ‘+’ 더하다&gt;<br>  · 충장마음박물관 – 기록 아카이브 제작 (마을잡지, 일간지 등)<br>  · 그린나래-나는 듯 날개를 펴 *마을교육공동체 활동 지속</li></ul></div>`,
-            '동명동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>쓰레기불법투기지역 포토존만들기<br> - 쓰레기불법투기지역에 포토존 설치하여 무단투기방지</li><li>동명동 기후위기대응<br> - 기후위기대응교육, 기후위기대응실천단 운영</li><li>동명동 마을텃밭 가꾸기 <br> - 어르신들과 함게 마을텃밭가꾸기</li><li>골목이 웃는 주차문화 만들기<br> - 주차 및 교통안내 표지판을 상가·주택가에 부착</li><li>동명동 차없는 거리 운영 <br> - 차없는 거리 운영하여 안전골목 및 상가활성화 도모</li><li>동명자원순환마을 만들기<br> - 자원순환교육 및 쓰레기 불법투기 방지 캠페인, 자원순환해설사 양성 운영</li><li>동명 스토리워커즈 <br> - 동명역사문화프로그램 운영, 동명동문화해설사양성</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>쓰레기불법투기지역 소정원만들기</li><li>공공 주차장 건설</li><li>실외 운동기구 설치</li><li>유휴지 주차부지 전환</li><li>동명동 명소(공방,카페 등) 홍보자료 발간</li><li>폐건전지, 형광등 수거함 설치</li><li>동명동 자원순환 모니터링단 운영</li><li>독거노인 주거환경 개선사업</li><li>1인가구 커뮤니티 활동 증진 사업</li><li>동이명이 캐릭터 조형물 설치</li><li>공공주차장 무인주차차단기 설치</li><li>은퇴한 신중년을 위한 고용심리지원사업</li><li>안전마을 만들기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>동명동 건강센터 공간 조성 및 활성화</li><li>동명동 에너지 전환마을 만들기</li><li>마을공동체 활성화</li><li>동명동 주거 취약계층 어르신을 위한 따뜻한 겨울나기 프로젝트</li><li>동명이네 마을 관광상품 개발 및 동티켓(동명에티켓) 개발</li><li>연령별 1인가구를 위한 욕구조사 후 힐링프로젝트 실시</li><li>임대인․임차인 소통의 장 마련</li><li>차 없이 생활해 보는 동명동의 날 정하기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>동명동 주거 취약계층 어르신을 위한 따뜻한 겨울나기 프로젝트</li><li>차 없이 생활해 보는 동명동의 날 정하기</li><li>동명이네 마을 관광상품 개발 및 동티켓(동명동에티켓) 개발</li><li>임대인·임차인 주민과의 소통의 장 마련</li><li>연령별 1인 가구를 위한 욕구 조사 후 힐링프로젝트 실시</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>주차 문제 해소로 관광하기 좋은 동명동 만들기</li><li>동이와 명이가 함께하는 커피축제</li><li>깨끗하고 안전한 동명이네 마을</li><li>동명동 담배꽁초 없는 거리 만들기</li><li>동명동 주거 취약계층 주거환경 개선</li><li>선배시민과(1인 가구) 함께 만들어 가는 녹색 도시 동명</li><li>동명동 관광상품 개발 “동명이네 마을로 오세요!”</li><li>주민 건강 체육동호회 운영</li><li>동명 뉴스 제작</li></ul></div>`,
-            '계림1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>주택가 안정을 위한 태양광 가로등설치<br>  - 마을의 안전과 주민 편의를 위한 주택가 태양광 가로등 설치<br>  - 전기 비용 절감과 동시, 야간보행시 주민들의 안전한 통행 보장 및 범죄 예방효과 제고</li><li>Young&Old 스마트폰교육 교육단 운영 및 한글배움터 고도화<br>  - 청년층과 노년층의 상부상조를 통한 세대 간 교류 활성화<br>  - 성인 문해교육의 질적 향상 제고</li><li>다회용기를 이용한 음식부스 축제<br>  - 다회용기 활용을 통한 환경 보호<br>  - 주민들이 함께하는 화합 및 단결 제고</li><li>탄소는 줄이Go, 산소는 늘리Go, 시민실천사업 운영<br>  - 텃밭 조성을 통한 빈공터에 방치된 쓰레기 문제 해결<br>  - 마을 환경 개선 및 주민이 직접 실천하는 친환경 공동체 형성</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>한글놀이터 교육 확대<br>  - 한글 교육 중심에서 숫자, 알파벳 교육 확대 및 신규 수강생 모집으로 지속 가능한 교육 연계<br>  - 스포츠 스태킹, 퍼즐 맞추기 등 어르신 치매 예방</li><li>개미자원순환가게 정착화 및 주민이 참여하는 자원순환<br>  - 자원순환가게 활성화 및 자원순환에 대한 주민 인식 확대</li><li>탄소중립 실천을 위한 지붕 쿨루프 사업 추진<br>  - 건물에너지 온실가스 절감 및 도심 열섬현상 방지</li><li>플라스틱 병뚜껑 벽화 제작<br>  - 골목길, 취약지역 등 업사이클링 친환경 벽화 제작</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>청소년 실용댄스 동아리 지원</li><li>한글놀이터 활성화</li><li>깨끗한 거리 만들기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>마을쉼터 조성</li><li>문화체육행사 확대</li><li>지역주민 자원 발굴</li><li>골목길 환경개선</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>함께 나누고, 참여하며 계림1동에서 함께해요</li><li>마을사랑채를 알차게 운영해요</li><li>우리가 함께 안전한 골목길 만들어요</li></ul></div>`,
-            '계림2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>튼튼한 어린이 만들기</li><li>깨끗한 마을 만들기</li><li>정보통신 교육 프로그램 개설</li><li>자치프로그램 활성화 방안 마련</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>걷기 안전한 활짝마을! 대각선 횡단보도 설치</li><li>푸요가 원하는 활짝마을! 행복한 마을만들기</li><li>불법쓰레기 배출 OUT! 주민 환경보안관 운영</li><li>우리는 한 마을! 아파트 주차장, 낮엔 함께 써요!</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>아파트 천국 계림2동! 모두가 행복한 아파트 만들기</li><li>이웃과 즐겁게! 온동네 동아리 활성화</li><li>탄소중립 실천해요! 환경을 생각하는 활짝마을 조성</li><li>활짝마을 재능기부! 찾아가는 계림2동 평생교육</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>얘들아 밖에서 놀자 제발~(풍향어린이공원을 어린이 품으로)</li><li>계림2동 문화·소통 Day</li><li>계림2네 밥상차림</li><li>활짝마을 추억찾기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>올바른 쓰레기 배출은 위한 주민약속·실천</li><li>푸른길에서 이웃과 함께 마을축제</li><li>동·마을공동체 소식 홍보관 만들어요</li><li>계림2동 안전은 우리가 지켜요</li><li>계림2동 모두가 환경보호 같이 해요</li></ul></div>`,
-            '산수1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>재개발 지역에 적합한 공간조성<br>  - 공유오피스, 공유 주방 등<br>  - 지역 커뮤니티 공간 제공</li><li>아(름답고) 따(뜻한)갤러리, 마을예술길 만들기<br>  - 아따갤러리 4구간 조성<br>  - 벽화 조형물, 포토존 등 설치</li><li>쾌적한 골목환경 만들기<br>  - 배려주차 표지판 3구간 설치 <br>  - 쓰레기 취약지구 줍깅</li><li>노인 보행 많은 거리 가로수 밑 쉼터 의자 조성<br>  - 가로수 아래 벤치 설치<br>  - 작은 화단 등 쾌적한 환경 조성</li><li>안전하고 쾌적한 통학로 조성<br>  - 통학로 주변 불법 주정차 단속<br>  - 통학로 환경정비</li><li>산수시장 아치형 조명 옆 포토존 설치<br>  - 산수시장 특색을 살린 시장 환경 조성(포토존설치)</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>안전하고 쾌적한 통학로 조성<br>  - 재개발사업 시행지 주변 통학로 유해요인 제거<br>  - 주변 통학로와 잘 어울리는 환경조성</li><li>아(름답고) 따(뜻한)갤러리, 마을예술길 만들기<br>  - 주민이 함께 참여하는 마을예술길로 조성<br>  - 산수초등학교에서 푸른길로 이어지는 마을예술길 조성</li><li>벽화와 아치형 조명이 만들어 주는 산수시장<br>  - 산수시장에서 푸른길로 이어지는 구간 아치형 조명 설치 <br>  - 산수시장 특색을 살린 시장 환경 조성</li><li>어우러짐이 묻어나는 산수문화마당 만들기<br>  - 조손 바둑‧장기교실 개최로 세대를 뛰어넘는 공간 조성<br>  - 산수1동 주민자치회장배 바둑‧장기 대회 개최</li><li>마을활동가 및 마을 PD양성 프로젝트<br>  - 마을 곳곳을 알리고 홍보할 수 인력 양성</li><li>아따! 시방! 세대공감 설치(어울림 공간 조성)<br>  - 푸른길과 산수오거리에 어울림 공간 조성</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>아(름답고) 따(뜻한) 갤러리, 마을예술길 만들기</li><li>빌라촌 분리수거를 위한 재활용 센터 운영</li><li>어린이는 너무너무 소중해!! 든든지킴이!</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>소방도로 확보와 쾌적한 골목환경 만들기</li><li>정기적인 분리배출 캠페인으로 깨끗한 산수1동 만들기</li><li>1인가구와 독거 어르신에게 어깨동무 되어주기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>산수초, 충장중 급경사길 안전한 통학로 조성</li><li>쓰레기 불법 투기지역과 노후된 골목길에 추민참여 정원 조성</li><li>마을 소통을 위한 아나바다 장터</li></ul></div>`,
-            '산수2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>유휴 텃밭 활용 주차장 조성, Green 주차장 만들기</li><li>유휴공간을 활용한 영유아 실내놀이터 조성</li><li>집집마다 나무 한 그루, 탄소 없는 우리 마을 만들기</li><li>월 1회 플로깅 활동, 너와 내가 함께 지구 살리기</li><li>산수2동 교통안전지킴이단과 함께하는 안전한 우리 마을 만들기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>안전한 통학환경 조성, 스마트 횡단보도 설치</li><li>여성 안심 귀갓길 감지의 눈, 반사경 설치</li><li>지속 가능한 아파트 버스킹 공연</li><li>소외된 이웃을 위한 나눔밥상, 호랑꼬두메 가마솥 데이</li><li>스마트 마을게시판, 전자플래카드 설치</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>스마트 마을게시판, 전자플래카드 설치</li><li>여성 안심 귀갓길 감지의 눈, 반사경 설치</li><li>소외된 이웃을 위한 나눔밥상, 호랑꼬두메 가마솥 데이</li><li>지속 가능한 아파트 버스킹 공연</li><li>안전한 통학환경 조성, 스마트 횡단보도 설치</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>산수2동 랜드마크 시계탑 설치</li><li>아파트로 찾아가는 버스킹 음악회 개최</li><li>불법쓰레기 투기지역에 화단 조성</li><li>마을 안전 지킴이 캠페인 실시</li><li>설맞이 복주머니 나눔</li><li>산수2동 역사 알기 골목길 스탬프 투어</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>주택가 분리수거함 설치</li><li>방학을 알차게! 찾아가는 요모조모 수업</li><li>호랑꼬두메 안심골목길 조성</li><li>산수2동 주민총회 및 마을축제 개최</li></ul></div>`,
-            '지산1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>지구를 지키는 작은 실천, 분리배출 캠페인<br> - 학생과 주민을 대상으로 급변하는 기후 대비와 지속 가능한 삶의 실천을 위한 쓰레기 분리·배출 교육 및 캠페인 실시</li><li>청년과 어르신이 함께 여는 디지털 세상<br> - 실습을 동반한 어르신 스마트폰·키오스크 교육 및 상시 상담 가능 전문 인원 배치 모색</li><li>혼자가 아닌 우리, 어르신 안심 케어 시스템<br> - 독거 어르신 댁에 움직임 감지 센서 설치(화장실 등)</li><li>따뜻한 온기로 전하는 효(孝) 마음, 어르신 목욕 봉사<br> - 어르신들이 청결하고 건강하게 지낼 수 있도록 목욕탕 봉사 진행(통장단의 홍보를 통해 어르신 돌봄 서비스 이용 독려)</li><li>우리의 안전, 우리가 지킨다!<br> - 호신술, CPR 교육 등 안전 교육 실시</li><li>지산1동, 함께 만드는 소통의 창(窓)<br> - 지산1동 주민을 대상으로 각종 마을 소식을 상시 전할 수 있는 open 채팅방 개설 및 홈페이지 제작</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>골목길 LED 조명 설치(조도 높이기)</li><li>복지사각지대 발굴하여 운영(소통창구 운영)</li><li>주민과 함께하는 열린 기자단 교육(마을 기자단 교육)</li><li>미로마을 美路답게 가꾸기(꽃길 조성)</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>문화예술 거점 공간 확보</li><li>사랑의 밑반찬 나눔</li><li>안심귀가길 조성</li><li>교통안전 교육지원</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>공연문화 거점공간 구성</li><li>평생교육 플랫폼 구성</li><li>수익성 프로그램 발굴</li><li>취약 소외 가구 돌봄 지원</li><li>마을반찬 나눔 운영사업</li><li>장애인 인식문화 개선활동</li><li>안심 안전 마을 만들기</li><li>주차 안전 마을 만들기</li><li>겨울철 안전사고 방지상버</li><li>미로마을 방송국 운영</li><li>평생대학 교육지원</li><li>교통안전 교육지원</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>주민자치회 전환 및 분과구성 운영</li><li>미로마을 방송국 개설 및 운영</li><li>미로마을 사랑채 활성화 (주민 이용 프로그램 등 개발)</li><li>늘 푸른 골목길 확대 추진(사과마을, 장미의거리 등 연계</li><li>마을장터 및 벼룩시장 운영 (사랑채운영기금 등 확충)</li><li>안전지킴이 모임 발족 및 활동</li><li>소통과 사회관계망 형성을 위한 1인 가구 복지</li><li>더불어 행복한 맞춤형 복지 (어르신, 장애인, 청소년 등)</li><li>모두가 함께하는 복지 (밑반찬 나눔, 빨래·세탁서비스, 이·미용서비스 등)</li></ul></div>`,
-            '지산2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>걷기 편한길 안전한 인도 만들기</li><li>어린이가 마을에서 안전하게 놀 권리 어린이 공간 조성</li><li>지역대학과 연계해 다복마을 주민들의 건강사업 연계 제공</li><li>무단 경작지와 산책로 주변 환경정비 활동 필요</li><li>골목주차문제,쓰레기 문제 내집앞부터 골목의변화가 필요</li><li>구유지 공간을 주민들의 필요한 편의공간 정비</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>마을 환경정화 플로깅 실시</li><li>쓰레기 무단투기 단속 CCTV 설치 및 관리</li><li>쾌적한 마을환경 조성(가로등 교체 및 소독)</li><li>교통안전 캠페인 실시</li><li>마을공유공간 사랑채 활성화</li><li>지산2동 문화·소통의 날 지정 운영</li><li>마을 역사·문화 알림이 제작</li><li>보행자 도로 정비</li><li>어르신 대상 여가프로그램 운영</li><li>독거 어르신 안부 확인 서비스</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>공사로 인한 소음과 교통으로 불편해요</li><li>금연구역이나 사람이 많은 곳에 흡연하지 않도록 해주세요</li><li>우리마을 쓰레기 문제 해결을 위해 주민 스스로 배출문화 만들기</li><li>환경오염 방지 및 악취예방을 우리가 관리하고 실천하자</li><li>주민들 의견 넣을 수 있는 우리마을 소통함 만들기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>다시 방문하고픈 문화가 있는 지산2동 장원봉 옛길 복원 마을 둘레길 만들어요</li><li>악취저감을 위한 하수구 맨홀뚜껑 교체해주세요</li><li>활력있는 우리동네 마을 일자리 만들어요~</li><li>내 집앞 주차공간 주차장으로 활용해서 마을에서 다함께 안전한 지산2동 만들어요~</li><li>정보와 마음을 나누는 주민의 소통공간 지산2동 자치센터 만들어요~</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>안전하고 깨끗한 찾아오는 우리마을을 위한 로고젝트 설치가 필요해요~</li><li>모두의 안전을 위한 신호등을 설치 해주세요! 우리에게 필요한건 신.호.등!</li><li>주민들을 위한 소통공간 '주민문화센터'가 필요해요!</li></ul></div>`,
-            '서남동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>문화를 잇는 마을<br> - 잇다 문화교실, 골목조성 이음사업</li><li>주민이 서로 잇는 마을<br> - 정 담은 소통방, 골목별 주민 의견 수렴 및 실현</li><li>마음을 잇는 마을<br> - 돌봄 잇다, 이웃 건강 지킴이</li><li>안전을 잇는 마을<br> - 마을 안전 지킴이단 운영, 청결 캠페인 진행</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>불법 주정차 금지 구역 표시 캠페인</li><li>다함께 깨끗한 길길마을 만들기</li><li>우리 동네 문화 교실</li><li>길길마을 소식 우체통 설치</li><li>“친구가 되어 드려요” 이미용봉사</li><li>길길마을 재능 나눔 교실</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>동네책방 등 복합문화공간 조성하기</li><li>독거노인을 위한 이미용 봉사</li><li>길길마을 대표 캐릭터 및 굿즈 개발</li><li>내집 앞 분리배출 깨끗한 서남동 만들기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>불법주정차 해결을 위한 마을공론화</li><li>깨끗한 우리 마을 만들기</li><li>올바른 쓰레기 및 재활용품 분리배출 요령 홍보</li></ul></div>`,
-            '학동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>둘러보며 걷기 좋은 학동 이음길 경관조성</li><li>꽃이 피는 남문로 꽃길 조성</li><li>두루마을 꿈나무 놀이 교실 운영</li><li>두루마을 올래 건강동아리 활동</li><li>보행이 즐겁고 아름다운 마을길 만들기</li></ul></div>
-                     <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>둘러보며 걷기 좋은 학동 이음길 확장</li><li>광주 백범기념관 잔디공원 조성</li><li>두루마을 브랜드를 활용한 마을 굿즈 개발</li><li>마을사랑채 활성화로 주민의 문화ㆍ여가 공간 조성</li><li>두루두루 살펴주는 두루마을 관리소</li></ul></div>
-                     <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>안전한 학동 만들기</li><li>마을 대청소를 통한 깨끗한 학동 만들기</li><li>두루두루 살펴주는 두루마을 관리소</li><li>두루마을 벽화 골목길 조성</li><li>두루마을 플리마켓</li><li>마을사랑채 활성화로 열린 주민소통공간 조성</li></ul></div>
-                     <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>둘러보며 걷기 좋은 학동 이음길 조성</li><li>안전한 학동을 만들기 위한 주민실천 캠페인</li><li>마을대청소 및 자원재활용으로 깨끗한 학동 만들기</li><li>마을사랑채 활성화로 진정한 주민소통공간 조성</li><li>두루마을 관리사무소 - 떴다! 학반장 서비스 운영</li><li>이웃과 소통하는 건강한 공동주택 문화 형성</li><li>학동 '두루마을' 마을브랜드 BI를 활용한 상품 개발 및 활용</li><li>마을밴드 결성을 활용한 마을문화축제 개최</li></ul></div>`,
-            '학운동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>주민 건강 요가 교실 동아리</li><li>숟가락 난타</li><li>다 함께 운동과 소통을</li><li>삼대가 함께하는 건강 놀이</li><li>전통차와 꽃꽂이 모임</li><li>꽃밭 만들기</li><li>뜨개방</li><li>반려 식물, 사계절 모종 나눔</li><li>마을주민 베이커리 배움터</li><li>책과 놀자</li><li>세계요리 맛보기</li><li>떠나요~ 여행! 여행가기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>청소년이 기획하고 참여하는 세대어울림 마을축제</li><li>무등산, 동적골 건강프로그램 운영</li><li>자연마을 전통풍습 함께하기</li><li>학운동 상가번영회 조성</li><li>아파트공동체 소규모 마을공헌 활동 활성화</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>무꽃동 아름다운 산들길 만들기</li><li>자연마을 산책길에서 만나는 우리</li><li>자연과 함께하는 문화예술 프로그램 운영</li><li>상인회 구성 및 밝고 환한 상가거리 조성</li><li>재미있는 놀이터 프로그램 운영</li><li>3대가 참여하는 아파트 소통문화 만들기</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>의재로에 사계절 아름다운 가로 화단을 조성하여 관리하자</li><li>보행로 환경개선으로 안전하고 쾌적한 마을 길을 만들자</li><li>마을을 가꾸는 문화예술 프로그램을 다양하게 운영하자</li><li>아파트 주민의 소통을 위한 소규모 공간을 만들어보자</li><li>마을 공유공간을 찾아서 주민이 참여(활동)할 수 있도록 홍보하자</li><li>매주 금요일 행동하는 주민캠페인에 참여하자</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>안전하고 쾌적한 산책로 조성<br>  - 산책로 주변 환경정화 및 시설점검활동<br>  - 증심사천 산책로 꽃길 조성</li><li>어린이의 안전한 놀 권리 찾기<br>  - 무량어린이공원 어린이 맞춤 환경으로 개선</li><li>온마을 추억 나눔 놀이터 운영<br>  - 마을 내 아나바다 장터 운영(자원 재활용 및 기후위기대응)<br>  - 가족과 함께하는 전래놀이</li></ul></div>`,
-            '지원1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>으뜸 안전, 으뜸 마을</li><li>마을도서관 조성</li><li>마을경제 살리기(홍보활성화)</li><li>기후위기대응 선도 마을만들기</li><li>청소년 마을동아리 활동 활성화</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>청소년을 위한 어린이 공원 조성<br>  - 운동시설 및 공원화 가능한 장소 개방 및 구축</li><li>청소년 문화공간 개설<br>  - 방과 후 청소년들이 여가활동을 보낼 수 있는 공간 조성</li><li>지원1동 머굴길 조성<br>  - 마을브랜드를 연계한 학소로 보행환경 정비</li><li>지원1동 부족한 주차장 확보<br>  - 관내 유휴자원을 활용한 주차공간 확보</li><li>지원1동 대표 건강산책길 조성<br> - 관내 모아미래도 뒷산을 쾌적하고 안전한 운동공간 정비</li><li>행복하고 걷기 편한 보행로 조성<br> - 보행약자 보호를 위한 골목환경개선(쉼의자 설치 등)</li><li>주차장 조성<br> - (구)지원중학교, 폐공가 등 관내 유휴공간을 활용한 주차장 조성</li><li>지원1동 마을도서관 조성<br> - 관내 유휴공간에 주민을 위한 문화‧여가생활 공간 마련</li><li>마을 햇빛발전소 건립<br> - 공익형 햇빛발전소(태양광 활용) 설치 및 발전수익 나눔 시스템 구축</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>(구)지원중학교 운동장 활용<br>  - 지역 내 유휴자원을 활용한 주민 휴식공간으로 재탄생</li><li>안전한 보행로 확보<br>  - 보행로 확보를 위한 인식개선 캠페인, 홍보물 나눔 등</li><li>마을사랑채 활성화<br>  -인적·물적 자원을 활용한 사랑채 특화프로그램 운영</li><li>주민주도, ‘찐 에너지전환마을’ 만들기<br>  - 태양광 발전 그늘막 및 스마트 냉온열의자 설치</li><li>머굴마을 보안관</li><li>머굴마을 틈새발굴단 창단<br>  - 주민 주도의 복지사각지대 발굴 및 지원대책 수립 등</li><li>머굴마을 합창단 운영<br>  - 문화사절단 역할 수행으르 위한 특성화 프로그램 개발</li><li>머굴마을 소식지 발간<br>  - 주민 화합 및 소통 활성화를 위한 소식지 발간, 마을밴드 개설 등</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>잘사는 머굴마을<br>  - 머굴마을 브랜드 개발을 통한 마을상품화 및 주민창업학교 운영<br>  - 온라인 마을총회 개최</li><li>소태동 소통꽃담을 피우다<br>  - 머굴마을 정원 및 골목정원 조성</li><li>머굴마을을 공유하다 <br>  - 머굴 공유텃밭 조성 및 공유 장터 개최</li><li>있어도 없는, 없어도 있는 마을공간<br>  - 공폐가를 활용한 주차장 조성<br>  - 주변 관공서 및 교회와 연계한 개방화장실 조성</li><li>사람냄새 나는 머굴 인권마을<br>  - 인권교육, 인권캠페인, 인권감수성 향상 캠프 진행</li><li>기다리던 너의 아파트<br>  - 주민소통프로그램 운영(북카페, 동네친구 만들기 등)</li><li>머굴마을을 보여줘<br>  - 마을 기록자 양성, 마을기록책 제작</li><li>쓰레기 없는 꽃담마을<br>  - 마을재능공유 활동가 발굴, 공유 프로그램 활성화 등</li><li>안전없이 마을없다<br>  - 주택 골목길 LED조명 설치</li><li>머굴축제 개최<br>  - 주민주도 머굴축제, 공유장터 등 교류의 장 마련</li><li>배워서 남주랴<br>  - 정기적 학습 및 토론, 주민동아리 활성화</li><li>맞춤형 복지<br>  - 머굴마을의 특색있는 마을복지사업 추진 등</li><li>성공적인 주민자치회 전환<br>  - 주민자치회 구성, 주민자치센터 운영 등</li></ul></div>`,
-            '지원2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>소원마을 둘레길(소원길)조성사업 3단계</li><li>우리마을 공유 영화관</li><li>빗물유입구 낙엽·쓰레기 제거 및 집중호우 재난 취약지역 개선</li><li>아파트 앞 정지선 지키기 캠페인</li><li>구 너릿재 ‘소원마을’ 조형물 설치</li><li>당산제, 기우제 복원</li><li>지원2동 역사 홍보자료 제작</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>소원마을 둘레길(소원길)조성 사업 2단계</li><li>지원2동 골목가 정비</li><li>너릿재 소원마을 조형물 만들기</li><li>5·18 역사가 깃든 주남마을 명품마을 만들기</li><li>지원2동 홍보자료 제작</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>테마가 있는 마을 만들기<br>  - 소원마을 둘레길(소원길) 조성</li><li>깨끗한 광주천 가꾸기</li><li>아이들이 안전한 등굣길II(지한초교)</li><li>나눔장터로 소통하는 아파트</li><li>마을기후변화 교육 및 탄소 중립 캠페인</li><li>지원2동 역사 홍보자료 제작</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>테마가 있는 마을 만들기</li><li>우리마을 공유 영화관</li><li>아파트 도시 농부<br>  - 마당텃밭·정원 조성</li><li>당산제, 기우제 복원</li><li>찾아가는 문화행사<br>  - 시와 우리춤의 어울림</li><li>마을인문 공예학당 운영<br>  - 어쩌다 공방</li><li>문화예술마을</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>아이들이 안전한 등굣길 만들기<br>  - 노랑노랑 캠페인, 스쿨존 포인트 마크</li><li>오고싶은 소원마을 만들기</li><li>마을커뮤니티 공간 조성하기</li><li>소통하는 아파트 만들기</li><li>소원마을 통합축제 개최하기</li><li>마을자치 역량 키우기</li><li>소원마을 가치 공유하기</li><li>대기환경 파악하고 가꾸기</li><li>소원마을 전통문화 살리기</li><li>세대공감 노인대학 운영하기</li></ul></div>`,
-            '동구 평균': `<div class='p-4 bg-white rounded-xl text-gray-500 text-sm border border-gray-200 text-center font-bold'>👆 좌측 상단 셀렉트 박스에서 행정동을 선택하시면 과거 5개년도 마을의제 원본 데이터를 확인하실 수 있습니다.</div>`
+            '동구 평균': `<div class='p-4 bg-white rounded-xl text-gray-500 text-sm border border-gray-200 text-center font-bold'>👆 좌측 상단 셀렉트 박스에서 행정동을 선택하시면 과거 5개년도 마을의제 모아보기 데이터를 확인하실 수 있습니다.</div>`,
+            '충장동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;마음에 지구를 '+' 더하다&gt;<br> · 그린라이프 실천교육 : 절전, 분리배출 등 친환경 생활습관 확산</li></ul></div>`,
+            '동명동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>쓰레기불법투기지역 포토존만들기</li></ul></div>`,
+            '계림1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>주택가 안정을 위한 태양광 가로등설치</li></ul></div>`,
+            '계림2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>튼튼한 어린이 만들기</li></ul></div>`,
+            '산수1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>재개발 지역에 적합한 공간조성</li></ul></div>`,
+            '산수2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>유휴 텃밭 활용 주차장 조성</li></ul></div>`,
+            '지산1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>지구를 지키는 작은 실천, 분리배출 캠페인</li></ul></div>`,
+            '지산2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>걷기 편한길 안전한 인도 만들기</li></ul></div>`,
+            '서남동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>문화를 잇는 마을</li></ul></div>`,
+            '학동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>둘러보며 걷기 좋은 학동 이음길 경관조성</li></ul></div>`,
+            '학운동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>주민 건강 요가 교실 동아리</li></ul></div>`,
+            '지원1동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>으뜸 안전, 으뜸 마을</li></ul></div>`,
+            '지원2동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>소원마을 둘레길(소원길)조성사업 3단계</li></ul></div>`
         };
 
-        // 초기 데이터 매핑 시 평균 데이터가 없는 동은 동구 평균으로 자동 폴백 처리
         for (const orderDong of DONG_ORDER) {
             if (!agendaReports[orderDong]) {
                 agendaReports[orderDong] = agendaReports['동구 평균'];
+            }
+        }
+
+        const regionInsights = {
+            'theme1': {
+                '충장동': '1인가구 비율이 동구 전체 최고 수준을 기록 중이며, 정주 인구 규모 자체가 매우 적은 특성이 있습니다.',
+                '동명동': '20대 위주 청년 1인가구 유입이 활발하여 다른 지역에 비해 상대적으로 젊은 인구 구조를 보입니다.',
+                '계림1동': '원도심과 신규 전입 인구가 섞여 있으며, 1인가구와 다인가구가 혼재된 과도기적 양상을 띱니다.',
+                '계림2동': '대단지 아파트 밀집 효과로 유소년 비율이 동구 1위 수준을 보이며 가족 단위 거주가 활발합니다.',
+                '산수1동': '고령 인구 비율과 1인가구 비율이 동시에 높아 전통적인 구도심의 고령화 특성이 매우 뚜렷합니다.',
+                '산수2동': '유소년 비율 대비 고령 인구 비율이 약 3배 이상 높아, 초고령 사회로의 진입이 가속화된 구조입니다.',
+                '지산1동': '조선대학교 상권 배후지로서 원룸가 중심의 20대 청년층 1인가구 거주 비율이 압도적으로 높습니다.',
+                '지산2동': '법조타운 인접으로 직장인 거주 및 다인가구와 1인가구가 비교적 균형 있게 혼재되어 있습니다.',
+                '서남동': '아파트 거주 비율이 전무(0%)하고, 1인가구 비율이 85%를 상회하는 극단적인 인구 구조를 보입니다.',
+                '학동': '대형 의료기관 인프라의 영향으로 의료·건강 수요가 높은 고령자 거주 밀집도가 돋보입니다.',
+                '학운동': '무등산 인접 자연 친화적 환경으로 노년층 거주 선호도가 높아 고령 인구 비율이 최상위권입니다.',
+                '지원1동': '1인가구 비율이 상대적으로 낮고 세대당 인구수가 안정적으로 유지되는 전통적인 가족 주거지입니다.',
+                '지원2동': '동구 최대 인구 규모를 자랑하며, 세대당 인구수가 가장 높은 안정적인 베드타운 구조를 띱니다.'
+            },
+            'theme2': {
+                '충장동': '상업지 특성상 거주 주택 수가 적고 노후 단독·연립 주택이 주를 이루어 주거 기능은 약화되어 있습니다.',
+                '동명동': '노후주택 비율이 65% 이상으로 동구 최고치를 기록 중이며, 물리적 주거 환경의 세심한 관리가 필요합니다.',
+                '계림1동': '재개발에 따른 신축 아파트와 기존 구도심 주택 간의 인프라 격차가 뚜렷하게 나타납니다.',
+                '계림2동': '아파트 거주 비율이 93%에 달하여 정주 기반과 주차 등 기본 주거 인프라가 매우 안정적입니다.',
+                '산수1동': '노후주택 비율이 41.9%에 달하며 단독주택 골목 중심의 밀집형 주거 형태를 보입니다.',
+                '산수2동': '구축 아파트와 노후 단독주택이 섞여 있어 전반적인 주거 환경 개선 및 방재 점검 수요가 높습니다.',
+                '지산1동': '아파트 비율이 매우 낮고 원룸 및 다세대 주택 밀집도가 높아 생활 소음·주차 등의 갈등 관리가 요구됩니다.',
+                '지산2동': '단독주택과 연립다세대 비율이 높으며, 통계상 녹지비율 대비 실제 체감형 근린공원은 부족한 편입니다.',
+                '서남동': '아파트가 전혀 없는 특수 지구로, 상가 주택과 노후 구옥이 대부분을 차지하여 야간 방범이 취약합니다.',
+                '학동': '대규모 도시 정비 사업의 영향으로 신축 아파트 비율이 지속적으로 상승하고 있는 전환기 지역입니다.',
+                '학운동': '노후주택 비율이 60% 이상으로 높아, 동절기 한파 및 주택 화재 등의 재난 안전 점검이 필수적입니다.',
+                '지원1동': '아파트와 일반 주택이 고르게 섞여 있으나, 거주민이 쉽게 접근할 수 있는 동네 공원 면적이 다소 부족합니다.',
+                '지원2동': '아파트 거거 비율이 매우 높아 대단지 인프라 혜택을 온전히 누리는 쾌적한 주거 환경을 갖추고 있습니다.'
+            },
+            'theme3': {
+                '충장동': '고령 인구 비율이 높은 데다 독거 세대가 많아, 고독사 예방을 위한 야간 밀착형 돌봄망 구축이 시급합니다.',
+                '동명동': '대학생·청년층의 단기 거주가 많아, 청년 빈곤 및 외로움 해소를 돕는 거점형 사회 복지가 필요합니다.',
+                '계림1동': '기초연금 수급자 및 장애인 등록자 비율이 상대적으로 높아 섬세한 복지 행정 수요가 발생합니다.',
+                '계림2동': '유소년 인구 비중이 독보적으로 높아, 노인 복지보다는 아동 보육 및 방과후 돌봄 인프라 확충이 요구됩니다.',
+                '산수1동': '기초연금 수급 비중이 높아 거동이 불편한 어르신을 타겟으로 한 병원 동행 및 가사 지원이 필수적입니다.',
+                '산수2동': '절대 다수의 고령 인구가 거주하므로 시니어 여가 시설 확충과 방문형 실버 건강 체육 지원이 최우선입니다.',
+                '지산1동': '청년 1인가구 특성상 주거 불안정 및 야간 생활 안전 확보를 위한 스마트 방범 복지망이 필요합니다.',
+                '지산2동': '보편적 노인 복지 외에도 어르신들이 쉴 수 있는 소규모 쌈지 공원 등 휴식 인프라 조성이 필요합니다.',
+                '서남동': '주간 경제 활동은 활발하나 야간 체류 1인가구의 고립 위험이 커 스마트 긴급 안심 호출 지원이 매우 중요합니다.',
+                '학동': '관내 대형 의료 기관(병상수 최고 수준)이 밀집하여 보건·의료 복지 접근성이 동구 내 가장 탁월합니다.',
+                '학운동': '초고령화 특성상 홀몸 어르신 혹서/혹한기 안부 살핌 복지와 재난 대피 거점 마련이 최상위 과제입니다.',
+                '지원1동': '가족 단위 인구가 많으나, 주민들이 여가 활동을 모여 즐길 수 있는 커뮤니티 복지 시설이 열악한 편입니다.',
+                '지원2동': '아동 및 청소년 복지 수요가 매우 강하며, 부모들의 양육 부담을 덜어줄 공동 육아 인프라가 요구됩니다.'
+            },
+            'theme4': {
+                '충장동': '압도적인 사업체 및 종사자 수를 보유하여 거주 기능보다 상업 및 경제 거점으로서의 활력이 지배적입니다.',
+                '동명동': '카페거리 및 청년 창업 위주의 소상공인 사업체 증가세가 뚜렷하며 로컬 경제 활성화 지표가 우수합니다.',
+                '계림1동': '주거 기능 중심이나 인접한 재래시장과 상권의 긍정적인 파급 효과를 바탕으로 소형 경제 활동이 유지됩니다.',
+                '계림2동': '자체 사업체 규모는 작으나 관내 1만 명 이상의 거대 소비 시장(배후 수요)을 형성하는 경제적 텃밭입니다.',
+                '산수1동': '산수시장 등 전통 시장을 매개로 한 구도심 상권의 특징이 강하게 나타나며 지역 화폐 순환율이 양호합니다.',
+                '산수2동': '전형적인 주거 베드타운 성격이 강하여 관내 자체 지역 경제 활력 지표(사업체 수 등)는 다소 낮게 나타납니다.',
+                '지산1동': '조선대학교 상권의 직접적인 영향을 받아 대학생 유동 인구가 지역 식음료·서비스 경제 활력을 주도합니다.',
+                '지산2동': '법조타운 인접 효과로 전문 서비스업 및 공공 행정 관련 사업체 종사자 비율이 매우 뚜렷하게 나타납니다.',
+                '서남동': '인쇄거리 등 도심 제조업 소상공인 네트워크가 매우 강력하며 인구수 대비 종사자 수 비율이 최고 수준입니다.',
+                '학동': '대규모 대학 병원을 중심으로 의료·보건 관련 산업 종사자가 집중되어 특화된 상권 경제가 발달해 있습니다.',
+                '학운동': '거시적 상업 시설은 적으나 무등산 국립공원 방문객과 연계된 특화 식음료 상권이 동네 경제에 기여합니다.',
+                '지원1동': '전통적인 거주지 특성상 자체 일자리 지표는 높지 않으나 안정된 가계 소득을 바탕으로 한 상생 잠재력이 있습니다.',
+                '지원2동': '동구 내 최대 정주 인구 규모에 비해 관내 사업체 및 상주 종사자 수는 적은 완전한 주거 중심형 베드타운입니다.'
+            }
+        };
+
+        function cleanNum(val) {
+            if (val === undefined || val === null || val === '') return 0;
+            if (typeof val === 'number') return val;
+            let cleaned = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+            if (cleaned === '-' || cleaned === '') return 0;
+            let num = parseFloat(cleaned);
+            return isNaN(num) ? 0 : num;
+        }
+
+        window.onload = function() {
+            Papa.parse("data.csv", {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    try {
+                        const rows = results.data;
+                        for (let i = 1; i < rows.length; i++) {
+                            let row = rows[i];
+                            if (row.length < 10) continue;
+                            let dong = row[0] ? row[0].trim() : '';
+                            if (!DONG_ORDER.includes(dong) && dong !== '동구 평균') continue;
+
+                            let pop = cleanNum(row[1]);
+                            let male = cleanNum(row[2]);
+                            let female = cleanNum(row[3]);
+                            let youthPop = cleanNum(row[4]); 
+                            let eldPop = cleanNum(row[5]);   
+                            let val6 = cleanNum(row[6]); 
+                            let val7 = cleanNum(row[7]); 
+                            
+                            let onePop = val6 > 10 ? val6 : (val7 > 10 ? val7 : 0);
+                            let ppHouse = (val6 > 0 && val6 < 10) ? val6 : ((val7 > 0 && val7 < 10) ? val7 : 0);
+                            
+                            let singleHousePct = cleanNum(row[8]);
+                            let multiHousePct = cleanNum(row[9]);
+                            let aptPct = cleanNum(row[10]);
+                            let oldPct = cleanNum(row[11]);
+                            let bizCount = cleanNum(row[12]);
+                            let bizWorker = cleanNum(row[13]);
+                            let socEco = cleanNum(row[14]);
+                            let cult = cleanNum(row[15]);
+                            let kin = cleanNum(row[16]);
+                            let wel = cleanNum(row[17]);
+                            let pen = cleanNum(row[19]);
+                            let dis = cleanNum(row[20]);
+                            let forgn = cleanNum(row[21]);
+                            let beds = cleanNum(row[23]);
+                            let hosp = cleanNum(row[24]);
+                            let greenPct = cleanNum(row[25]);
+                            let parkArea = cleanNum(row[26]);
+                            let acc = cleanNum(row[28]);
+
+                            let youthPct = pop > 0 ? parseFloat(((youthPop / pop) * 100).toFixed(1)) : 0;
+                            let eldPct = pop > 0 ? parseFloat(((eldPop / pop) * 100).toFixed(1)) : 0;
+                            let onePct = pop > 0 ? parseFloat(((onePop / pop) * 100).toFixed(1)) : 0;
+
+                            if (dong === '동구 평균') {
+                                pop = 8056; youthPop = 960; eldPop = 2015; ppHouse = 1.82;
+                                youthPct = 11.9; eldPct = 25.0; onePop = 2172; onePct = 54.4;
+                            }
+
+                            const ai = aiReports[dong] || {};
+                            dongData[dong] = {
+                                type: ai.type, strength: ai.strength, weakness: ai.weakness,
+                                strategy: ai.strategy, festival: ai.festival, welfare: ai.welfare,
+                                media: ai.media, safety: ai.safety,
+                                pop, male, female, youthPop, youthPct, eldPop, eldPct,
+                                ppHouse, onePop, onePct, singleHousePct, multiHousePct, aptPct, oldPct, 
+                                bizCount, bizWorker, socEco, cult, kin, wel, pen, dis, forgn, beds, hosp, greenPct, parkArea, acc
+                            };
+                        }
+                        document.getElementById('loading').classList.add('hidden');
+                        document.getElementById('mainContent').classList.remove('hidden');
+                        initApp();
+                    } catch (e) {
+                        document.getElementById('loading').innerHTML = `<div class="text-xl font-bold text-red-600 mb-2">데이터 분석 중 오류가 발생했습니다.</div><p class="text-gray-700">${e.message}</p>`;
+                    }
+                }
+            });
+        };
+
+        const barChartCategories = {
+            'theme1': { labels: ['유소년(%)', '고령(%)', '1인가구(%)', '외국인(%)'], getData: (d) => [d.youthPct, d.eldPct, d.onePct, d.pop > 0 ? parseFloat(((d.forgn / d.pop) * 100).toFixed(1)) : 0] },
+            'theme2': { labels: ['아파트(%)', '단독(%)', '노후주택(%)', '녹지(%)'], getData: (d) => [d.aptPct, d.singleHousePct, d.oldPct, d.greenPct] },
+            'theme3': { labels: ['고령(%)', '기초연금(%)', '장애인(%)'], getData: (d) => [d.eldPct, d.pop > 0 ? parseFloat(((d.pen / d.pop) * 100).toFixed(1)) : 0, d.pop > 0 ? parseFloat(((d.dis / d.pop) * 100).toFixed(1)) : 0] },
+            'theme4': { labels: ['인구대비 종사자(%)', '유소년(%)', '세대당 인구(배수)'], getData: (d) => [d.pop > 0 ? parseFloat(((d.bizWorker / d.pop) * 100).toFixed(1)) : 0, d.youthPct, d.ppHouse * 20] }
+        };
+
+        function initApp() {
+            renderUIElements();
+            renderTable();
+            initCharts();
+            setupAgendaTabs();
+            switchMainTab('tab1');
+            
+            const initialDong = document.querySelector('input[value="충장동"]');
+            if(initialDong) { 
+                initialDong.checked = true; 
+                checkedOrder.push("충장동");
+                updateChartsAndTable(); 
+            }
+            
+            const repSel = document.getElementById('reportSelect');
+            if(repSel && repSel.options.length > 0) { repSel.value = '충장동'; updateReport('충장동', 'strategy'); }
+            
+            document.getElementById('barChartCategory').addEventListener('change', updateChartsAndTable);
+            document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('chartModal').classList.add('hidden'); });
+        }
+
+        function setupAgendaTabs() {
+            document.querySelectorAll('.agenda-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.agenda-tab').forEach(t => {
+                        t.classList.remove('active', 'text-indigo-600', 'bg-indigo-50', 'border-indigo-200', 'shadow-sm');
+                        t.classList.add('text-gray-500', 'border-transparent');
+                    });
+                    this.classList.remove('text-gray-500', 'border-transparent');
+                    this.classList.add('active', 'text-indigo-600', 'bg-indigo-50', 'border-indigo-200', 'shadow-sm');
+                    currentAgendaTab = this.getAttribute('data-tab');
+                    updateAgendaReport(document.getElementById('reportSelect').value);
+                });
+            });
+        }
+
+        function updateAgendaReport(dong) {
+            const textEl = document.getElementById('agendaText');
+            if (currentAgendaTab === 'raw') {
+                textEl.innerHTML = rawAgendas[dong] || '데이터가 없습니다.';
+            } else {
+                textEl.innerHTML = (agendaReports[dong] && agendaReports[dong][currentAgendaTab]) ? agendaReports[dong][currentAgendaTab] : agendaReports['동구 평균']['phase1'];
             }
         }
 
@@ -670,7 +829,6 @@
 
         function buildRow(name, d, isAvg) {
             const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
-            
             const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
             const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
             const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
@@ -726,8 +884,7 @@
                     maintainAspectRatio: false, 
                     scales: { 
                         r: { 
-                            min: 0, 
-                            max: 100, 
+                            min: 0, max: 100, 
                             ticks: { display: false, stepSize: 20 },
                             grid: { color: 'rgba(71, 85, 105, 0.22)', lineWidth: 1.5 },
                             angleLines: { color: 'rgba(71, 85, 105, 0.28)', lineWidth: 1.5 },
@@ -760,7 +917,10 @@
             document.getElementById('reportType').innerText = data.type;
             document.getElementById('strengthText').innerText = data.strength;
             document.getElementById('weaknessText').innerText = data.weakness;
-            document.getElementById('themeTitle').innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> 심층 테마 제안 : <span class="font-black underline decoration-emerald-300 decoration-4 underline-offset-4">${document.getElementById('reportCategorySelect').options[document.getElementById('reportCategorySelect').selectedIndex].text}</span>`;
+            
+            const selEl = document.getElementById('reportCategorySelect');
+            const themeLabel = selEl.options[selEl.selectedIndex].text.replace('🔍 심층 테마 : ', '');
+            document.getElementById('themeTitle').innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> 제안 : <span class="font-black underline decoration-emerald-300 decoration-4 underline-offset-4">${themeLabel}</span>`;
             document.getElementById('themeText').innerText = data[categoryKey];
             updateAgendaReport(dong);
         }
@@ -776,7 +936,6 @@
                 const d = dongData[dong];
                 const col = colors[i % colors.length];
                 const rawData = currentCat.getData(d);
-                
                 const radarData = rawData.map(val => Math.min(val, 100));
 
                 barDs.push({ label: dong, data: rawData, backgroundColor: col, borderRadius: 6 });
@@ -786,7 +945,7 @@
                     data: radarData, 
                     rawData: rawData, 
                     borderColor: col, 
-                    backgroundColor: col + '1a', 
+                    backgroundColor: col + '1a',
                     pointBackgroundColor: '#fff', 
                     pointBorderColor: col, 
                     pointBorderWidth: 2.5, 
