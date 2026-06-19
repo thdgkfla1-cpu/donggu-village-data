@@ -16,7 +16,7 @@
         td { white-space: nowrap; vertical-align: middle; }
         
         /* 표 가로 스크롤 시 첫 번째 열 텍스트 겹침 완벽 방지 */
-        .sticky-col { position: sticky; left: 0; z-index: 11; border-right: 1px solid #cbd5e1; box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1); }
+        .sticky-col { position: sticky; left: 0; z-index: 11; border-right: 1px solid #e2e8f0; box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05); }
         th.sticky-col { z-index: 12; background-color: #f8fafc !important; }
         
         .row-average { border-top: 2px solid #10b981; background-color: #ecfdf5 !important; }
@@ -89,6 +89,16 @@
                     <div class="flex-grow relative"><canvas id="radarChart"></canvas></div>
                 </div>
             </div>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col">
+                <div class="mb-3">
+                    <h4 class="font-bold text-gray-800 text-base mb-2 flex items-center gap-2"><i class="fa-solid fa-lightbulb text-amber-500"></i> 핵심 지표 Point</h4>
+                    <p id="dynamicInsight" class="text-sm text-gray-800 bg-amber-50 p-3.5 rounded-lg border border-amber-100 font-medium leading-relaxed"></p>
+                </div>
+                <div class="border-t border-gray-100 pt-3 mt-1">
+                    <p id="dynamicFootnote" class="text-xs text-gray-500 leading-relaxed font-medium"></p>
+                </div>
+            </div>
         </section>
 
         <section id="section-tab2" class="hidden space-y-6">
@@ -138,9 +148,9 @@
                     </div>
                     
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-5 pb-4 border-b border-gray-100 flex-shrink-0">
-                        <button class="agenda-tab active px-2 py-3 text-[13px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg shadow-sm transition-colors" data-tab="phase1">1단계: 과거 회고</button>
-                        <button class="agenda-tab px-2 py-3 text-[13px] font-bold text-gray-500 border border-transparent hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" data-tab="phase2">2단계: '26년 검증</button>
-                        <button class="agenda-tab px-2 py-3 text-[13px] font-bold text-gray-500 border border-transparent hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" data-tab="phase3">3단계: 향후 도출</button>
+                        <button class="agenda-tab active px-2 py-3 text-[13px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg shadow-sm transition-colors" data-tab="phase1">1단계: 과거 의제 회고</button>
+                        <button class="agenda-tab px-2 py-3 text-[13px] font-bold text-gray-500 border border-transparent hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" data-tab="phase2">2단계: 26년 의제 점검</button>
+                        <button class="agenda-tab px-2 py-3 text-[13px] font-bold text-gray-500 border border-transparent hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" data-tab="phase3">3단계: 향후 의제 제안</button>
                         <button class="agenda-tab px-2 py-3 text-[13px] font-bold text-gray-500 border border-transparent hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" data-tab="raw">연도별 모아보기</button>
                     </div>
                     
@@ -160,39 +170,39 @@
                 
                 <div class="table-container rounded-xl border border-gray-300 shadow-sm">
                     <table class="w-full text-xs md:text-sm text-center border-collapse">
-                        <thead class="bg-gray-100 border-b-2 border-gray-300">
+                        <thead class="border-b-2 border-gray-400">
                             <tr>
-                                <th class="px-4 py-4 sticky-col text-gray-800">행정동</th>
+                                <th class="px-4 py-4 sticky-col bg-gray-100 text-gray-800 border-r border-gray-300 font-black">행정동</th>
                                 
-                                <th class="px-4 py-4 text-blue-700 clickable-th" onclick="openModal('총 인구', 'pop')">총 인구(명)<span class="date-badge">26. 5.</span></th>
-                                <th class="px-4 py-4 text-blue-700 clickable-th" onclick="openModal('남성', 'male')">남성(명)<span class="date-badge">26. 5.</span></th>
-                                <th class="px-4 py-4 text-blue-700 clickable-th" onclick="openModal('여성', 'female')">여성(명)<span class="date-badge">26. 5.</span></th>
-                                <th class="px-4 py-4 text-blue-700 clickable-th" onclick="openModal('유소년', 'youthPop')">유소년(명)<span class="date-badge">26. 5.</span></th>
-                                <th class="px-4 py-4 text-blue-700 clickable-th" onclick="openModal('고령', 'eldPop')">고령(명)<span class="date-badge">26. 5.</span></th>
-                                <th class="px-4 py-4 text-blue-700 clickable-th" onclick="openModal('1인가구', 'onePop')">1인가구(명)<span class="date-badge">26. 5.</span></th>
-                                <th class="px-4 py-4 text-blue-700 clickable-th" onclick="openModal('세대당 인구수', 'ppHouse')">세대당 인구수(명)<span class="date-badge">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('총 인구', 'pop')">총 인구(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('남성', 'male')">남성(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('여성', 'female')">여성(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('유소년', 'youthPop')">유소년(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('고령', 'eldPop')">고령(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('1인가구', 'onePop')">1인가구(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 clickable-th hover:bg-blue-100 transition" onclick="openModal('세대당 인구수', 'ppHouse')">세대당 인구수(명)<span class="date-badge text-blue-500/70">26. 5.</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 text-indigo-700 clickable-th" onclick="openModal('단독주택', 'singleHousePct')">단독주택(%)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-indigo-700 clickable-th" onclick="openModal('연립다세대', 'multiHousePct')">연립다세대(%)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-indigo-700 clickable-th" onclick="openModal('아파트', 'aptPct')">아파트(%)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-indigo-700 clickable-th" onclick="openModal('노후주택', 'oldPct')">노후주택(%)<span class="date-badge">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-indigo-50 text-indigo-900 border-b-2 border-indigo-200 clickable-th hover:bg-indigo-100 transition" onclick="openModal('단독주택', 'singleHousePct')">단독주택(%)<span class="date-badge text-indigo-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-indigo-50 text-indigo-900 border-b-2 border-indigo-200 clickable-th hover:bg-indigo-100 transition" onclick="openModal('연립다세대', 'multiHousePct')">연립다세대(%)<span class="date-badge text-indigo-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-indigo-50 text-indigo-900 border-b-2 border-indigo-200 clickable-th hover:bg-indigo-100 transition" onclick="openModal('아파트', 'aptPct')">아파트(%)<span class="date-badge text-indigo-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-indigo-50 text-indigo-900 border-b-2 border-indigo-200 clickable-th hover:bg-indigo-100 transition" onclick="openModal('노후주택', 'oldPct')">노후주택(%)<span class="date-badge text-indigo-400/80">24년</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 text-purple-700 clickable-th" onclick="openModal('사업체', 'bizCount')">사업체(개)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-purple-700 clickable-th" onclick="openModal('종사자', 'bizWorker')">종사자(명)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-purple-700 clickable-th" onclick="openModal('사회연대경제', 'socEco')">사회연대경제(개)<span class="date-badge">26년</span></th>
-                                <th class="px-4 py-4 text-purple-700 clickable-th" onclick="openModal('문화체육시설', 'cult')">문화체육시설(개)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-purple-700 clickable-th" onclick="openModal('유치원/보육시설', 'kin')">유치원/보육시설(개)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-purple-700 clickable-th" onclick="openModal('사회복지시설', 'wel')">사회복지시설(개)<span class="date-badge">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('사업체', 'bizCount')">사업체(개)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('종사자', 'bizWorker')">종사자(명)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('사회연대경제', 'socEco')">사회연대경제(개)<span class="date-badge text-purple-400/80">26년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('문화체육시설', 'cult')">문화체육시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('유치원/보육시설', 'kin')">유치원/보육시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-purple-50 text-purple-900 border-b-2 border-purple-200 clickable-th hover:bg-purple-100 transition" onclick="openModal('사회복지시설', 'wel')">사회복지시설(개)<span class="date-badge text-purple-400/80">24년</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 text-rose-600 clickable-th" onclick="openModal('기초연금수급', 'pen')">기초연금수급(명)<span class="date-badge">25. 1.</span></th>
-                                <th class="px-4 py-4 text-rose-600 clickable-th" onclick="openModal('장애인 등록', 'dis')">장애인 등록(명)<span class="date-badge">25. 1.</span></th>
-                                <th class="px-4 py-4 text-rose-600 clickable-th" onclick="openModal('외국인 등록', 'forgn')">외국인 등록(명)<span class="date-badge">26. 3.</span></th>
-                                <th class="px-4 py-4 text-rose-600 clickable-th" onclick="openModal('병상수', 'beds')">병상수(개)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-rose-600 clickable-th" onclick="openModal('병원수', 'hosp')">병원수(개)<span class="date-badge">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('기초연금수급', 'pen')">기초연금수급(명)<span class="date-badge text-rose-400/80">25. 1.</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('장애인 등록', 'dis')">장애인 등록(명)<span class="date-badge text-rose-400/80">25. 1.</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('외국인 등록', 'forgn')">외국인 등록(명)<span class="date-badge text-rose-400/80">26. 3.</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('병상수', 'beds')">병상수(개)<span class="date-badge text-rose-400/80">24년</span></th>
+                                <th class="px-4 py-4 bg-rose-50 text-rose-900 border-b-2 border-rose-200 clickable-th hover:bg-rose-100 transition" onclick="openModal('병원수', 'hosp')">병원수(개)<span class="date-badge text-rose-400/80">24년</span></th>
                                 
-                                <th class="px-4 py-4 border-l-2 border-gray-300 text-emerald-700 clickable-th" onclick="openModal('녹지비율', 'greenPct')">녹지비율(%)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-emerald-700 clickable-th" onclick="openModal('공원면적', 'parkArea')">공원면적(㎡)<span class="date-badge">24년</span></th>
-                                <th class="px-4 py-4 text-emerald-700 clickable-th" onclick="openModal('보행사고', 'acc')">보행사고(건)<span class="date-badge">24년</span></th>
+                                <th class="px-4 py-4 border-l-2 border-gray-300 bg-emerald-50 text-emerald-900 border-b-2 border-emerald-200 clickable-th hover:bg-emerald-100 transition" onclick="openModal('녹지비율', 'greenPct')">녹지비율(%)<span class="date-badge text-emerald-500/70">24년</span></th>
+                                <th class="px-4 py-4 bg-emerald-50 text-emerald-900 border-b-2 border-emerald-200 clickable-th hover:bg-emerald-100 transition" onclick="openModal('공원면적', 'parkArea')">공원면적(㎡)<span class="date-badge text-emerald-500/70">24년</span></th>
+                                <th class="px-4 py-4 bg-emerald-50 text-emerald-900 border-b-2 border-emerald-200 clickable-th hover:bg-emerald-100 transition" onclick="openModal('보행사고', 'acc')">보행사고(건)<span class="date-badge text-emerald-500/70">24년</span></th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-gray-200 bg-white"></tbody>
@@ -424,7 +434,7 @@
             '학동': {
                 phase1: `<ul class="agenda-list">
                             <li><strong>[의제 매핑 및 지속성]</strong> 학동 이음길 등 압도적인 도시 공원 인프라를 활용한 '자연 친화 브랜드' 방향성이 뚜렷합니다.</li>
-                            <li><strong>[피드백]</strong> '학반장 서비스' 등 우수 사업이 소수 봉사자의 희생에만 의존해 번아웃 리스크가 큽니다.
+                            <li><strong>[피드백]</strong> '학반장 서비스' 등 우수 사업이 소수 봉사자의 희생에만 의존해 번아웃 리스크가 큰 상황입니다.
                                 <div class="action-box"><strong><i class="fa-solid fa-circle-play"></i> 구체적 실행방안</strong> 구청의 '우리동네 공공 일자리' 예산과 매칭하여 자원봉사자에게 정당한 수당을 지급하는 자생적 경제 순환 모델로 재설계해야 합니다.</div>
                             </li>
                          </ul>`,
@@ -520,7 +530,7 @@
 
         const rawAgendas = {
             '충장동': `<div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2026년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;마을에 지구를 '+' 더하다&gt;<br> · 그린라이프 실천교육 : 절전, 분리배출 등 친환경 생활습관 확산<br> · 제로충장 30일 챌린지 : 일회용품 줄이기 도전 캠페인</li><li>&lt;일상에 배움을 ‘+’ 더하다&gt;<br> · 세대공감 테라피 : 어르신과 아이들이 전통차, 음식으로 세대교류<br> · 충장 재능나눔학교 : 주민 재능을 나누는 평생학습 공동체</li><li>&lt;이웃에 온기를 ‘+’ 더하다&gt;<br> · 마음정원 화분나눔 : 독거어르신, 1인가구에 화분전달, 안부확인<br> · 안심골목 만들기 : 방범, 환경정비로 안전, 깨끗 골목 조성</li><li>&lt;마을에 소통을 ‘+’ 더하다&gt;<br> · 충장 소통한마당 : 주민, 단체가 모여 동네 문제 함께 해결<br> · 우리동네 골목길 밥상 : 음식을 나누며 이웃과 정을 나눔</li></ul></div>
-                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;주민자치에 협치를 '+' 더하다&gt;<br> · 마을 내 다양한 조직 간 네트워크 구축<br> · 생활 속 기초질서 지키기 캠페인 추진<br> · 우리동네 홍보미디어 제작</li><li>&lt;마을역사에 미래를 '+' 더하다&gt;<br> · 교육공동체 마을역사탐방, 마을자원 연구<br> · 시내로마을돌아보기 프로그램 확대<br> · 행복한 아이로 키우는 ‘마을교육’ 실시</li><li>&lt;충장골목에 향기를 ‘+’ 더하다&gt;<br>· 충장골목 환경 정화활동(줍깅, 캠페인, 교육)<br>· ‘내 집(점포) 앞 내가 쓸기’ 캠페인 추진<br>· 교통사고 제로! 안전한 마을 만들기</li><li>&lt;마을복지에 희망을 ‘+’ 더하다&gt;<br>· 마을에 마음을 잇는 봉사활동 실시<br>· 독거어르신 대상 집수리, 빨래방 봉사<br>· 사회적 고립 1인 가구 관계 맺기</li></ul></div>
+                       <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2025년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;주민자치에 협치를 '+' 더하다&gt;<br> · 마을 내 다양한 조직 간 네트워크 구축<br> · 생활 속 기초질서 지키기 캠페인 추진<br> · 우리동네 홍보미디어 제작</li><li>&lt;마을역사에 미래를 '+' 더하다&gt;<br> · 교육공동체 마을역사탐방, 마을자원 연구<br> · 시내로마을돌아보기 프로그램 확대<br> · 행복한 아이로 키우는 ‘마을교육’ 실시</li><li>&lt;충장골목에 향기를 ‘+’ 더하다&gt;<br>· 충장골목 환경 정화활동(줍깅, 캠페인, 교육)<br>· ‘내 집(점포) 앞 내가 쓸기’ 캠페인 추진<br>· 교통사고 제로! 안전한 마을 만들기</li><li>&lt;마 마을복지에 희망을 ‘+’ 더하다&gt;<br>· 마을에 마음을 잇는 봉사활동 실시<br>· 독거어르신 대상 집수리, 빨래방 봉사<br>· 사회적 고립 1인 가구 관계 맺기</li></ul></div>
                        <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2024년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;건강한 충장동, 걸음을 ‘+’ 더하다&gt;<br>  · 탄소중립캠페인과 지구환경교육 실시<br>  · 오래된 골목에 새빛 밝히기</li><li>&lt;마을행복에 나눔을 ‘+’ 더하다&gt;<br>  · 여성친화마을사업 – 여성상인 3번째 책자 발간<br>  · 행복나눔공동체 – 사랑채를 활용한 나눔 활동</li><li>&lt;마음과 기억에 예술을 ‘+’ 더하다&gt;<br>  · 그린마을 교육공동체 운영 – 마을돌아보기, 환경교육<br>  · 충장주민이 원하는 마을축제</li><li>&lt;주민자치에 새빛을 ‘+’ 더하다&gt;<br>  · 충장동의 다양한 색을 찾다 – 지속가능한 공동체 만들기<br>  · 충장자치위원 워크숍 – 위원 역량강화</li></ul></div>
                        <div class='mb-6'><h4 class='font-bold text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2023년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;마을행복에 나눔을 ‘+’ 더하다&gt;<br>  · 여성친화마을사업 · 1인가구 행복만들기</li><li>&lt;마음과 기억에 예술을 ‘+’ 더하다&gt;<br>  · 충장 마음박물관 운영 · 그린마을 교육공동체 운영</li><li>&lt;오래된 골목에 새빛을 ‘+’ 더하다&gt;<br>  · 충장동의 다양한 색을 찾다 · 충장 마을사랑채 운영</li><li>&lt;예쁘고 건강한 충장동, 걸음을 ‘+’ 더하다&gt;<br>  · 상인회와 네트워크 형성 및 공동사업 구상</li></ul></div>
                        <div class='mb-6'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1'>[2022년]</h4><ul class='list-none pl-1 space-y-1 text-sm text-gray-700'><li>&lt;마을행복에 나눔을 ‘+’ 더하다&gt;<br>  · 1인가구 무연고 고독사 ‘마지막 배웅’ 장례절차 지원<br>  · 충장당근마켓, 공유장터 진행 등 마을나눔복지 시스템 만들기</li><li>&lt;오래된 골목에 새빛을 ‘+’ 더하다&gt;<br>  · 걷고싶은 마을 만들기 *생활속 탄소중립실천*<br>  · 마을청년작가 연계, 주민 원데이 클래스 운영</li><li>&lt;예쁘고 건강한 충장동, 걸음을 ‘+’ 더하다&gt;<br>  · 마을 전반적인 자치, 상권, 교육, 복지 활성화<br>  · 우리동네 건강마을 만들기</li><li>&lt;충장동 주민자치에 쓸모를 ‘+’ 더하다&gt;<br>  · 마을 온라인 플랫폼 구축(미니홈피)으로 공동체 홍보 활성화<br>  · 마을소통 거점공간 마련 및 주민 여가·취미·교육 프로그램 운영</li><li>&lt;마음과 기억에 예술을 ‘+’ 더하다&gt;<br>  · 충장마음박물관 – 기록 아카이브 제작 (마을잡지, 일간지 등)<br>  · 그린나래-나는 듯 날개를 펴 *마을교육공동체 활동 지속</li></ul></div>`,
@@ -741,42 +751,43 @@
             tbody.innerHTML = html;
         }
 
+        // 일람표 가독성 대폭 개선: 텍스트 컬러를 차분하게 통일
         function buildRow(name, d, isAvg) {
-            // 체크박스 클릭 시의 배경색 하이라이트 삭제 요청 반영 (배경색 일괄 투명/흰색 처리)
             const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
+            const textClass = isAvg ? 'text-gray-900 font-black' : 'text-gray-700 font-medium';
             return `
-                <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200">
-                    <td class="px-4 py-3 sticky-col ${bgClass} font-black text-gray-900">${name}</td>
+                <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200 text-sm">
+                    <td class="px-4 py-3 sticky-col ${bgClass} font-bold text-gray-800 border-r border-gray-200">${name}</td>
                     
-                    <td class="px-4 py-3 font-bold text-blue-700">${Number(d.pop).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-blue-700">${Number(d.male).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-blue-700">${Number(d.female).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-blue-700">${Number(d.youthPop).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-blue-700">${Number(d.eldPop).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-blue-700">${Number(d.onePop).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-blue-700">${d.ppHouse}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.pop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.male).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.female).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.youthPop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.eldPop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.onePop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${d.ppHouse}</td>
                     
-                    <td class="px-4 py-3 border-l-2 border-gray-200 font-bold text-indigo-700">${d.singleHousePct}%</td>
-                    <td class="px-4 py-3 font-bold text-indigo-700">${d.multiHousePct}%</td>
-                    <td class="px-4 py-3 font-bold text-indigo-700">${d.aptPct}%</td>
-                    <td class="px-4 py-3 font-bold text-indigo-700">${d.oldPct}%</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${textClass}">${d.singleHousePct}%</td>
+                    <td class="px-4 py-3 ${textClass}">${d.multiHousePct}%</td>
+                    <td class="px-4 py-3 ${textClass}">${d.aptPct}%</td>
+                    <td class="px-4 py-3 ${textClass}">${d.oldPct}%</td>
                     
-                    <td class="px-4 py-3 border-l-2 border-gray-200 font-bold text-purple-700">${Number(d.bizCount).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-purple-700">${Number(d.bizWorker).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-purple-700">${d.socEco}</td>
-                    <td class="px-4 py-3 font-bold text-purple-700">${d.cult}</td>
-                    <td class="px-4 py-3 font-bold text-purple-700">${d.kin}</td>
-                    <td class="px-4 py-3 font-bold text-purple-700">${d.wel}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${textClass}">${Number(d.bizCount).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.bizWorker).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${d.socEco}</td>
+                    <td class="px-4 py-3 ${textClass}">${d.cult}</td>
+                    <td class="px-4 py-3 ${textClass}">${d.kin}</td>
+                    <td class="px-4 py-3 ${textClass}">${d.wel}</td>
                     
-                    <td class="px-4 py-3 border-l-2 border-gray-200 font-bold text-rose-600">${Number(d.pen).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-rose-600">${Number(d.dis).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-rose-600">${Number(d.forgn).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-rose-600">${Number(d.beds).toLocaleString()}</td>
-                    <td class="px-4 py-3 font-bold text-rose-600">${d.hosp}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${textClass}">${Number(d.pen).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.dis).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.forgn).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${Number(d.beds).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${textClass}">${d.hosp}</td>
                     
-                    <td class="px-4 py-3 border-l-2 border-gray-200 font-bold text-emerald-700">${d.greenPct}%</td>
-                    <td class="px-4 py-3 font-bold text-emerald-700">${d.parkArea}</td>
-                    <td class="px-4 py-3 font-bold text-emerald-700">${d.acc}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${textClass}">${d.greenPct}%</td>
+                    <td class="px-4 py-3 ${textClass}">${d.parkArea}</td>
+                    <td class="px-4 py-3 ${textClass}">${d.acc}</td>
                 </tr>
             `;
         }
@@ -799,7 +810,6 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    // 툴팁에는 캡핑된 최대 100%가 아니라 실제 원본 데이터(rawData)가 나오도록 설정
                                     const rawVal = context.dataset.rawData[context.dataIndex];
                                     return context.dataset.label + ': ' + rawVal + (context.chart.data.labels[context.dataIndex].includes('비율') || context.chart.data.labels[context.dataIndex].includes('%') ? '%' : '');
                                 }
@@ -826,16 +836,16 @@
             const checked = Array.from(document.querySelectorAll('.dong-checkbox:checked')).map(cb => cb.value);
 
             const barDs = [], radarDs = [];
-            const currentCat = barChartCategories[document.getElementById('barChartCategory').value];
+            const theme = document.getElementById('barChartCategory').value;
+            const currentCat = barChartCategories[theme];
             barChartInst.data.labels = currentCat.labels;
-            radarChartInst.data.labels = currentCat.labels; // 레이더 차트 범례도 완벽하게 연동
+            radarChartInst.data.labels = currentCat.labels;
 
             checked.forEach((dong, i) => {
                 const d = dongData[dong];
                 const col = colors[i % colors.length];
                 const rawData = currentCat.getData(d);
                 
-                // 차트 왜곡 방지용: 시각적으로는 최대 100까지만 뻗어나가도록 제한
                 const radarData = rawData.map(val => Math.min(val, 100));
 
                 barDs.push({ label: dong, data: rawData, backgroundColor: col, borderRadius: 6 });
@@ -853,6 +863,44 @@
 
             barChartInst.data.datasets = barDs; barChartInst.update();
             radarChartInst.data.datasets = radarDs; radarChartInst.update();
+
+            // 동적 산출식 주석 업데이트
+            const footnoteEl = document.getElementById('dynamicFootnote');
+            const footnotes = {
+                'theme1': '※ 산출내역: [유소년/고령/1인가구/외국인 비율] = (해당 인구 수 ÷ 총 인구 수) × 100',
+                'theme2': '※ 산출내역: [아파트/단독/노후주택 비율] = (해당 주택 수 ÷ 전체 주택 수) × 100, [녹지비율] = (녹지 면적 ÷ 행정동 전체 면적) × 100',
+                'theme3': '※ 산출내역: [고령/기초연금/장애인 비율] = (해당 인구 수 ÷ 총 인구 수) × 100',
+                'theme4': '※ 산출내역: [인구대비 종사자 비율] = (종사자 수 ÷ 총 인구 수) × 100, [세대당 인구] = 총 인구 수 ÷ 세대 수 (레이더 맵 시각화를 위해 스케일 배수 조정 적용)'
+            };
+            footnoteEl.innerText = footnotes[theme];
+
+            // 동적 1줄 Point 도출 로직
+            const insightEl = document.getElementById('dynamicInsight');
+            if (checked.length === 0) {
+                insightEl.innerHTML = '<span class="text-gray-400">비교할 행정동을 선택하시면 주요 특이사항이 분석되어 나타납니다.</span>';
+            } else {
+                let maxDong = checked[0];
+                let insightText = '';
+                
+                if (theme === 'theme1') {
+                    let maxVal = -1;
+                    checked.forEach(d => { if(dongData[d].onePct > maxVal) { maxVal = dongData[d].onePct; maxDong = d; } });
+                    insightText = `선택하신 지역 중 <strong>${maxDong}</strong>의 1인가구 비율(${maxVal}%)이 가장 뚜렷합니다. 1인가구 고립 예방 및 소셜 네트워크 복원 의제가 우선적으로 필요합니다.`;
+                } else if (theme === 'theme2') {
+                    let maxVal = -1;
+                    checked.forEach(d => { if(dongData[d].oldPct > maxVal) { maxVal = dongData[d].oldPct; maxDong = d; } });
+                    insightText = `비교 그룹 내 <strong>${maxDong}</strong>의 노후주택 비율(${maxVal}%)이 가장 높습니다. 주거 환경 정비 및 골목길 안전 확보를 위한 하드웨어 개선 의제가 시급합니다.`;
+                } else if (theme === 'theme3') {
+                    let maxVal = -1;
+                    checked.forEach(d => { let penPct = (dongData[d].pen / dongData[d].pop) * 100; if(penPct > maxVal) { maxVal = penPct; maxDong = d; } });
+                    insightText = `선택 지역 중 <strong>${maxDong}</strong>의 기초연금 수급 비율(${maxVal.toFixed(1)}%)이 두드러집니다. 촘촘한 노인 돌봄망과 의료 복지 인프라 확충에 자치회 역량을 집중할 필요가 있습니다.`;
+                } else if (theme === 'theme4') {
+                    let maxVal = -1;
+                    checked.forEach(d => { let bizPct = (dongData[d].bizWorker / dongData[d].pop) * 100; if(bizPct > maxVal) { maxVal = bizPct; maxDong = d; } });
+                    insightText = `<strong>${maxDong}</strong>의 인구대비 종사자 비율(${maxVal.toFixed(1)}%)이 압도적이며, 이는 단순 거주지보다는 경제 상업 중심지로서의 특성을 강하게 띠고 있음을 시사합니다.`;
+                }
+                insightEl.innerHTML = `<i class="fa-solid fa-thumbtack text-amber-600 mr-1"></i> ${insightText}`;
+            }
         }
 
         function openModal(title, dataKey) {
@@ -878,7 +926,6 @@
                     maintainAspectRatio: false, 
                     plugins: { 
                         legend: { display: false },
-                        // 막대 상단 데이터 라벨 표시 옵션 켜기
                         datalabels: {
                             display: true,
                             anchor: 'end',
@@ -890,7 +937,7 @@
                             color: '#1e293b'
                         }
                     },
-                    layout: { padding: { top: 35 } } // 라벨이 잘리지 않도록 상단 여백 추가
+                    layout: { padding: { top: 35 } }
                 }
             });
         }
