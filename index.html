@@ -54,7 +54,7 @@
             
             <div class="tab-container flex gap-1 w-full xl:w-auto overflow-x-auto pb-1">
                 <button onclick="switchMainTab('tab1')" id="btn-tab1" class="main-tab active px-6 py-3 text-sm md:text-base whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
-                <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap"><i class="fa-solid fa-file-invoice mr-2"></i>마 마을 리포트 및 의제 분석</button>
+                <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
                 <button onclick="switchMainTab('tab3')" id="btn-tab3" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
             </div>
         </div>
@@ -229,7 +229,7 @@
         let dongData = {}; 
         let barChartInst = null, radarChartInst = null, modalChartInst = null;
         let currentAgendaTab = 'phase1';
-        let checkedOrder = []; // 체크한 순서를 기억하는 배열
+        let checkedOrder = []; 
         const avgColor = '#10b981';
         const colors = ['#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#ef4444', '#06b6d4', '#10b981', '#64748b', '#78350f', '#0ea5e9'];
 
@@ -598,7 +598,6 @@
             '동구 평균': `<div class='p-4 bg-white rounded-xl text-gray-500 text-sm border border-gray-200 text-center font-bold'>👆 개별 행정동을 선택하시면 해당 동의 5개년 과거 마을의제 원본 데이터를 모두 확인하실 수 있습니다.</div>`
         };
 
-        // 행정동별 핵심 지표 고유 해석 매핑
         const regionInsights = {
             'theme1': {
                 '충장동': '1인가구 비율이 동구 전체 최고 수준을 기록 중이며, 정주 인구 규모 자체가 매우 적은 특성이 있습니다.',
@@ -811,7 +810,6 @@
                 }
             });
 
-            // 체크 순서를 관리하기 위한 이벤트 리스너 세팅
             document.querySelectorAll('.dong-checkbox').forEach(cb => {
                 cb.addEventListener('change', (e) => {
                     if(e.target.checked) {
@@ -838,7 +836,6 @@
         function buildRow(name, d, isAvg) {
             const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
             
-            // 일반 행정동과 평균 수치의 클래스(크기/볼드체/색상) 차등 적용
             const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
             const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
             const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
@@ -898,9 +895,23 @@
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false, 
-                    scales: { r: { min: 0, max: 100, ticks: { display: false } } },
+                    scales: { 
+                        r: { 
+                            min: 0, 
+                            max: 100, 
+                            ticks: { display: false, stepSize: 20 },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            angleLines: { color: 'rgba(0,0,0,0.1)' },
+                            pointLabels: { font: { size: 12, weight: 'bold' }, color: '#475569' }
+                        } 
+                    },
                     plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 15, font: { weight: 'bold', size: 12 } } },
                         tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 12,
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 13 },
                             callbacks: {
                                 label: function(context) {
                                     const rawVal = context.dataset.rawData[context.dataIndex];
@@ -932,7 +943,6 @@
             barChartInst.data.labels = currentCat.labels;
             radarChartInst.data.labels = currentCat.labels;
 
-            // 체크한 순서대로 차트 범례 및 데이터 구성
             checkedOrder.forEach((dong, i) => {
                 const d = dongData[dong];
                 const col = colors[i % colors.length];
@@ -941,7 +951,20 @@
                 const radarData = rawData.map(val => Math.min(val, 100));
 
                 barDs.push({ label: dong, data: rawData, backgroundColor: col, borderRadius: 6 });
-                radarDs.push({ label: dong, data: radarData, rawData: rawData, borderColor: col, backgroundColor: col + '22', pointBackgroundColor: col, borderWidth: 3 });
+                radarDs.push({ 
+                    label: dong, 
+                    data: radarData, 
+                    rawData: rawData, 
+                    borderColor: col, 
+                    backgroundColor: col + '33', 
+                    pointBackgroundColor: '#fff', 
+                    pointBorderColor: col, 
+                    pointBorderWidth: 2, 
+                    pointRadius: 4, 
+                    pointHoverRadius: 6, 
+                    borderWidth: 2.5, 
+                    tension: 0.3 
+                });
             });
             
             const avg = dongData['동구 평균'];
@@ -950,13 +973,25 @@
                 const radarAvg = rawAvg.map(val => Math.min(val, 100));
 
                 barDs.push({ label: '동구 평균', data: rawAvg, backgroundColor: '#10b98188', borderRadius: 6 });
-                radarDs.push({ label: '동구 평균', data: radarAvg, rawData: rawAvg, borderColor: '#10b981', borderDash: [5, 5], backgroundColor: 'transparent', borderWidth: 2 });
+                radarDs.push({ 
+                    label: '동구 평균', 
+                    data: radarAvg, 
+                    rawData: rawAvg, 
+                    borderColor: '#10b981', 
+                    borderDash: [5, 5], 
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)', 
+                    pointBackgroundColor: '#fff', 
+                    pointBorderColor: '#10b981', 
+                    pointBorderWidth: 2, 
+                    pointRadius: 4, 
+                    borderWidth: 2, 
+                    tension: 0.3 
+                });
             }
 
             barChartInst.data.datasets = barDs; barChartInst.update();
             radarChartInst.data.datasets = radarDs; radarChartInst.update();
 
-            // 산출식 주석 업데이트
             const footnoteEl = document.getElementById('dynamicFootnote');
             const footnotes = {
                 'theme1': '※ 산출내역: [유소년/고령/1인가구/외국인 비율] = (해당 인구 수 ÷ 총 인구 수) × 100',
@@ -966,7 +1001,6 @@
             };
             footnoteEl.innerText = footnotes[theme];
 
-            // 다중 체크 시 순서대로 개별 박스 생성
             const insightContainer = document.getElementById('dynamicInsightContainer');
             if (checkedOrder.length === 0) {
                 insightContainer.innerHTML = '<span class="text-gray-400 text-sm">비교할 행정동을 선택하시면 해당 지역의 특이사항이 체크한 순서대로 요약되어 나타납니다.</span>';
