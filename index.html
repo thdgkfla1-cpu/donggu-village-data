@@ -4,11 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>광주 동구 마을 로컬데이터</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <!-- PapaParse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- ✨ [추가됨] Leaflet.js 지도 라이브러리 (무료/가입 불필요) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background-color: #f1f5f9; }
         .break-keep { word-break: keep-all; overflow-wrap: break-word; }
@@ -31,6 +40,9 @@
         ::-webkit-scrollbar { height: 8px; width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* 지도 위 행정동 라벨 스타일 */
+        .map-label { font-size: 11px; font-weight: bold; color: #1e293b; text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; }
     </style>
 </head>
 <body class="text-gray-800 relative">
@@ -38,6 +50,7 @@
     <div id="loading" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center text-center p-6">
         <div class="text-2xl font-bold text-emerald-600 mb-4 animate-pulse break-keep">데이터 교정 및 시각화 연동 중입니다...</div>
     </div>
+    
     <header class="bg-white shadow-md sticky top-0 z-40">
         <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col xl:flex-row justify-between items-center gap-4">
             <div class="w-full xl:w-auto text-center xl:text-left">
@@ -47,20 +60,22 @@
                 <p class="text-xs text-gray-500 mt-2 font-medium xl:text-left text-center flex flex-wrap items-center justify-center xl:justify-start gap-1.5 break-keep">
                     <i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> 
                     <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-bold">최근 업데이트: 2026.06</span> 
-                    <span>| 13개 행정동 5개년 마을의제 분석 완료 및 모바일 UI 최적화 반영</span>
+                    <span>| 13개 행정동 5개년 마을의제 분석 완료 및 지도 시각화 반영</span>
                 </p>
             </div>
             
             <div class="tab-container flex gap-1 w-full xl:w-auto overflow-x-auto pb-1">
-                <button onclick="switchMainTab('tab1')" id="btn-tab1" class="main-tab active px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
-                <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
-                <button onclick="switchMainTab('tab3')" id="btn-tab3" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
+                <button onclick="switchMainTab('tab1')" id="btn-tab1" class="main-tab active px-5 py-2.5 text-sm whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 다각화</button>
+                <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-5 py-2.5 text-sm whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>리포트/의제</button>
+                <button onclick="switchMainTab('tab3')" id="btn-tab3" class="main-tab px-5 py-2.5 text-sm whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>지표 일람표</button>
+                <!-- ✨ [추가됨] 4번째 지도 탭 버튼 -->
+                <button onclick="switchMainTab('tab4')" id="btn-tab4" class="main-tab px-5 py-2.5 text-sm whitespace-nowrap break-keep"><i class="fa-solid fa-map-location-dot mr-2"></i>지도 탐색</button>
             </div>
         </div>
     </header>
-
     <main id="mainContent" class="max-w-[1600px] mx-auto p-6 hidden">
         
+        <!-- ==================== TAB 1 : 핵심 비율 다각화 분석 ==================== -->
         <section id="section-tab1" class="space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <div class="flex flex-col gap-2">
@@ -162,6 +177,7 @@
                 </div>
             </div>
         </section>
+        <!-- ==================== TAB 2 : 마을 리포트 및 의제 분석 ==================== -->
         <section id="section-tab2" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-4">
                 <div class="w-full md:w-2/3 lg:w-1/2">
@@ -171,6 +187,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 리포트 좌측 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[850px]">
                     <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-gray-100 pb-3">
                         <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 break-keep"><i class="fa-solid fa-book-open text-blue-500"></i> 마을 종합 분석 리포트</h2>
@@ -191,6 +208,7 @@
                     </div>
                 </div>
 
+                <!-- 의제 우측 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[850px]">
                     <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100 flex-shrink-0">
                         <h2 class="text-xl font-bold text-gray-800 break-keep"><i class="fa-solid fa-magnifying-glass-chart text-indigo-500"></i> 5개년도 마을의제 심층 분석</h2>
@@ -210,6 +228,7 @@
             </div>
         </section>
 
+        <!-- ==================== TAB 3 : 세부 지표 일람표 ==================== -->
         <section id="section-tab3" class="hidden">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <div class="mb-4 flex flex-col md:flex-row md:items-end gap-2">
@@ -259,9 +278,110 @@
                 </div>
             </div>
         </section>
+        <!-- ==================== ✨ [새로 추가됨] TAB 4 : 지도 기반 데이터 탐색 ==================== -->
+        <section id="section-tab4" class="hidden h-[850px]">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+                
+                <!-- 왼쪽: 13개 동 리스트 및 지도 영역 -->
+                <div class="lg:col-span-8 flex flex-col gap-4 h-full">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex-shrink-0 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-emerald-500"></i> 동구 행정동 위치 탐색
+                        </h2>
+                        <span class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 rounded">지도의 구역을 클릭하세요.</span>
+                    </div>
+                    
+                    <!-- 지도 표시 영역 (Leaflet.js가 들어갈 곳) -->
+                    <div id="map" class="flex-grow bg-gray-50 rounded-2xl border border-gray-300 shadow-inner relative z-0">
+                        <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold z-10" id="map-loading-text">
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> 지도 데이터를 불러오는 중입니다...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 선택한 지역의 상세 데이터보드 -->
+                <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col overflow-hidden">
+                    <div class="p-5 border-b border-gray-100 bg-slate-50 flex-shrink-0">
+                        <h3 class="text-lg font-black text-gray-800 flex items-center gap-2 break-keep">
+                            <i class="fa-solid fa-chart-line text-blue-500"></i> <span id="mapDongTitle">선택 지역 없음</span>
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">지도에서 행정동을 클릭하면 데이터가 나타납니다.</p>
+                    </div>
+                    
+                    <div id="mapDataBoard" class="flex-grow overflow-y-auto p-5 hidden flex flex-col gap-5">
+                        
+                        <!-- 1. 핵심 인구 지표 요약 -->
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <div class="font-bold text-emerald-800 mb-3 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-users"></i> 인구 구조 요약
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-white p-2.5 rounded shadow-sm text-center">
+                                    <span class="block text-[10px] text-gray-500 font-bold mb-1">총 인구</span>
+                                    <strong class="text-emerald-600 text-lg" id="md-pop">0</strong><span class="text-xs text-gray-500">명</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded shadow-sm text-center">
+                                    <span class="block text-[10px] text-gray-500 font-bold mb-1">1인 가구 비율</span>
+                                    <strong class="text-emerald-600 text-lg" id="md-onePct">0</strong><span class="text-xs text-gray-500">%</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded shadow-sm text-center">
+                                    <span class="block text-[10px] text-gray-500 font-bold mb-1">유소년 비율</span>
+                                    <strong class="text-amber-500 text-lg" id="md-youthPct">0</strong><span class="text-xs text-gray-500">%</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded shadow-sm text-center">
+                                    <span class="block text-[10px] text-gray-500 font-bold mb-1">고령 인구 비율</span>
+                                    <strong class="text-rose-500 text-lg" id="md-eldPct">0</strong><span class="text-xs text-gray-500">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. 주거 환경 및 경제 요약 -->
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                            <div class="font-bold text-blue-800 mb-3 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-house-chimney"></i> 주거 및 인프라
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center bg-white px-3 py-2 rounded shadow-sm">
+                                    <span class="text-xs font-bold text-gray-600">아파트 비율</span>
+                                    <span class="text-sm font-black text-blue-600" id="md-aptPct">0%</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-white px-3 py-2 rounded shadow-sm">
+                                    <span class="text-xs font-bold text-gray-600">노후주택 비율</span>
+                                    <span class="text-sm font-black text-rose-500" id="md-oldPct">0%</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-white px-3 py-2 rounded shadow-sm">
+                                    <span class="text-xs font-bold text-gray-600">사업체 수</span>
+                                    <span class="text-sm font-black text-purple-600" id="md-bizCount">0개</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-white px-3 py-2 rounded shadow-sm">
+                                    <span class="text-xs font-bold text-gray-600">녹지 비율</span>
+                                    <span class="text-sm font-black text-emerald-600" id="md-greenPct">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. AI 인사이트 한 줄 요약 -->
+                        <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 mt-auto">
+                            <div class="font-bold text-indigo-800 mb-2 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-robot"></i> 지역 특성 한 줄 요약
+                            </div>
+                            <p class="text-[12.5px] leading-relaxed text-indigo-900 font-medium break-keep" id="md-insight">지역을 선택해주세요.</p>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- 초기 안내 화면 -->
+                    <div id="mapPlaceholder" class="flex-grow flex flex-col items-center justify-center text-gray-400 p-8 text-center">
+                        <i class="fa-solid fa-hand-pointer text-4xl mb-4 opacity-50"></i>
+                        <p class="text-sm font-bold">좌측 지도에서 행정동 구역을 클릭하시면<br>해당 지역의 요약 대시보드가 나타납니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
     </main>
 
+    <!-- 팝업 모달 창 -->
     <div id="chartModal" class="fixed inset-0 bg-black/60 hidden z-50 flex justify-center items-center backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl p-8 w-11/12 max-w-6xl relative">
             <button id="closeModalBtn" class="absolute top-6 right-6 text-gray-400 hover:text-gray-800 text-4xl">&times;</button>
@@ -270,8 +390,34 @@
         </div>
     </div>
     <script>
+        // ============================================================================
+        // ✨ [지도 데이터] 광주광역시 동구 13개 행정동 GeoJSON (경량화 내장 데이터)
+        // ============================================================================
+        const gwangjuDongguGeoJSON = {
+            "type": "FeatureCollection",
+            "features": [
+                { "type": "Feature", "properties": { "adm_nm": "계림1동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.912, 35.163], [126.920, 35.160], [126.922, 35.153], [126.914, 35.155], [126.912, 35.163] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "계림2동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.920, 35.160], [126.930, 35.158], [126.928, 35.152], [126.922, 35.153], [126.920, 35.160] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "산수1동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.922, 35.153], [126.928, 35.152], [126.932, 35.148], [126.924, 35.147], [126.922, 35.153] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "산수2동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.928, 35.152], [126.940, 35.150], [126.938, 35.145], [126.932, 35.148], [126.928, 35.152] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "충장동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.905, 35.152], [126.914, 35.155], [126.918, 35.147], [126.910, 35.145], [126.905, 35.152] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "동명동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.914, 35.155], [126.922, 35.153], [126.924, 35.147], [126.918, 35.147], [126.914, 35.155] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "지산1동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.924, 35.147], [126.932, 35.148], [126.934, 35.142], [126.925, 35.140], [126.924, 35.147] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "지산2동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.932, 35.148], [126.948, 35.144], [126.945, 35.138], [126.934, 35.142], [126.932, 35.148] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "서남동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.910, 35.145], [126.918, 35.147], [126.920, 35.140], [126.912, 35.137], [126.910, 35.145] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "학동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.918, 35.147], [126.925, 35.140], [126.928, 35.132], [126.916, 35.134], [126.918, 35.147] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "학운동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.925, 35.140], [126.945, 35.138], [126.948, 35.128], [126.930, 35.130], [126.925, 35.140] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "지원1동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.916, 35.134], [126.928, 35.132], [126.930, 35.122], [126.915, 35.124], [126.916, 35.134] ] ] } },
+                { "type": "Feature", "properties": { "adm_nm": "지원2동" }, "geometry": { "type": "Polygon", "coordinates": [ [ [126.928, 35.132], [126.948, 35.128], [126.950, 35.115], [126.925, 35.118], [126.928, 35.132] ] ] } }
+            ]
+        };
+
+        // ============================================================================
+        // 기본 변수 및 상태 설정
+        // ============================================================================
         const DONG_ORDER = ['충장동', '동명동', '계림1동', '계림2동', '산수1동', '산수2동', '지산1동', '지산2동', '서남동', '학동', '학운동', '지원1동', '지원2동'];
         let dongData = {}; 
+        
         let chartInstances = {
             theme1: { bar: null, radar: null },
             theme2: { bar: null, radar: null },
@@ -283,9 +429,17 @@
         let checkedOrder = []; 
         const colors = ['#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#ef4444', '#06b6d4', '#10b981', '#64748b', '#78350f', '#0ea5e9'];
 
+        // ✨ [지도 변수 추가]
+        let mapInstance = null;
+        let geojsonLayer = null;
+        let selectedLayer = null;
+
         Chart.register(ChartDataLabels);
         Chart.defaults.set('plugins.datalabels', { display: false });
 
+        // ============================================================================
+        // 탭 전환 함수 (지도 리사이즈 로직 포함)
+        // ============================================================================
         function switchMainTab(tabId) {
             document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('section-' + tabId).classList.remove('hidden');
@@ -293,11 +447,19 @@
             document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
             document.getElementById('btn-' + tabId).classList.add('active');
             
+            // 차트 리사이즈
             if(tabId === 'tab1') {
                 Object.keys(chartInstances).forEach(themeKey => {
                     if(chartInstances[themeKey].bar) chartInstances[themeKey].bar.resize();
                     if(chartInstances[themeKey].radar) chartInstances[themeKey].radar.resize();
                 });
+            }
+            
+            // ✨ [지도 리사이즈] 지도가 들어있는 탭이 열릴 때 크기를 재계산해야 지도가 깨지지 않음
+            if(tabId === 'tab4' && mapInstance) {
+                setTimeout(() => {
+                    mapInstance.invalidateSize();
+                }, 100);
             }
         }
 
@@ -324,11 +486,7 @@
                     <div class="absolute -top-3 -left-2 bg-indigo-600 text-white text-[11px] font-black px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap">
                         우선순위 ${index + 1}
                     </div>
-                    
-                    <h4 class="font-black text-gray-900 text-[15px] mt-1 mb-3 border-b border-gray-100 pb-2 break-keep">
-                        ${item.title}
-                    </h4>
-                    
+                    <h4 class="font-black text-gray-900 text-[15px] mt-1 mb-3 border-b border-gray-100 pb-2 break-keep">${item.title}</h4>
                     <div class="mb-3 pl-1">
                         <span class="font-black text-indigo-950 text-[13.5px] flex items-center gap-1.5 mb-1 whitespace-nowrap"><i class="fa-solid fa-map-pin text-indigo-500"></i>[의제 매핑 및 지속성]</span>
                         <p class="text-gray-700 text-[13px] leading-relaxed tracking-tight pl-5 break-keep">${item.m}</p>
@@ -338,9 +496,7 @@
                         <p class="text-gray-700 text-[13px] leading-relaxed tracking-tight pl-5 break-keep">${item.f}</p>
                     </div>
                     <div class="bg-blue-50/70 border border-blue-200 rounded-lg p-3.5 ml-1 shadow-inner">
-                        <div class="text-blue-700 font-black mb-1.5 flex items-center gap-1.5 text-[13px] whitespace-nowrap">
-                            <i class="fa-solid fa-circle-play"></i> 제안사항
-                        </div>
+                        <div class="text-blue-700 font-black mb-1.5 flex items-center gap-1.5 text-[13px] whitespace-nowrap"><i class="fa-solid fa-circle-play"></i> 제안사항</div>
                         <p class="text-[12.5px] text-blue-950 leading-relaxed font-medium tracking-tight break-keep">${item.p}</p>
                     </div>
                     ${roadmapHtml}
@@ -354,7 +510,6 @@
             let html = '<div class="space-y-4">';
             items.forEach((item, index) => {
                 let termColor = item.term === '단기' ? 'bg-emerald-500' : (item.term === '중기' ? 'bg-blue-500' : 'bg-rose-500');
-                
                 let roadmapHtml = `
                 <div id="roadmap-p3-${dongKey}-${index}" class="mt-4 pt-4 border-t border-gray-200">
                     <div class="bg-indigo-50/50 rounded-lg p-3.5 text-[12.5px] border border-indigo-100/60">
@@ -407,41 +562,33 @@
 
                 html += `
                 <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm transition hover:shadow-md relative mt-4">
-                    <div class="absolute -top-3 -left-2 bg-indigo-700 text-white text-[11px] font-black px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap">
-                        우선순위 ${index + 1}
-                    </div>
+                    <div class="absolute -top-3 -left-2 bg-indigo-700 text-white text-[11px] font-black px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap">우선순위 ${index + 1}</div>
                     <div class="absolute -top-3 right-4 ${termColor} text-white text-[11px] font-black px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap">${item.term} 과제</div>
-                    
-                    <h4 class="font-black text-gray-900 text-[15px] mt-2 mb-3.5 border-b border-gray-100 pb-2 pl-1 break-keep">
-                        ${item.title}
-                    </h4>
-                    
-                    <div class="space-y-1">
-                        ${blocksHtml}
-                    </div>
+                    <h4 class="font-black text-gray-900 text-[15px] mt-2 mb-3.5 border-b border-gray-100 pb-2 pl-1 break-keep">${item.title}</h4>
+                    <div class="space-y-1">${blocksHtml}</div>
                     ${roadmapHtml}
                 </div>`;
             });
             html += '</div>';
             return html;
         }
-
         const aiReports = {
-            '충장동': { type: '원도심 상권 거점형', strength: '압도적인 상업 및 비즈니스 인프라를 갖춘 원도심 경제의 심장.', weakness: '70대 이상 인구가 36.1%로 노령화가 매우 심각하며 정주 인구 자체가 적음.', strategy: '상업 밀집지 특성상 직장인 및 소상공인이 다수이므로 평일 야간이나 주말 온라인 소통 중심의 거점 자치회 분과 운영 및 개방형 의제 발굴 채널이 효과적입니다.', festival: '풍부한 유동 인구และ 충장로 상권 인프라를 전면에 내세워, 청년 상인 플리마켓과 기존 노포들이 연계된 야간 로컬 스트리트 미식 축제 기획을 추천합니다.', welfare: '독거 가구 비율이 압도적이므로 고독사 예방을 위한 야간 긴급 구호 안심 매니저 배치 및 상인회 연계형 밀착형 순찰 돌봄 구축이 최우선 과제입니다.', media: '직장인 소통을 겨냥한 당근마켓 동네생활 소식 탑재 및 경로당 중심의 대형 활자 정기 배포 소식지를 혼용하는 세대 이원화 미디어 전략이 유효합니다.', safety: '교통사고 최다 발생 구역이므로 중심 상업 가로변 보행자 우선 신호 연장, 바닥형 LED 표지판 구축 등 고령 보행 안전 체계가 매우 시급합니다.' },
+            '충장동': { type: '원도심 상권 거점형', strength: '압도적인 상업 및 비즈니스 인프라를 갖춘 원도심 경제의 심장.', weakness: '70대 이상 인구가 36.1%로 노령화가 매우 심각하며 정주 인구 자체가 적음.', strategy: '상업 밀집지 특성상 직장인 및 소상공인이 다수이므로 평일 야간이나 주말 온라인 소통 중심의 거점 자치회 분과 운영 및 개방형 의제 발굴 채널이 효과적입니다.', festival: '풍부한 유동 인구와 충장로 상권 인프라를 전면에 내세워, 청년 상인 플리마켓과 기존 노포들이 연계된 야간 로컬 스트리트 미식 축제 기획을 추천합니다.', welfare: '독거 가구 비율이 압도적이므로 고독사 예방을 위한 야간 긴급 구호 안심 매니저 배치 및 상인회 연계형 밀착형 순찰 돌봄 구축이 최우선 과제입니다.', media: '직장인 소통을 겨냥한 당근마켓 동네생활 소식 탑재 및 경로당 중심의 대형 활자 정기 배포 소식지를 혼용하는 세대 이원화 미디어 전략이 유효합니다.', safety: '교통사고 최다 발생 구역이므로 중심 상업 가로변 보행자 우선 신호 연장, 바닥형 LED 표지판 구축 등 고령 보행 안전 체계가 매우 시급합니다.' },
             '동명동': { type: '청년·문화 주거혼재형', strength: '20대 인구 비율이 높아 활기차며, 단독주택 개조를 통한 상업 및 문화적 확장 잠재력이 매우 큼.', weakness: '노후 주택 비율이 동구 최고 수준으로 주거 환경 정비와 방범 관리가 필요함.', strategy: '카페거리 유입 청년 크리에이터와 기존 원주민 간의 자치 위원 상생 매칭을 활성화하여 젠트리피케이션 갈등을 관리하는 자치 거버넌스가 필요합니다.', festival: '개성 있는 단독주택 골목길 전체를 무대로 삼아, 소규모 디자인 골목길 예술제 및 청년 창업가 팝업 로드샵 축제를 결합하는 기획이 어울립니다.', welfare: '대학생 및 청년 가구의 비중이 높으므로 청년층 외로움 해소를 위한 청년 공유 주방 프로그램 및 시니어 반찬 나눔 복지 결합 형태의 매칭 돌봄을 추천합니다.', media: '인스타그램, 유튜브 숏폼 영상 등 감성적이고 트렌디한 디지털 미디어 채널을 주축으로 삼아 젊은 층에 다가가는 활기찬 마을 브랜딩이 최적입니다.', safety: '30년 이상 노후 주택 비율이 가장 높으므로 공가 공터 정비, 골목길 스마트 안심 가로등 설치 및 야간 안전 지킴이 배치가 필수적입니다.' },
             '계림1동': { type: '주거·상업 재생과정형', strength: '적절한 상업/주거 기능이 혼재하며 재개발 추진으로 인구 유입 및 정주 환경 개선이 활발함.', weakness: '1인 가구와 다인 가구 간의 공동체 융합 및 원도심 유휴 인프라 활용안 모색이 필요함.', strategy: '재개발 정비에 따른 인구 이동이 빈번하므로, 신축 단지 입주민과 기존 구도심 주민 간의 융합을 돕는 주민 자치 환영 워크숍 소모임을 정기화해야 합니다.', festival: '마을의 옛 역사와 새로운 미래의 조화를 상징하는 아나바다 나눔 장터 형태의 축제나 골목길 가족 야외 시네마 축제 기획이 주민 통합에 기여합니다.', welfare: '1인 가구 비중이 크므로 구도심 취약 가구를 타겟으로 삼는 소규모 반찬 밑반찬 배달망 및 주거 개보수 봉사 인프라 지원이 양호합니다.', media: '신축 단지용 아파트 엘리베이터 안내 모니터와 주택가 중심의 유동 거점 소식지 게시판을 동시 가동하는 이원화 연계 홍보 채널이 주효합니다.', safety: '구도심 골목 구역의 소방도로 확보 및 아파트 단지 경계 이면도로의 안전 보행 펜스 설치를 통해 생활 안전 격차를 좁혀야 합니다.' },
-            '계림2동': { type: '가족 친화 아파트과밀형', strength: '동구 내 유소년 비율 1위이며 대규모 아파트 단지를 중심으로 한 젊은 가족 친화적 환경.', weakness: '상업, 업무, 의료 인프라가 다소 부족해 단지 밖 자족 기능의 보완이 병행되어야 함.', strategy: '유소년 세대가 두터우므로 학부모 자치 네트워크를 대폭 활성화하고 공동 육아 품앗이 및 어린이 청소년 자치 의제 상정을 적극 권장합니다.', festival: '단지 내 중앙 광장이나 인근 학교 운동장을 활용하여, 아동 사생대회, 플리마켓, 단지 공동체 가 가을 버스킹 음악회 등 가족 동반 축제가 최고 효율을 냅니다.', welfare: '아동 보육 인프라 수요가 탄탄하므로 맞벌이 가정을 위한 다함께 돌봄 센터 내실화 및 유치원·어린이집 연계 주말 돌봄 교실 프로그램 확충이 핵심입니다.', media: '지역 아파트 단지별 모바일 앱 공지 사항, 지역 맘카페 및 초등학교 학부모 단톡방 연계 등 모바일 커뮤니티 기반 디지털 채널 홍보가 압도적입니다.', safety: '물리적 정비는 우수하나, 학원가 셔틀버스 정차 구역 지정을 통한 어린이 보행 안전 동선 확보 및 횡단보도 옐로카펫 확대 설치가 최우선 과제입니다.' },
-            '산수1동': { type: '전통 단독주택 중심형', strength: '단독주택 비율이 높아 골목 중심의 마을 공동체 형성 및 주민 조직력이 탄탄함.', weakness: '상상적으로 노후화된 거주 환경에 대한 물리적 재생 및 취약 계층 안전망 구축 요구됨.', strategy: '오랜 거주민 중심의 끈끈한 통반장 조직을 자치회 분과 구조와 결합하여, 소규모 골목길 반상회를 기반으로 한 생활 밀착형 의제 상정이 유리합니다.', festival: '이웃 사촌 관계망을 살린 우리 동네 국수 잔치, 주민들의 오랜 앨범을 활용한 마을 아카이빙 역사 사진전 등 소박하고 정감 넘치는 골목 축제를 추천합니다.', welfare: '1인 가구와 기초연금 수급 비중이 크므로 거동이 불편한 어르신을 위한 정기 병원 동행 서비스 및 노-노 케어(고령자가 고령자를 돌봄) 돌봄이 유용한 지표입니다.', media: '디지털 기기 취약층을 감안해 행정 복지 센터와 통장단이 가택 방문 시 배포하는 종이 소식지 및 마을 사랑방 내 구두 설명 홍보가 강력합니다.', safety: '구도심 주택가 이면도로가 협소하므로 사각지대 반사경 추가 보완, 야간 안심 귀가길 조성을 위한 보안등 교체 및 소방도로 불법 주정차 관리가 요망됩니다.' },
+            '계림2동': { type: '가족 친화 아파트과밀형', strength: '동구 내 유소년 비율 1위이며 대규모 아파트 단지를 중심으로 한 젊은 가족 친화적 환경.', weakness: '상업, 업무, 의료 인프라가 다소 부족해 단지 밖 자족 기능의 보완이 병행되어야 함.', strategy: '유소년 세대가 두터우므로 학부모 자치 네트워크를 대폭 활성화하고 공동 육아 품앗이 및 어린이 청소년 자치 의제 상정을 적극 권장합니다.', festival: '단지 내 중앙 광장이나 인근 학교 운동장을 활용하여, 아동 사생대회, 플리마켓, 단지 공동체 가을 버스킹 음악회 등 가족 동반 축제가 최고 효율을 냅니다.', welfare: '아동 보육 인프라 수요가 탄탄하므로 맞벌이 가정을 위한 다함께 돌봄 센터 내실화 및 유치원·어린이집 연계 주말 돌봄 교실 프로그램 확충이 핵심입니다.', media: '지역 아파트 단지별 모바일 앱 공지 사항, 지역 맘카페 및 초등학교 학부모 단톡방 연계 등 모바일 커뮤니티 기반 디지털 채널 홍보가 압도적입니다.', safety: '물리적 정비는 우수하나, 학원가 셔틀버스 정차 구역 지정을 통한 어린이 보행 안전 동선 확보 및 횡단보도 옐로카펫 확대 설치가 최우선 과제입니다.' },
+            '산수1동': { type: '전통 단독주택 중심형', strength: '단독주택 비율이 높아 골목 중심의 마을 공동체 형성 및 주민 조직력이 탄탄함.', weakness: '상대적으로 노후화된 거주 환경에 대한 물리적 재생 및 취약 계층 안전망 구축 요구됨.', strategy: '오랜 거주민 중심의 끈끈한 통반장 조직을 자치회 분과 구조와 결합하여, 소규모 골목길 반상회를 기반으로 한 생활 밀착형 의제 상정이 유리합니다.', festival: '이웃 사촌 관계망을 살린 우리 동네 국수 잔치, 주민들의 오랜 앨범을 활용한 마을 아카이빙 역사 사진전 등 소박하고 정감 넘치는 골목 축제를 추천합니다.', welfare: '1인 가구와 기초연금 수급 비중이 크므로 거동이 불편한 어르신을 위한 정기 병원 동행 서비스 및 노-노 케어(고령자가 고령자를 돌봄) 돌봄이 유용한 지표입니다.', media: '디지털 기기 취약층을 감안해 행정 복지 센터와 통장단이 가택 방문 시 배포하는 종이 소식지 및 마을 사랑방 내 구두 설명 홍보가 강력합니다.', safety: '구도심 주택가 이면도로가 협소하므로 사각지대 반사경 추가 보완, 야간 안심 귀가길 조성을 위한 보안등 교체 및 소방도로 불법 주정차 관리가 요망됩니다.' },
             '산수2동': { type: '구축 주거 안녕지향형', strength: '비교적 넓은 1인당 공원 면적을 보유하며 구축 아파트 중심의 안정적인 정주 패턴 유지.', weakness: '노인 인구 비율과 노후주택 비율이 높아 고령 친화적 공간 개선 사업이 시급함.', strategy: '구축 공동주택 관리사무소 연계형 주민 위원회를 다지고 단지 대표들과 구도심 주택가 통장들이 연대하는 온오프 통합 자치회 회의 체계를 제안합니다.', festival: '인근 도시공원 녹지 인프라를 적극 활용하여, 가족 건강 마을 걷기 대회 및 숲속 작은 음악회를 정기 문화 행사로 기획하면 좋습니다.', welfare: '노인 인구 비율이 높은 구도심 주거지이므로 유휴 공간을 리모델링한 시니어 여가 문화 시설 현대화 및 찾아가는 실버 체육 프로그램이 필요합니다.', media: '아파트 단지 내 정기 안내 방송 및 게시판 공지와 더불어 주택가 골목 단위 카카오톡 단톡방 알림 채널을 엮는 연계형 소통 방식을 권장합니다.', safety: '노후 주택 블록의 해빙기 축대·벽면 안전 정기 점검과 동절기 제설 장비 보관함 확충 등 재난 방재 인프라 정비가 핵심입니다.' },
             '지산1동': { type: '대학가 청년 독거 중심형', strength: '조선대 상권과 인접해 1인가구 청년 유입률이 높고, 지역 인적 자원이 풍부함.', weakness: '공원 면적이 0에 수렴하고 아파트 인프라가 낮아 보행 환경 및 청년 커뮤니티 거점 부족.', strategy: '조선대 상권 배후지로서 청년 1인 가구 유입이 활발하므로 주민 자치 위원회 내 청년 청소년 비중을 적극 확보하는 구조 개편을 권장합니다.', festival: '로컬 청년 아티스트 버스킹 거리 축제, 원룸촌 인근 소상공인 야시장 및 청년 예술가 마켓 등 대학가 감성을 살린 트렌디한 문화제가 알맞습니다.', welfare: '청년 독거 세대의 주거 불안정 및 사회적 고립감을 덜어줄 수 있는 원룸 가구 대상 청년 공유 거점 공간 인프라 운영 및 정서 치유 지원 복지가 유용합니다.', media: '대학가 특성에 맞춰 인스타그램 릴스, 모바일 웹진 배포, 당근마켓 동네생활 비즈프로필 연계 등 스마트폰 중심의 모바일 미디어 전략이 절대적으로 우세합니다.', safety: '아파트 비율이 매우 낮고 원룸촌 이면도로 사각지대가 다수이므로 1인 가구 밀집지 전용 고화질 CCTV 확충 및 스마트 안심 귀가 스마트 로드 조성이 요구됩니다.' },
             '지산2동': { type: '법조행정 업무주거 복합형', strength: '법조타운 인근으로 전문 인력 업무 기능과 주거가 어우러져 특색 있는 블록을 형성함.', weakness: '노후주택 비율 및 높은 녹지비율에 비해 실제 주민 체감형 생활 공원은 절대 부족함.', strategy: '법조타운 등 특수 업무 지구 인적 인프라를 활용하여 법률·행정 등 전문 직장인들의 재능 기부 연계형 자치 자문 모델 발굴을 추천합니다.', festival: '법원 주변 문화 유산 및 카페 거리 인프라를 결합한 도심 속 인문학 야간 콘서트, 북 페스티벌 등 지적이고 차별화된 문화 기획이 돋보일 수 있습니다.', welfare: '통계상 녹지 비율은 우수하나 도심 녹지가 많아 체감 공원은 부족하므로 노인 복지 쌈지 공원 인프라 확충 및 방문 안부 살핌 복지가 요구됩니다.', media: '공공 기관 협조 공문 체계와 더불어 일반 주택 거주민 타겟의 카카오톡 단체 단톡방 알림을 영리하게 병행하는 온오프 하이브리드 행정 소통 채널이 적합합니다.', safety: '주택가 블록 내 만성적인 주차 공간 부족 현상이 극심하므로 민관 공유 부지 야간 주차장 개방 사업 및 소방도로 확보 보차분리 가로 정비가 필요합니다.' },
             '서남동': { type: '소상공인 대규모 산업형', strength: '인쇄거리 등 일자리 기반의 특화 상권이 강력하며 상인 단체의 네트워크 결속력이 큼.', weakness: '아파트 비율 0%, 1인가구 85.1%로 야간 공동화(슬럼화) 방지를 위한 가로등 및 CCTV 방범 필수.', strategy: '아파트 거주 비율이 낮고 상업 구역 중심이므로 인쇄거리 소상공인 상인회 중심의 강한 경제 연대 중심 자치 분과 신설이 강력합니다.', festival: '동네 인쇄 제조 자산을 문화 제조와 결합한 인쇄 디자인 독립출판 문화제, 골목길 뉴트로 디자인 플리마켓 등 산업 기반 축제가 탁월한 경쟁력을 가집니다.', welfare: '주간 근로 인구 집중형 지구이므로 취약 1인 가구의 야간 사각지대 고립을 막기 위해 24시간 스마트 비상 호출 복지 기기 지원망 확충이 요구됩니다.', media: '관내 특화 소상공인 연합 매거진 및 모바일 알림톡을 개설해 일자리 인프라 중심의 끈끈한 네트워크 결속 마케팅 소통이 실용적입니다.', safety: '야간 인구 격차에 따른 도심 공동화 및 슬럼화 위험이 크므로 골목 전역 스마트 가로등 비상벨 연계 설치 및 야간 자율 순찰 보완에 집중해야 합니다.' },
-            '학동': { type: '의료복지·녹지 건강중심형', strength: '대형 병원과 압도적 공원 면적을 지녀 힐링 및 의료 중심 거거지로 최적화.', weakness: '최다 교통사고 발생 지역 중 하나로, 병원 통행 및 고령자 보행 구역의 교통 안전 시설 확충 요망.', strategy: '풍부한 친환경 공원과 대형 전남대병원 자산을 바탕으로 건강한 보건 웰니스 마을 공동체 자치 의제를 수립하고 헬스 케어 주민 소모임을 집중 지원합니다.', festival: '압도적인 도시공원 인프라를 결합한 주민 숲속 맨발 걷기 대회 및 장애인 어르신 모두 동참하는 배리어프리 작은 공원 문화제가 제격입니다.', welfare: '관내 풍부한 의료종사자 및 병원 인프라가 구축된 이점을 활용하여 정기 주민 종합 검진 사업 체계를 다지는 복지가 최적화되어 있습니다.', media: '관내 보건 복지 시설 및 병원 로비 내 인포메이션 전광판 알림 연계와 자치회 소통 영상 유튜브 쇼츠 채널을 통한 건강 정보 송출이 뛰어난 효율을 냅니다.', safety: '보행자 사고 발생률이 높으므로 대형 병원 정문 주변 보행 차량 엉킴 방지 우회로 확보, 대각선 횡단보도 설치 등 교통 보행 환경 리모델링이 필수입니다.' },
+            '학동': { type: '의료복지·녹지 건강중심형', strength: '대형 병원과 압도적 공원 면적을 지녀 힐링 및 의료 중심 주거지로 최적화.', weakness: '최다 교통사고 발생 지역 중 하나로, 병원 통행 및 고령자 보행 구역의 교통 안전 시설 확충 요망.', strategy: '풍부한 친환경 공원과 대형 전남대병원 자산을 바탕으로 건강한 보건 웰니스 마을 공동체 자치 의제를 수립하고 헬스 케어 주민 소모임을 집중 지원합니다.', festival: '압도적인 도시공원 인프라를 결합한 주민 숲속 맨발 걷기 대회 및 장애인 어르신 모두 동참하는 배리어프리 작은 공원 문화제가 제격입니다.', welfare: '관내 풍부한 의료종사자 및 병원 인프라가 구축된 이점을 활용하여 정기 주민 종합 검진 사업 체계를 다지는 복지가 최적화되어 있습니다.', media: '관내 보건 복지 시설 및 병원 로비 내 인포메이션 전광판 알림 연계와 자치회 소통 영상 유튜브 쇼츠 채널을 통한 건강 정보 송출이 뛰어난 효율을 냅니다.', safety: '보행자 사고 발생률이 높으므로 대형 병원 정문 주변 보행 차량 엉킴 방지 우회로 확보, 대각선 횡단보도 설치 등 교통 보행 환경 리모델링이 필수입니다.' },
             '학운동': { type: '초고령화 자연친화형', strength: '무등산 국립공원과 인접한 청정 거주지이며 문화 시설 및 장애인 복지 인프라가 양호함.', weakness: '고령 인구와 노후주택 비율이 높아 노인 고립 해소를 위한 방문 복지 및 노후 개보수 우선 대상지.', strategy: '고령 인구 비율이 매우 높으므로 원로 시니어들의 지혜를 활용하는 시니어 마을 환경 정비 자치단을 구축해 주도권을 양보하는 전략이 유용합니다.', festival: '무등산 국립공원 자락의 이점을 적극 살려 시니어 주도 무등산 나물 산채 미식 축제나 노인 문화 예술 극장 무대를 결합한 세대 통합형 축제가 좋습니다.', welfare: '기초연금 수급 비중과 주택 노후화가 높으므로 홀몸 어르신 혹서기·혹한기 안심 대피 사랑방 지정 및 집수리 가스 안전 통합 돌봄이 절실합니다.', media: '디지털 배제가 극심하므로 관내 경로당 순회 구두 설명회 활성화, 동네 행정 방송 마이크 상시 활용 및 대형 가독성 전용 왕글씨 소식지 배포 채널이 핵심입니다.', safety: '경사지가 많은 구도심 산책로 도로 특성이 강하므로 동절기 빙판 미끄럼 방지 그루빙 포장, 보행용 안전 난간 설치 및 노후 안전 옹벽 전수 조사가 가동되어야 합니다.' },
             '지원1동': { type: '다인가구 전통 주거형', strength: '1인가구 비율이 낮고 다인 가구 중심의 비교적 안정적인 전통 주거지 특성을 보임.', weakness: '녹지 및 도시공원 면적이 매우 열악하여 주민들의 휴식 및 커뮤니티 마당 역할의 부지가 필요함.', strategy: '1인 가구 비율이 상대적으로 낮고 다인 가구 기반의 안정적인 전통 주민 결속력이 있으므로 이웃 사촌 반상회 조직을 통한 탄탄한 자치 생태계 유지가 정답입니다.', festival: '주거 중심 골목 문화를 레버리지 삼아 이웃 사촌 마당 장터 축제나 주민 장기자랑 동네 노래자랑 축제 등 공동체 친화적 일상 축제를 다지는 편이 좋습니다.', welfare: '공원 면적이 상대적으로 열악하여 거점 사랑방 구축, 옥상 정원 및 쌈지 쉼터형 복지 여가 시설 확충이 우선적입니다.', media: '단지 내 부녀회 네트워크와 단독주택지 통반장 대면 소통을 유기적으로 엮는 오프라인 발 소통 미디어가 가장 주민 참여 유도에 높은 도달율을 띱니다.', safety: '이면도로 내 보행자 사고 위험 예방을 위해 스쿨존 주변 어린이 안심 횡단보도 표지석 설치 및 주택가 이면 골목 차량 서행 유도 도색 정비가 필요합니다.' },
-            '지원2동': { type: '최대규모 정주지 배드타운형', strength: '동구 최대 인구 규모와 높은 아파트 거주율을 바탕으로 한 가족 단위의 우수한 정주 인프라.', weakness: '거거 인구 대비 공원 면적이 부족하고, 인구수에 비해 자체 일자리(사업체) 규모가 작은 베드타운 성격 존재.', strategy: '동구 내 최다 인구 밀집 지구이므로 대단지 아파트 입주자 대표 연합 자치회 분과를 다지고, 정주 환경 개선 연대 의제를 발굴하는 구조화가 유용합니다.', festival: '대규모 아동 인구 거주 특성을 살려 단지 내 복합 문화 구역 연계형 어린이 친화 물놀이 여름 축제나 온 가족 동네 한마음 운동회 기획이 큰 인기를 얻을 수 있습니다.', welfare: '유소년 세대 중심의 맞춤형 수요가 탄탄하므로 영유아 공동 육아 공동체 쉼터 공간 전폭 지원 및 청소년 방과 후 자치 창의 교실 연계 복지가 핵심입니다.', media: '대단지 전용 아파트 소통 모바일 어플리케이션 공지 시스템 연계 및 정기 아파트 관리비 고지서 내 소식지 탑재 배포 등 타겟팅 명확한 시스템 활용이 최적입니다.', safety: '학원가 통학로 주변 불법 주정차 단속 카메라 전폭 확대, 출퇴근 시간 정체 유발 교차로 스마트 신호 체계 도입 등 단지 맞춤형 안전망이 생명선입니다.' },
+            '지원2동': { type: '최대규모 정주지 배드타운형', strength: '동구 최대 인구 규모와 높은 아파트 거주율을 바탕으로 한 가족 단위의 우수한 정주 인프라.', weakness: '거주 인구 대비 공원 면적이 부족하고, 인구수에 비해 자체 일자리(사업체) 규모가 작은 베드타운 성격 존재.', strategy: '동구 내 최다 인구 밀집 지구이므로 대단지 아파트 입주자 대표 연합 자치회 분과를 다지고, 정주 환경 개선 연대 의제를 발굴하는 구조화가 유용합니다.', festival: '대규모 아동 인구 거주 특성을 살려 단지 내 복합 문화 구역 연계형 어린이 친화 물놀이 여름 축제나 온 가족 동네 한마음 운동회 기획이 큰 인기를 얻을 수 있습니다.', welfare: '유소년 세대 중심의 맞춤형 수요가 탄탄하므로 영유아 공동 육아 공동체 쉼터 공간 전폭 지원 및 청소년 방과 후 자치 창의 교실 연계 복지가 핵심입니다.', media: '대단지 전용 아파트 소통 모바일 어플리케이션 공지 시스템 연계 및 정기 아파트 관리비 고지서 내 소식지 탑재 배포 등 타겟팅 명확한 시스템 활용이 최적입니다.', safety: '학원가 통학로 주변 불법 주정차 단속 카메라 전폭 확대, 출퇴근 시간 정체 유발 교차로 스마트 신호 체계 도입 등 단지 맞춤형 안전망이 생명선입니다.' },
             '동구 평균': { type: '통계 분석 기본 지표선', strength: '13개 행정동 분석의 기초가 되는 평균치 지표', weakness: '편차가 큰 항목들의 중심값 도출', strategy: '행정동 간 편차를 최소화하고 균형 발전을 유도하는 정책 기본 지표로 참조하기 좋습니다.', festival: '동구 전역의 평균적 문화 수용도를 나타내며 종합 축제 기획의 표준선으로 작용합니다.', welfare: '복지 사각지대 발굴을 위한 상대적 빈곤 및 인프라 과부족 분석의 기초 기준값입니다.', media: '구정 전반의 보편적 행정 홍보 도달률 분석을 위한 통합 데이터 표준선입니다.', safety: '생활 안전 지수 전국 표준 대비 동구의 객관적인 위험 수준을 진단하는 베이스라인입니다.' }
         };
+
         const agendaReports = {
             '충장동': {
                 phase1: makePhase12Template([
@@ -489,7 +636,7 @@
                 phase1: makePhase12Template([
                     { title: "카페거리 상권 젠트리피케이션 방지", m: "상권 활성화에 따른 임대료 상승 방지 및 상생 협약 체결을 위한 주민 공론장이 다수 열렸습니다.", f: "실제 주민과 청년 상인 간의 실효성 있는 협의체 부재로 선언적 협약에 머무는 한계가 있었습니다.", p: "청년 창업가와 원주민 어르신이 1:1 결연을 맺고 동네 문화를 함께 기획하는 '상생 자문단'을 공식 분과로 출범시킵니다." },
                     { title: "노후 주택가 및 공폐가 환경 개선", m: "마을 골목길 미관 개선을 위해 벽화 그리기 및 화단 조성 사업을 지속적으로 추진했습니다.", f: "사후 관리가 되지 않아 화단이 방치되고 골목 미관이 다시 훼손되는 악순환이 발생했습니다.", p: "단순 미화에 그치지 않고, 청년 크리에이터들이 빈 공간을 활용해 주기적인 '디자인 팝업 전시'를 여는 예술 거점화 의제로 전환합니다." },
-                    { title: "방문객 불법 주차난 주민 갈등 중재", m: "外部 방문객의 무분별한 주차 문제로 인한 거주민 불편 해소를 위해 주말 단속 강화 민원을 집중 제기했습니다.", f: "상권 위축을 우려한 상인들의 반발로 행정 부서의 즉각적인 단속 실행이 지연되었습니다.", p: "단속 민원을 넘어, 주민 주차장 공유 시 상가 할인 쿠폰을 제공하는 '동명 상생 주차 스왑' 제도를 스마트폰 앱으로 구축 제안합니다." },
+                    { title: "방문객 불법 주차난 주민 갈등 중재", m: "외부 방문객의 무분별한 주차 문제로 인한 거주민 불편 해소를 위해 주말 단속 강화 민원을 집중 제기했습니다.", f: "상권 위축을 우려한 상인들의 반발로 행정 부서의 즉각적인 단속 실행이 지연되었습니다.", p: "단속 민원을 넘어, 주민 주차장 공유 시 상가 할인 쿠폰을 제공하는 '동명 상생 주차 스왑' 제도를 스마트폰 앱으로 구축 제안합니다." },
                     { title: "청년 크리에이터-원주민 문화 소통 워크숍", m: "동명동 카페거리 유입 청년들과 원주민 간 소모임을 주선하여 공감대를 넓혔습니다.", f: "공통 관심사 부족으로 단발성 만남에 그쳤으며, 지속적인 마을 발전 동력으로 이어지지 못했습니다.", p: "마을 사랑채에서 시니어 요리 교실과 청년 브랜딩 멘토링을 결합하는 호혜적 교류 프로그램을 제안합니다." },
                     { title: "전통 주택지 보존 및 골목길 아카이빙", m: "동명동의 옛 정취가 가득한 골목길 사진집을 제작하고 아카이빙을 시도했습니다.", f: "단순 기록물 보관에 그쳐, 실제 청년층이나 유입 인구에게 동네 역사를 알리는 홍보 효과는 미진했습니다.", p: "아카이빙 데이터를 QR 코드로 골목 곳곳에 부착해 스마트 도심 가이드맵과 연동하는 디지털 아카이빙을 제안합니다." }
                 ], '동명동', 'p1'),
@@ -499,7 +646,7 @@
                     { title: "구도심 좁은 골목길 야간 보행 안전", m: "야간 방범을 위해 스마트 안심 가로등 및 로고젝터 설치를 행정에 강력히 건의했습니다.", f: "설치 위치 선정 시 실거주민의 체감 위험도보다는 행정 편의가 우선시되는 경향이 있었습니다.", p: "청년 분과와 주민이 직접 동네를 걸으며 야간 위험 지대를 맵핑하는 '안전 지도 직접 그리기' 안건으로 고도화합니다.",
                       r1: "주민·학생 연합 야간 골목길 걷기 탐방 및 위험 구역 사진 촬영", r2: "수집된 데이터를 바탕으로 구글맵 기반 '우리동네 안전 지도' 앱 제작", r3: "완성된 지도를 행정에 전달하여 우선 설치 구역으로 확정 요구" },
                     { title: "청년 상인 연계 일회용 플라스틱 컵 저감 캠페인", m: "유동인구가 많은 카페거리 상인들과 텀블러 사용 시 추가 할인 이벤트를 추진했습니다.", f: "개별 점포의 마진 감소 부담으로 인해 자발적인 참여 상점 수가 급격히 축소되었습니다.", p: "동구청 기후환경과 환경 보조금 사업 예산과 연계하여 공동 리워드 포인트를 지급하는 방식으로 고도화합니다.",
-                      r1: "관내 프랜차이즈 및 개인 카페 대표단 초청 환경 보조금 설명회 개최", r2: "자치회 포인트와 연동되는 에코 QR 스티커 배포 및 테스트 시스템 구축", r3: "마을 총회 안건 통과를 통해 연간 친환경 소상공인 상생 예산 확정" },
+                      r1: "관내 프랜차이즈 및 개인 카페 대표단 초청 환경 보조금 설명회 개최", r2: "자치회 포인트와 연동되는 에코 QR 스티커 배포 및 테스트 시스템 구축", r3: "마 마을 총회 안건 통과를 통해 연간 친환경 소상공인 상생 예산 확정" },
                     { title: "공가 유휴지 활용 팝업 쌈지정원 조성", m: "동명동 내 방치된 공터의 미관 개선을 위해 게릴라 가드닝 형태로 꽃과 나무를 심었습니다.", f: "소유주와의 명확한 사전 협의가 부재하여 정원 철거 요청이 들어오는 등 마찰이 있었습니다.", p: "도시재생과 및 소유주와의 '유휴 토지 무상 임대 상생 협약'을 거쳐 공식적인 마을 가든 스페이스로 격상합니다.",
                       r1: "동명동 내 방치 공가 및 공터 필지 조사 및 실소유주 대상 안내장 발송", r2: "3개년 무상 사용 허가 시 재산세 감면 혜택 등을 담은 행정 부서 중재 회의", r3: "주민총회에서 상생 쌈지정원 1호점 개장식 및 관리 주민 자원봉사단 위촉" }
                 ], '동명동', 'p2'),
@@ -607,7 +754,7 @@
                     { title: "아따 갤러리 4구간 마을예술길 만들기", m: "산수동의 어두운 골목길 미관 개선을 위해 자치 위원들과 청년 예술가들이 연대하여 스토리 벽화를 조성했습니다.", f: "조성 후 비바람에 마모된 벽면의 정기 보수 예산이 배정되지 않아 일부 구간이 다시 방치되었습니다.", p: "벽화 구간별 주민 '골목 가이드' 책임제를 도입해 자율 유지 관리 및 마을 투어 코스로 활용합니다.",
                       r1: "아따 갤러리 4구간 노후 상태 전수 조사 및 보수 필요 디자인 도출", r2: "구간별 실거주 주민 1인 '골목 마스터' 임명 및 자치회 케어 예산 매칭", r3: "총회 안건 통과를 통해 정기 골목길 예술 축제 및 미관 유지 보수 기금 신설" },
                     { title: "거동 불편 어르신 병원 동행 자치 봉사 서비스", m: "고령 인구 통계에 맞춰 거동이 어려운 어르신들의 외출을 돕는 정기 동행 도우미 활동을 벌였습니다.", f: "자원봉사자들의 개인 일정에 따라 동행 매칭률이 널뛰어 상시적인 돌봄망 유지가 힘들었습니다.", p: "노인 인적 자원 풀을 역이용하여 건강한 어르신이 아픈 어르신을 돌보는 노노케어 마일리지 시스템을 구축합니다.",
-                      r1: "관내 건강한 액티브 시니어 및 은퇴자 대상 '마을 동행 매니저' 20명 모집", r2: "동구 자원봉사센터 연계 휠체어 보행 보조 안전 교육 및 긴급 구호 훈련 이수", r3: "마을총회 공식 승인 후 동행 건당 지역 화폐 포인트 보상 바우처 제도 가동" },
+                      r1: "관내 건강한 액티브 시니어 및 은퇴자 대상 '마 마을 동행 매니저' 20명 모집", r2: "동구 자원봉사센터 연계 휠체어 보행 보조 안전 교육 및 긴급 구호 훈련 이수", r3: "마을총회 공식 승인 후 동행 건당 지역 화폐 포인트 보상 바우처 제도 가동" },
                     { title: "산수시장 상인회 연계 경관 조명길 조성", m: "침체된 야간 시장 분위기를 전환하기 위해 상가 가로변에 알전구 경관 조명을 달았습니다.", f: "전기세 부담 주체와 야간 소음 민원으로 인해 일부 구간의 조명이 조기 철거되는 진통이 있었습니다.", p: "상인회 자부담과 자치회 지원을 5:5 매칭하고 타이머 자동 소등(22시) 규칙을 제정해 상생을 꾀합니다.",
                       r1: "시장 내 상인 및 인접 거주민 대상 야간 조명 운영 시간 공청회 개최", r2: "건설과 및 한전 협의 하에 안전 인증 규격 경관 조명 자재 공동 구매", r3: "마을총회 정식 의결 후 야간 '산수 감성 골목 야시장' 연계 활성화 안건 확정" }
                 ], '산수1동', 'p2'),
@@ -815,7 +962,7 @@
             },
             '학운동': {
                 phase1: makePhase12Template([
-                    { title: "증심사천 꽃길 산책로 하천 정화 활동", m: "무등산 자락 증심사천 친환경 산책로 보존을 위해 주민 자율 줍깅 및 하천 쓰레기 정화 활동을 벌였습니다.", f: "방문객들의 무분별한 불법 쓰레기 투기가 주말마다 반복되어 주민들의 피로감이 극에 달했습니다.", p: "환경과와 협력하여 주요 등산로 진입구에 자 자율 수거함 및 주민 환경 감시 초소를 상설 운영합니다." },
+                    { title: "증심사천 꽃길 산책로 하천 정화 활동", m: "무등산 자락 증심사천 친환경 산책로 보존을 위해 주민 자율 줍깅 및 하천 쓰레기 정화 활동을 벌였습니다.", f: "방문객들의 무분별한 불법 쓰레기 투기가 주말마다 반복되어 주민들의 피로감이 극에 달했습니다.", p: "환경과와 협력하여 주요 등산로 진입구에 자율 수거함 및 주민 환경 감시 초소를 상설 운영합니다." },
                     { title: "무량어린이공원 노후 아동 시설 개보수 건의", m: "초고령화 속에서도 관내 아동들의 놀 권리를 위해 공원 내 파손된 놀이기구 교체 민원을 넣었습니다.", f: "예산 우선순위에서 밀려 전면 교체 대신 단순 땜질식 보수에 그쳐 학부모들이 실망했습니다.", p: "학부모들과 시니어 위원들이 함께 공원 리모델링 디자인을 기획해 공모사업 예산을 직접 따내는 전략으로 전환합니다." },
                     { title: "동적골 건강 축제 주민 펀딩 모금 시도", m: "학운동의 자랑인 동적골 산책로에서 전 주민이 참여하는 음악 축제를 개최하고자 주민 성금을 모금했습니다.", f: "기금 모금의 체계성이 부족해 목표액 달성에 지연이 생기고 축제 규모가 다소 축소되었습니다.", p: "자치회 정식 문화 분과 예산과 구청 소규모 축제 보조금을 영리하게 엮는 하이브리드 재정 구조를 수립합니다." }
                 ], '학운동', 'p1'),
@@ -852,13 +999,13 @@
             '지원1동': {
                 phase1: makePhase12Template([
                     { title: "소태동 소통꽃담 미니 정원 골목길 조성", m: "단독주택 가구들의 삭막한 시멘트 담장 밑에 미니 상자 화단을 배치해 꽃담 골목길을 만들었습니다.", f: "여름철 가뭄 시 물주기 관리가 자율적으로 되지 않아 일부 화단 식물이 고사하는 아쉬움이 있었습니다.", p: "골목 거주 주민들을 '화단 대부'로 지정해 1인 1화단 책임 관리제를 도입합니다." },
-                    { title: "구 지원중학교 운동장 주말 개방 주민 협의", m: "주민들의 부족한 체공·녹지 인프라 보완을 위해 학교 운동장 주말 상시 개방 민원을 추진했습니다.", f: "학교 측의 야간 보안 및 쓰레기 투기 우려 반대로 인해 개방 시간 조율이 초기 보류되었습니다.", p: "자치회가 주말 폐쇄 시간대 '클린 지킴이 봉사조'를 배치하는 상생 협약을 제안합니다." },
+                    { title: "구 지원중학교 운동장 주말 개방 주민 협의", m: "주민들의 부족한 체육·녹지 인프라 보완을 위해 학교 운동장 주말 상시 개방 민원을 추진했습니다.", f: "학교 측의 야간 보안 및 쓰레기 투기 우려 반대로 인해 개방 시간 조율이 초기 보류되었습니다.", p: "자치회가 주말 폐쇄 시간대 '클린 지킴이 봉사조'를 배치하는 상생 협약을 제안합니다." },
                     { title: "머굴마을 주민창업학교 기초 과정 개설", m: "다인가구 중심의 비교적 안정적인 정주 인구를 바탕으로 주민 협동조합 창업 기초 강좌를 열었습니다.", f: "이론 위주의 수업으로 인해 실제 주민들이 체감하는 사업화 모델 도출이나 창업 연계에는 미치지 못했습니다.", p: "실전 모의 플리마켓 창업 실험실 세션을 자치회 장터와 연계해 고도화합니다." }
                 ], '지원1동', 'p1'),
                 phase2: makePhase12Template([
                     { title: "스쿨존 배리어프리 안심 상가 지도 제작", m: "유소년 및 다인가구 통행 안전을 위해 초등학교 주변 인도 턱 현황과 보행 위험 상가 진입로를 맵핑했습니다.", f: "종이 지도로만 인쇄되어 학부모들에게 도달율이 낮고 실시간 위험 정보 업데이트가 불가능했습니다.", p: "스마트폰 QR 코드로 스캔 가능한 구글 웹 브리핑 안심 지도로 고도화하여 단톡방에 배포합니다.",
-                      r1: "지원1동 통장단 및 초등 학부모회 합동 스쿨존 통학로 3개 구간 보행 장벽 전수 전수조사", r2: "유모차 및 아동 보행 방해 적치물 점포 대상 상생 협조문 발송 및 온라인 구글맵 데이터 입력", r3: "마을총회 보고 및 안심 지도 링크 아파트 관리 앱 및 초교 가정통신문 앱 공식 연동 탑재" },
-                    { title: "아파트 부녀회-단독주택 통반장 소태골 통합 거 거버넌스", m: "단독주택지와 신축 아파트 주민 간 자원순환가게 이용 및 공동체 분절 갈등을 막고자 합동 소통회를 주최했습니다.", f: "정기적인 만남 규칙이 없어 안건이 있을 때만 일시적으로 모여 감정 섞인 공방에 그쳤습니다.", p: "자치회 산하 '소태골 한마음 통합 소위원회'를 상설화해 격월 교차 회의를 의무화합니다.",
+                      r1: "지원1동 통장단 및 초등 학부모회 합동 스쿨존 통학로 3개 구간 보행 장벽 전수 조사", r2: "유모차 및 아동 보행 방해 적치물 점포 대상 상생 협조문 발송 및 온라인 구글맵 데이터 입력", r3: "마을총회 보고 및 안심 지도 링크 아파트 관리 앱 및 초교 가정통신문 앱 공식 연동 탑재" },
+                    { title: "아파트 부녀회-단독주택 통반장 소태골 통합 거버넌스", m: "단독주택지와 신축 아파트 주민 간 자원순환가게 이용 및 공동체 분절 갈등을 막고자 합동 소통회를 주최했습니다.", f: "정기적인 만남 규칙이 없어 안건이 있을 때만 일시적으로 모여 감정 섞인 공방에 그쳤습니다.", p: "자치회 산하 '소태골 한마음 통합 소위원회'를 상설화해 격월 교차 회의를 의무화합니다.",
                       r1: "아파트 입주자 대표들과 일반 주택지 통장단 20명이 모이는 1차 상생 거버넌스 출범", r2: "공유 마당 텃밭 공동 경작 및 수확물 나눔을 골자로 하는 상생 자치 협약서 체결", r3: "주민총회 정식 규칙 안건으로 가결하여 신구 주민 융합 프로그램 고정 자치 예산 배정" },
                     { title: "머굴마을 청소년 선도 자율 순찰단 상설 가동", m: "주택가 이면도로 및 유휴 취약지 내 청소년 비행 예방을 위해 주민 자율 야간 방범 순찰단을 운영했습니다.", f: "순찰대원들의 개인 생업 일정 조율 한계로 주말 야간 등 정작 중요한 시간대 순찰 공백이 발생했습니다.", p: "관내 자율방범대 및 퇴직 경찰 인적 자원과 연계하여 스케줄링을 시스템화합니다.",
                       r1: "관내 퇴직 경찰 및 방범 활동 희망 주민 15명 선발 및 순찰 노선 일원화", r2: "동부경찰서 소태파출소와 야간 긴급 핫라인 구축 및 방범 장비 자치회 지원 완료", r3: "총회 안건 통과를 통해 야간 안심 귀가 순찰대 상설 가동 및 대원 활동 마일리지 보상 규정 확정" }
@@ -962,7 +1109,7 @@
     <div class='bg-white p-3 rounded-xl border border-gray-200 shadow-sm'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1 break-keep'>[2025년]</h4><ul class='space-y-1 text-[13px] text-gray-700'><li>○ 문화체육행사 확대 및 지역주민 자원 발굴</li><li>○ 골목길 환경개선 릴레이 및 마을 미관 정비</li><li>○ 재개발 신규 전입 주민과 원주민 간 화합을 위한 한마음 워크숍</li></ul></div>
     <div class='bg-white p-3 rounded-xl border border-gray-200 shadow-sm'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1 break-keep'>[2024년]</h4><ul class='space-y-1 text-[13px] text-gray-700'><li>○ 개미자원순환가게 운영 내실화 및 재활용품 수거 보상제 강화</li><li>○ 계림1동 어르신 쌈지 공원 및 휴식 쉼터 보수 공사 건의</li><li>○ 마을 소식지 발간 및 디지털 홍보 채널 구축</li></ul></div>
     <div class='bg-white p-3 rounded-xl border border-gray-200 shadow-sm'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1 break-keep'>[2023년]</h4><ul class='space-y-1 text-[13px] text-gray-700'><li>○ 계림1동 마을쉼터 및 옥상 정원 조성 사업</li><li>○ 우리가 함께 안전한 골목길 만들어요 (방범대 야간 순찰)</li><li>○ 취약계층 주거 환경 개선 및 혹서기 쿨루프 시공 지원</li></ul></div>
-    <div class='bg-white p-3 rounded-xl border border-gray-200 shadow-sm'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1 break-keep'>[2022년]</h4><ul class='space-y-1 text-[13px] text-gray-700'><li>○ 함께 나누고, 참여하며 계림1동에서 함께해요 (마 마을 화합 행사)</li><li>○ 마을사랑채를 알차게 운영해요 (공유 공간 프로그램 활성화)</li><li>○ 구도심 좁은 골목길 소방도로 확보 캠페인</li></ul></div>
+    <div class='bg-white p-3 rounded-xl border border-gray-200 shadow-sm'><h4 class='font-black text-indigo-700 mb-2 border-b-2 border-indigo-100 pb-1 break-keep'>[2022년]</h4><ul class='space-y-1 text-[13px] text-gray-700'><li>○ 함께 나누고, 참여하며 계림1동에서 함께해요 (마을 화합 행사)</li><li>○ 마을사랑채를 알차게 운영해요 (공유 공간 프로그램 활성화)</li><li>○ 구도심 좁은 골목길 소방도로 확보 캠페인</li></ul></div>
 </div>`,
             '계림2동': `<div class='space-y-4 max-h-[500px] pr-2 overflow-y-auto'>
     <div class='bg-indigo-50 p-3 rounded-xl border border-indigo-200 shadow-sm'><h4 class='font-black text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1 break-keep'>[2026년]</h4><ul class='space-y-1 text-[13px] text-indigo-900 font-medium'><li>○ 튼튼한 어린이 만들기 : 단지 내 어린이 체육 활동 및 방과후 교실 지원</li><li>○ 정보통신 교육 프로그램 개설 : 모바일 기기 활용 및 키오스크 실습</li><li>○ 깨끗한 마을 만들기 : 아파트 주변 보행로 및 학원가 일대 자율 청소</li></ul></div>
@@ -1041,6 +1188,7 @@
                 agendaReports[dong] = agendaReports['동구 평균'];
             }
         });
+
         function cleanNum(val) {
             if (val === undefined || val === null || val === '') return 0;
             if (typeof val === 'number') return val;
@@ -1119,7 +1267,6 @@
                 '지원2동': '동구 내 최대 정주 인구 규모에 비해 관내 사업체 및 상주 종사자 수는 적은 완전한 주거 중심형 베드타운입니다.'
             }
         };
-
         window.onload = function() {
             Papa.parse("data.csv", {
                 download: true,
@@ -1128,8 +1275,6 @@
                 complete: function(results) {
                     try {
                         const rows = results.data;
-                        
-                        // 평균 연산을 위한 변수 선언
                         let totalCount = 0;
                         let sumPop = 0, sumMale = 0, sumFemale = 0, sumYouthPop = 0, sumEldPop = 0;
                         let sumVal6 = 0, sumVal7 = 0;
@@ -1137,7 +1282,6 @@
                         let sumBizCount = 0, sumBizWorker = 0, sumSocEco = 0, sumCult = 0, sumKin = 0, sumWel = 0;
                         let sumPen = 0, sumDis = 0, sumForgn = 0, sumBeds = 0, sumHosp = 0, sumGreenPct = 0, sumParkArea = 0, sumAcc = 0;
 
-                        // 1. DONG_ORDER에 맞게 개별 데이터 매핑 및 평균값 누적 합산
                         for (let i = 1; i < rows.length; i++) {
                             let row = rows[i];
                             if (row.length < 10) continue;
@@ -1174,7 +1318,6 @@
                                 bizCount, bizWorker, socEco, cult, kin, wel, pen, dis, forgn, beds, hosp, greenPct, parkArea, acc
                             };
 
-                            // 동구 평균을 위한 값 누적
                             totalCount++;
                             sumPop += pop; sumMale += male; sumFemale += female; 
                             sumYouthPop += youthPop; sumEldPop += eldPop;
@@ -1187,7 +1330,6 @@
                             sumHosp += hosp; sumGreenPct += greenPct; sumParkArea += parkArea; sumAcc += acc;
                         }
 
-                        // 2. 동구 평균 데이터 동적 연산 후 주입 (단, 데이터가 있는 경우에만 처리)
                         if (totalCount > 0) {
                             let avgPop = Math.round(sumPop / totalCount);
                             let avgYouthPop = Math.round(sumYouthPop / totalCount);
@@ -1237,6 +1379,10 @@
             renderTable();
             initCharts();
             setupAgendaTabs();
+            
+            // ✨ [새로 추가됨] 지도 생성 함수 호출
+            initMap(); 
+            
             switchMainTab('tab1');
             
             const initialDong = document.querySelector('input[value="충장동"]');
@@ -1255,6 +1401,114 @@
             document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('chartModal').classList.add('hidden'); });
         }
 
+        // ============================================================================
+        // ✨ [새로 추가됨] Leaflet.js 지도 제어 및 렌더링 함수
+        // ============================================================================
+        function initMap() {
+            // 1. 지도 초기화 (광주 동구 중심 좌표 설정)
+            mapInstance = L.map('map', { zoomControl: false }).setView([35.143, 126.925], 13);
+            L.control.zoom({ position: 'topright' }).addTo(mapInstance);
+
+            // 2. 배경 지도 타일 설정 (무료 오픈소스 CartoDB Positron - 대시보드용으로 깔끔함)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            }).addTo(mapInstance);
+
+            document.getElementById('map-loading-text').style.display = 'none';
+
+            // 3. 폴리곤(동별 경계) 기본 스타일
+            function style(feature) {
+                return {
+                    fillColor: '#3b82f6', // 파란색
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.2
+                };
+            }
+
+            // 4. 각 동별 마우스 이벤트 및 클릭 이벤트 설정
+            function onEachFeature(feature, layer) {
+                // 구역명 라벨 (텍스트) 추가
+                if (feature.geometry.type === 'Polygon') {
+                    const bounds = layer.getBounds();
+                    const center = bounds.getCenter();
+                    L.marker(center, {
+                        icon: L.divIcon({
+                            className: 'map-label',
+                            html: `<div class="text-[11px] font-black text-slate-800 text-shadow-sm whitespace-nowrap">${feature.properties.adm_nm}</div>`,
+                            iconSize: [60, 20],
+                            iconAnchor: [30, 10]
+                        }),
+                        interactive: false // 텍스트는 클릭 안 되게 막음 (폴리곤만 클릭되게)
+                    }).addTo(mapInstance);
+                }
+
+                layer.on({
+                    mouseover: function(e) {
+                        var targetLayer = e.target;
+                        if(selectedLayer !== targetLayer) {
+                            targetLayer.setStyle({ fillOpacity: 0.6, fillColor: '#10b981', color: '#047857', weight: 3 });
+                        }
+                    },
+                    mouseout: function(e) {
+                        var targetLayer = e.target;
+                        if(selectedLayer !== targetLayer) {
+                            geojsonLayer.resetStyle(targetLayer);
+                        }
+                    },
+                    click: function(e) {
+                        // 기존 선택 해제
+                        if(selectedLayer) {
+                            geojsonLayer.resetStyle(selectedLayer);
+                        }
+                        // 새 구역 선택 (강조)
+                        selectedLayer = e.target;
+                        selectedLayer.setStyle({ fillOpacity: 0.8, fillColor: '#3b82f6', color: '#1e3a8a', weight: 4 });
+                        
+                        // ✨ [클릭 시] 우측 데이터보드 업데이트 함수 호출
+                        updateMapBoard(feature.properties.adm_nm);
+                    }
+                });
+            }
+
+            // 5. GeoJSON 데이터를 지도에 얹기
+            geojsonLayer = L.geoJSON(gwangjuDongguGeoJSON, {
+                style: style,
+                onEachFeature: onEachFeature
+            }).addTo(mapInstance);
+        }
+
+        // ✨ [새로 추가됨] 지도 클릭 시 우측 데이터보드 업데이트
+        function updateMapBoard(dongName) {
+            const data = dongData[dongName];
+            if(!data) return;
+
+            document.getElementById('mapPlaceholder').classList.add('hidden');
+            document.getElementById('mapDataBoard').classList.remove('hidden');
+            
+            document.getElementById('mapDongTitle').innerText = dongName + " 통계 요약";
+            
+            // 핵심 데이터 매핑
+            document.getElementById('md-pop').innerText = Number(data.pop).toLocaleString();
+            document.getElementById('md-onePct').innerText = data.onePct;
+            document.getElementById('md-youthPct').innerText = data.youthPct;
+            document.getElementById('md-eldPct').innerText = data.eldPct;
+            
+            document.getElementById('md-aptPct').innerText = data.aptPct + '%';
+            document.getElementById('md-oldPct').innerText = data.oldPct + '%';
+            document.getElementById('md-bizCount').innerText = Number(data.bizCount).toLocaleString() + '개';
+            document.getElementById('md-greenPct').innerText = data.greenPct + '%';
+
+            // AI 인사이트 결합
+            const insight = regionInsights['theme1'][dongName] + " " + regionInsights['theme2'][dongName];
+            document.getElementById('md-insight').innerText = insight;
+        }
+
+        // ============================================================================
+        // 기존 탭 및 차트/테이블 렌더링 기능들
+        // ============================================================================
         function setupAgendaTabs() {
             document.querySelectorAll('.agenda-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
@@ -1353,7 +1607,7 @@
                     <td class="px-4 py-3 ${welBase}">${d.hosp}</td>
                     <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${d.greenPct}%</td>
                     <td class="px-4 py-3 ${envBase}">${d.parkArea}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${d.acc}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-300 ${accBase}">${d.acc}</td>
                 </tr>
             `;
         }
