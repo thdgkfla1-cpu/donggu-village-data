@@ -61,16 +61,12 @@
 </head>
 <body class="text-gray-800 relative">
 
-    <!-- 기존 Loading 애니메이션 (요구사항 완벽 반영) -->
-    <div id="loading" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center text-center p-6">
-        <div class="text-2xl font-bold text-emerald-600 mb-4 animate-pulse break-keep">데이터 교정 및 시각화 연동 중입니다...</div>
-    </div>
-   <!-- [신규] 1. 메인 대문(인트로) 화면 -->
+    <!-- [신규] 1. 메인 대문(인트로) 화면 -->
     <div id="introScreen" class="min-h-screen flex flex-col justify-center items-center p-6 relative hidden">
         <!-- 💡 나중에 미리캔버스 배경 이미지 넣을 곳 (CSS에서 body에 적용하면 됩니다) -->
         <div class="text-center space-y-4 mb-12 relative z-10">
             <h1 class="text-4xl md:text-5xl font-black text-gray-800 tracking-tight">
-                동구 마을 및 민원 데이터 허브
+                전남광주통합특별시 동구 마을의제 · 민원 데이터
             </h1>
             <p class="text-gray-500 font-bold text-lg">원하시는 데이터 분석 메뉴를 선택해주세요.</p>
         </div>
@@ -3196,6 +3192,68 @@
                     if(chartInstances[themeKey].radar) chartInstances[themeKey].radar.resize();
                 });
             }
+        }
+        // --------------------------------------------------------
+        // [신규 추가] 대문 <-> 대시보드 화면 전환 및 뒤로가기 로직
+        // --------------------------------------------------------
+
+        // 브라우저 뒤로가기를 위한 초기 주소 기록
+        window.addEventListener('load', function() {
+            history.replaceState({ screen: 'intro' }, '', window.location.pathname);
+        });
+
+        // 브라우저 '<- 뒤로가기' 버튼 감지
+        window.onpopstate = function(event) {
+            if (event.state && event.state.screen === 'dashboard') {
+                enterDashboardUI(event.state.type);
+            } else {
+                goHomeUI();
+            }
+        };
+
+        // 대문에서 카드 클릭 시 (주소 기록 남기고 안쪽으로 이동)
+        function enterDashboard(type) {
+            history.pushState({ screen: 'dashboard', type: type }, '', '?menu=' + type);
+            enterDashboardUI(type);
+        }
+
+        // 실제 화면 전환 및 에러 없는 탭 렌더링 UI
+        function enterDashboardUI(type) {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+
+            const tab1 = document.getElementById('btn-tab1');
+            const tab2 = document.getElementById('btn-tab2');
+            const tab3 = document.getElementById('btn-tab3');
+            const tab4 = document.getElementById('btn-tab4');
+
+            if(type === 'village') {
+                document.getElementById('dashboardTitle').innerHTML = '📊 동구 마을데이터 분석';
+                if(tab1) tab1.style.display = 'flex';
+                if(tab2) tab2.style.display = 'flex';
+                if(tab3) tab3.style.display = 'flex';
+                if(tab4) tab4.style.display = 'none';
+                switchMainTab('tab1'); 
+            } else if(type === 'complaint') {
+                document.getElementById('dashboardTitle').innerHTML = '📊 동구 민원 데이터 분석';
+                if(tab1) tab1.style.display = 'none';
+                if(tab2) tab2.style.display = 'none';
+                if(tab3) tab3.style.display = 'none';
+                if(tab4) tab4.style.display = 'flex';
+                switchMainTab('tab4'); 
+            }
+            window.dispatchEvent(new Event('resize')); 
+        }
+
+        // 홈(집 모양) 버튼 클릭 시
+        function goHome() {
+            history.pushState({ screen: 'intro' }, '', window.location.pathname);
+            goHomeUI();
+        }
+
+        function goHomeUI() {
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('introScreen').classList.remove('hidden');
         }
     </script>
 </body>
