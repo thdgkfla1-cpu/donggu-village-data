@@ -65,41 +65,59 @@
     <div id="loading" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center text-center p-6">
         <div class="text-2xl font-bold text-emerald-600 mb-4 animate-pulse break-keep">데이터 교정 및 시각화 연동 중입니다...</div>
     </div>
-    <!-- 상단 2단 탭 구조가 적용된 헤더 -->
-    <header class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-40">
-        <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col gap-3">
-            
-            <div class="w-full text-center xl:text-left">
-                <h1 class="text-2xl font-black text-gray-800 flex items-center justify-center xl:justify-start gap-2 tracking-tight break-keep">
-                    <span class="text-3xl">📊</span> 전남광주통합특별시 동구 마을 로컬데이터
-                </h1>
-                <p class="text-xs text-gray-500 mt-2 font-medium xl:text-left text-center flex flex-wrap items-center justify-center xl:justify-start gap-1.5 break-keep">
-                    <i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> 
-                    <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-bold">최근 업데이트: 2026.06</span> 
-                    <span>| 13개 행정동 5개년 마을의제 분석 완료 및 모바일 UI 최적화 반영</span>
-                </p>
-            </div>
-            
-            <!-- [1단계 메인 탭] -->
-            <div class="flex gap-2 border-b-4 border-emerald-500 mt-2">
-                <button onclick="switchMainCategory('village')" id="btn-cat-village" class="main-category-btn px-6 py-3 text-base md:text-lg font-black bg-emerald-500 text-white shadow-md">
-                    <i class="fa-solid fa-house-chimney mr-2"></i>동구 마을데이터 분석
-                </button>
-                <button onclick="switchMainCategory('complaint')" id="btn-cat-complaint" class="main-category-btn px-6 py-3 text-base md:text-lg font-black bg-gray-100 text-gray-500 hover:bg-gray-200">
-                    <i class="fa-solid fa-headset mr-2"></i>동구 민원 데이터 분석
-                </button>
-            </div>
-
-            <!-- [2단계 서브 탭] -->
-            <div id="sub-tabs-village" class="tab-container flex gap-1 w-full overflow-x-auto pb-1 mt-1 mb-1">
-                <button onclick="switchSubTab('tab1')" id="btn-tab1" class="main-tab active px-5 py-2.5 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
-                <button onclick="switchSubTab('tab2')" id="btn-tab2" class="main-tab px-5 py-2.5 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
-                <button onclick="switchSubTab('tab3')" id="btn-tab3" class="main-tab px-5 py-2.5 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
-            </div>
-
+   <!-- [신규] 1. 메인 대문(인트로) 화면 -->
+    <div id="introScreen" class="min-h-screen flex flex-col justify-center items-center p-6 relative hidden">
+        <!-- 💡 나중에 미리캔버스 배경 이미지 넣을 곳 (CSS에서 body에 적용하면 됩니다) -->
+        <div class="text-center space-y-4 mb-12 relative z-10">
+            <h1 class="text-4xl md:text-5xl font-black text-gray-800 tracking-tight">
+                동구 마을 및 민원 데이터 허브
+            </h1>
+            <p class="text-gray-500 font-bold text-lg">원하시는 데이터 분석 메뉴를 선택해주세요.</p>
         </div>
-    </header>
-    <main id="mainContent" class="max-w-[1600px] mx-auto p-6 hidden">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10 max-w-4xl w-full">
+            <!-- 1번 카드: 마을데이터 -->
+            <div onclick="enterDashboard('village')" class="cursor-pointer bg-white rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all p-10 text-center border-t-8 border-emerald-500">
+                <i class="fa-solid fa-chart-pie text-6xl text-emerald-500 mb-6"></i>
+                <h2 class="text-2xl font-black text-gray-800 mb-3">동구 마을데이터 분석</h2>
+                <p class="text-gray-500 font-medium">인구, 주거, 경제 지표 및 마을 리포트</p>
+            </div>
+            
+            <!-- 2번 카드: 민원데이터 -->
+            <div onclick="enterDashboard('complaint')" class="cursor-pointer bg-white rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all p-10 text-center border-t-8 border-indigo-500">
+                <i class="fa-solid fa-users-viewfinder text-6xl text-indigo-500 mb-6"></i>
+                <h2 class="text-2xl font-black text-gray-800 mb-3">동구 민원 데이터 분석</h2>
+                <p class="text-gray-500 font-medium">미해결 민원 분석 및 AI 실무 제안</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- [신규] 2. 대시보드 화면 (안쪽 화면 래퍼) -->
+    <div id="dashboardScreen" class="hidden">
+        <header class="bg-white shadow-md sticky top-0 z-40">
+            <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col xl:flex-row justify-between items-center gap-4">
+                
+                <div class="w-full xl:w-auto flex items-center justify-center xl:justify-start gap-4 text-center xl:text-left">
+                    <!-- 대문으로 돌아가기(홈) 버튼 -->
+                    <button onclick="goHome()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 w-11 h-11 rounded-full flex items-center justify-center transition shadow-sm" title="메인으로 돌아가기">
+                        <i class="fa-solid fa-house"></i>
+                    </button>
+                    <!-- 타이틀 -->
+                    <h1 id="dashboardTitle" class="text-2xl font-black text-gray-800 tracking-tight break-keep">
+                        📊 동구 데이터 분석
+                    </h1>
+                </div>
+                
+                <!-- 대시보드 탭 버튼들 -->
+                <div class="tab-container flex gap-1 w-full xl:w-auto overflow-x-auto pb-1">
+                    <button onclick="switchMainTab('tab1')" id="btn-tab1" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
+                    <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
+                    <button onclick="switchMainTab('tab3')" id="btn-tab3" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
+                    <button onclick="switchMainTab('tab4')" id="btn-tab4" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-users-viewfinder mr-2"></i>민원 분석 및 AI 제안</button>
+                </div>
+            </div>
+        </header>
+        <main id="mainContent" class="max-w-[1600px] mx-auto p-6">
         
         <!-- [기존 탭 1] 핵심 비율 다각화 분석 -->
         <section id="section-tab1" class="space-y-6">
@@ -403,6 +421,7 @@
         </section>
 
     </main>
+    </div>
 
     <div id="chartModal" class="fixed inset-0 bg-black/60 hidden z-50 flex justify-center items-center backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl p-8 w-11/12 max-w-6xl relative">
@@ -3071,7 +3090,7 @@
                         }
 
                         document.getElementById('loading').classList.add('hidden');
-                        document.getElementById('mainContent').classList.remove('hidden');
+                        document.getElementById('introScreen').classList.remove('hidden'); // 대문 띄우기
                         initApp();
                     } catch (e) {
                         document.getElementById('loading').innerHTML = `<div class="text-xl font-bold text-red-600 mb-2">데이터 분석 중 오류가 발생했습니다.</div><p class="text-gray-700">${e.message}</p>`;
@@ -3085,12 +3104,8 @@
             renderTable();
             initCharts();
             setupAgendaTabs();
-            
-            // Tab 4: 민원 분석 탭 초기화 (셀렉트박스 및 데이터 렌더링)
             populateComplaintSelect();
             renderComplaints('충장동');
-            
-            switchMainCategory('village');
             
             const initialDong = document.querySelector('input[value="충장동"]');
             if(initialDong) { 
@@ -3108,19 +3123,51 @@
             document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('chartModal').classList.add('hidden'); });
         }
 
-        function setupAgendaTabs() {
-            document.querySelectorAll('.agenda-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.agenda-tab').forEach(t => {
-                        t.classList.remove('active', 'text-indigo-600', 'bg-indigo-50', 'border-indigo-200', 'shadow-sm');
-                        t.classList.add('text-gray-500', 'border-transparent');
-                    });
-                    this.classList.remove('text-gray-500', 'border-transparent');
-                    this.classList.add('active', 'text-indigo-600', 'bg-indigo-50', 'border-indigo-200', 'shadow-sm');
-                    currentAgendaTab = this.getAttribute('data-tab');
-                    updateAgendaReport(document.getElementById('reportSelect').value);
+        // [핵심] 대문에서 카드 클릭 시 안쪽 대시보드로 넘어가는 함수
+        function enterDashboard(type) {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+
+            if(type === 'village') {
+                document.getElementById('dashboardTitle').innerHTML = '📊 동구 마을데이터 분석';
+                // 마을 데이터용 1,2,3 탭은 켜고 4번 탭은 끄기
+                document.getElementById('btn-tab1').style.display = 'flex';
+                document.getElementById('btn-tab2').style.display = 'flex';
+                document.getElementById('btn-tab3').style.display = 'flex';
+                document.getElementById('btn-tab4').style.display = 'none';
+                switchMainTab('tab1'); // 1번 탭으로 자동 시작
+            } else if(type === 'complaint') {
+                document.getElementById('dashboardTitle').innerHTML = '📊 동구 민원 데이터 분석';
+                // 민원 데이터용 1,2,3 탭은 끄고 4번 탭만 켜기
+                document.getElementById('btn-tab1').style.display = 'none';
+                document.getElementById('btn-tab2').style.display = 'none';
+                document.getElementById('btn-tab3').style.display = 'none';
+                document.getElementById('btn-tab4').style.display = 'flex';
+                switchMainTab('tab4'); // 4번 탭으로 자동 시작
+            }
+            window.dispatchEvent(new Event('resize')); // 차트 크기 오류 방지
+        }
+
+        // 대시보드 헤더의 집(홈) 아이콘 클릭 시 대문으로 복귀
+        function goHome() {
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('introScreen').classList.remove('hidden');
+        }
+
+        // 대시보드 내부 탭 전환
+        function switchMainTab(tabId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('section-' + tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + tabId).classList.add('active');
+            
+            if(tabId === 'tab1') {
+                Object.keys(chartInstances).forEach(themeKey => {
+                    if(chartInstances[themeKey].bar) chartInstances[themeKey].bar.resize();
+                    if(chartInstances[themeKey].radar) chartInstances[themeKey].radar.resize();
                 });
-            });
+            }
         }
 
         function updateAgendaReport(dong) {
