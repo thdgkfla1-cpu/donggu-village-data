@@ -10,7 +10,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background-color: #f1f5f9; }
+        /* 배경 이미지 적용 및 기본 스타일 */
+        body { 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
+            background-color: #f1f5f9;
+            /* 💡 나중에 미리캔버스에서 만든 배경 이미지가 생기면 아래 주석(/* */)을 풀고 이미지 파일명을 적어주세요. */
+            /* background-image: url('my-background.png'); */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
         .break-keep { word-break: keep-all; overflow-wrap: break-word; }
         
         .table-container { max-height: 700px; overflow-y: auto; overflow-x: auto; position: relative; }
@@ -23,6 +33,14 @@
         .row-average { border-top: 2px solid #10b981; background-color: #ecfdf5 !important; }
         .date-badge { display: block; font-size: 0.65rem; color: #94a3b8; font-weight: bold; margin-top: 4px; }
         
+        /* [신규] 상단 메인 카테고리 (큰 탭) 버튼 스타일 */
+        .main-category-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 1rem 1rem 0 0;
+            cursor: pointer;
+        }
+        
+        /* 서브 탭 스타일 */
         .tab-container { background: #f8fafc; padding: 6px; border-radius: 999px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
         .main-tab { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 999px; color: #64748b; font-weight: 800; display: flex; align-items: center; justify-content: center; }
         .main-tab:hover { color: #0f172a; background-color: #f1f5f9; }
@@ -32,8 +50,9 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
+        
 </head>
-<body class="text-gray-800 relative">
+<body class="text-gray-800 relative">ㅇ
 
     <!-- 기존 Loading 애니메이션 (요구사항 완벽 반영) -->
     <div id="loading" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center text-center p-6">
