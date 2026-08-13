@@ -324,23 +324,20 @@
         </section>
         <!-- Tab 4: 민원 분석 및 AI 해결 제안 -->
         <section id="section-tab4" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-6 border-b pb-3"><i class="fa-solid fa-chart-line text-indigo-500"></i> 전체 민원 요약 대시보드</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 flex flex-col items-center justify-center shadow-inner">
-                        <div class="text-gray-500 font-bold mb-2 text-sm flex items-center gap-1"><i class="fa-solid fa-users"></i> 총 민원 건수</div>
-                        <p class="text-4xl font-black text-indigo-600">141<span class="text-lg text-indigo-400 ml-1">건</span></p>
+                        <div class="text-gray-500 font-bold mb-2 text-sm flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-users"></i> 총 민원 건수</div>
+                        <p class="text-4xl font-black text-indigo-600 whitespace-nowrap">141<span class="text-lg text-indigo-400 ml-1">건</span></p>
                     </div>
                     <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex flex-col items-center justify-center shadow-inner">
-                        <div class="text-emerald-700 font-bold mb-2 text-sm flex items-center gap-1"><i class="fa-solid fa-check-circle"></i> 해결 완료</div>
-                        <p class="text-4xl font-black text-emerald-600">25<span class="text-lg text-emerald-400 ml-1">건</span></p>
+                        <div class="text-emerald-700 font-bold mb-2 text-sm flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-check-circle"></i> 해결 완료</div>
+                        <p class="text-4xl font-black text-emerald-600 whitespace-nowrap">25<span class="text-lg text-emerald-400 ml-1">건</span></p>
                     </div>
                     <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100 flex flex-col items-center justify-center shadow-inner">
-                        <div class="text-rose-700 font-bold mb-2 text-sm flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> 미해결 / 진행 중</div>
-                        <p class="text-4xl font-black text-rose-600">116<span class="text-lg text-rose-400 ml-1">건</span></p>
+                        <div class="text-rose-700 font-bold mb-2 text-sm flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-circle-exclamation"></i> 미해결 / 진행 중</div>
+                        <p class="text-4xl font-black text-rose-600 whitespace-nowrap">116<span class="text-lg text-rose-400 ml-1">건</span></p>
                     </div>
                 </div>
-            </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
@@ -2036,56 +2033,64 @@
             data.unresolved.forEach((item, idx) => {
                 accordionHtml += `
                 <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm transition-shadow hover:shadow-md">
-                    <button class="w-full text-left px-5 py-4 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center focus:outline-none" onclick="toggleAccordion(this)">
-                        <div class="flex items-center gap-3 pr-4">
-                            <span class="bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-md text-xs font-black whitespace-nowrap shadow-sm">${item.category}</span>
-                            <span class="font-bold text-gray-800 text-[15px] break-keep">${item.title}</span>
+                    <!-- 제목 부분: 모바일에서는 위아래로 분리(flex-col), PC에서는 양옆으로(md:flex-row) -->
+                    <button class="w-full text-left px-5 py-4 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-start md:items-center focus:outline-none" onclick="toggleAccordion(this)">
+                        <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 pr-4">
+                            <span class="bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-md text-xs font-black whitespace-nowrap shadow-sm w-max">${item.category}</span>
+                            <span class="font-bold text-gray-800 text-[15px] leading-snug break-keep">${item.title}</span>
                         </div>
-                        <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                        <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 mt-1 md:mt-0 flex-shrink-0"></i>
                     </button>
-                    <div class="accordion-content hidden px-5 py-5 border-t border-gray-100 space-y-4 text-[13.5px]">
+                    <div class="accordion-content hidden px-5 py-5 border-t border-gray-100 space-y-5 text-sm md:text-[14.5px]">
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/80 p-4 rounded-lg border border-gray-100">
                             <div>
-                                <strong class="text-indigo-900 block mb-1"><i class="fa-solid fa-user-pen mr-1"></i> 제기자</strong>
+                                <strong class="text-indigo-900 block mb-1.5"><i class="fa-solid fa-user-pen mr-1"></i> 제기자</strong>
                                 <p class="text-gray-700 font-medium break-keep">${item.proposer}</p>
                             </div>
                             <div>
-                                <strong class="text-emerald-900 block mb-1"><i class="fa-solid fa-location-dot mr-1"></i> 대상지</strong>
+                                <strong class="text-emerald-900 block mb-1.5"><i class="fa-solid fa-location-dot mr-1"></i> 대상지</strong>
                                 <p class="text-gray-700 font-medium break-keep">${item.target}</p>
                             </div>
                         </div>
                         
-                        <div>
-                            <strong class="text-rose-800 block mb-1.5"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 현황 및 문제점</strong>
-                            <p class="text-gray-700 leading-relaxed font-medium break-keep">${item.status}</p>
+                        <!-- 글이 길어지는 본문은 replace를 이용해 <br> 태그마다 여백을 줍니다 -->
+                        <div class="bg-white">
+                            <strong class="text-rose-800 block mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 현황 및 문제점</strong>
+                            <p class="text-gray-700 leading-relaxed font-medium break-keep">
+                                ${item.status.replace(/<br>/g, '<br><span class="block h-2"></span>')}
+                            </p>
                         </div>
                         
-                        <div>
-                            <strong class="text-blue-800 block mb-1.5"><i class="fa-solid fa-bullhorn mr-1"></i> 건의 및 요구사항</strong>
-                            <p class="text-gray-700 leading-relaxed font-medium break-keep">${item.request}</p>
+                        <div class="bg-white">
+                            <strong class="text-blue-800 block mb-2"><i class="fa-solid fa-bullhorn mr-1"></i> 건의 및 요구사항</strong>
+                            <p class="text-gray-700 leading-relaxed font-medium break-keep">
+                                ${item.request.replace(/<br>/g, '<br><span class="block h-2"></span>')}
+                            </p>
                         </div>
                         
-                        <div class="bg-gray-50 p-3.5 rounded-lg border border-gray-200 shadow-inner">
-                            <strong class="text-gray-800 block mb-1.5"><i class="fa-solid fa-clock-rotate-left mr-1"></i> 진행 흐름 및 행정 답변 (시계열)</strong>
-                            <p class="text-gray-600 leading-relaxed text-[13px] break-keep">${item.flow}</p>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-inner">
+                            <strong class="text-gray-800 block mb-2"><i class="fa-solid fa-clock-rotate-left mr-1"></i> 진행 흐름 및 행정 답변 (시계열)</strong>
+                            <p class="text-gray-600 leading-relaxed text-[13.5px] break-keep">
+                                ${item.flow.replace(/<br>/g, '<br><span class="block h-2"></span>')}
+                            </p>
                         </div>
                         
-                        <div class="mt-5 pt-5 border-t border-gray-200 space-y-3">
-                            <strong class="text-purple-800 block mb-3 text-[14.5px] font-black"><i class="fa-solid fa-robot mr-1"></i> AI 실무 해결 제안</strong>
+                        <div class="mt-6 pt-5 border-t border-gray-200 space-y-4">
+                            <strong class="text-purple-800 block mb-1 text-[15px] font-black"><i class="fa-solid fa-robot mr-1"></i> AI 실무 해결 제안</strong>
                             
-                            <div class="bg-emerald-50 border border-emerald-100 p-3.5 rounded-lg shadow-sm">
-                                <span class="inline-block bg-emerald-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-1.5 shadow-sm">단기/임시 조치</span>
+                            <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-lg shadow-sm">
+                                <span class="inline-block bg-emerald-500 text-white text-[11px] font-bold px-2 py-0.5 rounded mb-2 shadow-sm">단기/임시 조치</span>
                                 <p class="text-emerald-900 leading-relaxed font-medium break-keep">${item.ai_short}</p>
                             </div>
                             
-                            <div class="bg-blue-50 border border-blue-100 p-3.5 rounded-lg shadow-sm">
-                                <span class="inline-block bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-1.5 shadow-sm">중장기/예산 확보</span>
+                            <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg shadow-sm">
+                                <span class="inline-block bg-blue-500 text-white text-[11px] font-bold px-2 py-0.5 rounded mb-2 shadow-sm">중장기/예산 확보</span>
                                 <p class="text-blue-900 leading-relaxed font-medium break-keep">${item.ai_mid}</p>
                             </div>
                             
-                            <div class="bg-amber-50 border border-amber-100 p-3.5 rounded-lg shadow-sm">
-                                <span class="inline-block bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-1.5 shadow-sm">갈등 중재안</span>
+                            <div class="bg-amber-50 border border-amber-100 p-4 rounded-lg shadow-sm">
+                                <span class="inline-block bg-amber-500 text-white text-[11px] font-bold px-2 py-0.5 rounded mb-2 shadow-sm">갈등 중재안</span>
                                 <p class="text-amber-900 leading-relaxed font-medium break-keep">${item.ai_conflict}</p>
                             </div>
                         </div>
@@ -2098,11 +2103,10 @@
             // 2. 무편집본 리스트 렌더링
             let rawHtml = '';
             data.rawList.forEach(raw => {
-                // 특정 키워드(최종상태, 제기자 등) 가독성 강화를 위한 정규식 치환
                 let highlightedRaw = raw
-                    .replace(/\(최종상태: ([^\)]+)\)/g, '<span class="text-rose-600 font-bold px-1 bg-rose-50 rounded">(최종상태: $1)</span>')
-                    .replace(/- 제기자: (.+)$/g, '<br><span class="text-indigo-600 font-bold inline-block mt-1">⮑ 제기자:</span> <span class="text-gray-700 font-medium">$1</span>');
-                rawHtml += `<li class="pb-2 border-b border-gray-100 break-keep">${highlightedRaw}</li>`;
+                    .replace(/\(최종상태: ([^\)]+)\)/g, '<span class="text-rose-600 font-bold px-1.5 py-0.5 bg-rose-50 rounded ml-1 text-[11px] align-middle border border-rose-100">(최종상태: $1)</span>')
+                    .replace(/- 제기자: (.+)$/g, '<span class="block mt-2.5 text-indigo-700 font-bold text-[13px] bg-indigo-50/70 p-2.5 rounded-lg border border-indigo-100/50"><i class="fa-solid fa-user-pen mr-1"></i>제기자: <span class="text-gray-700">$1</span></span>');
+                rawHtml += `<li class="py-3.5 border-b border-gray-100 break-keep leading-relaxed text-sm">${highlightedRaw}</li>`;
             });
             rawContainer.innerHTML = rawHtml;
         }
