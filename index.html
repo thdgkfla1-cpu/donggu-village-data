@@ -2992,6 +2992,12 @@
         };
 
         window.onload = function() {
+            // 1. 무조건 대문(인트로) 화면부터 즉시 띄우고 로딩 숨김 (속도 문제 해결)
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('introScreen').classList.remove('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+
+            // 2. 백그라운드에서 데이터 읽어오기
             Papa.parse("data.csv", {
                 download: true,
                 header: false,
@@ -2999,7 +3005,6 @@
                 complete: function(results) {
                     try {
                         const rows = results.data;
-                        
                         let totalCount = 0;
                         let sumPop = 0, sumMale = 0, sumFemale = 0, sumYouthPop = 0, sumEldPop = 0;
                         let sumVal6 = 0, sumVal7 = 0;
@@ -3088,13 +3093,13 @@
                                 parkArea: Math.round(sumParkArea / totalCount), acc: Math.round(sumAcc / totalCount)
                             };
                         }
-
-                        document.getElementById('loading').classList.add('hidden');
-                        document.getElementById('introScreen').classList.remove('hidden'); // 대문 띄우기
                         initApp();
                     } catch (e) {
-                        document.getElementById('loading').innerHTML = `<div class="text-xl font-bold text-red-600 mb-2">데이터 분석 중 오류가 발생했습니다.</div><p class="text-gray-700">${e.message}</p>`;
+                        initApp();
                     }
+                },
+                error: function() {
+                    initApp();
                 }
             });
         };
@@ -3121,35 +3126,53 @@
             }
             
             document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('chartModal').classList.add('hidden'); });
+
+            // 3. 브라우저 뒤로가기를 위한 초기 주소 기록 저장
+            history.replaceState({ screen: 'intro' }, '', window.location.pathname);
         }
 
-        // [핵심] 대문에서 카드 클릭 시 안쪽 대시보드로 넘어가는 함수
+        // [핵심] 브라우저 '<- 뒤로가기' 버튼 감지 및 화면 이동
+        window.onpopstate = function(event) {
+            if (event.state && event.state.screen === 'dashboard') {
+                enterDashboardUI(event.state.type);
+            } else {
+                goHomeUI();
+            }
+        };
+
+        // 대문에서 카드 클릭 시 (주소 기록 남기고 안쪽으로 이동)
         function enterDashboard(type) {
+            history.pushState({ screen: 'dashboard', type: type }, '', '?menu=' + type);
+            enterDashboardUI(type);
+        }
+
+        // 실제 화면 전환 UI (민원데이터 에러 해결 완료)
+        function enterDashboardUI(type) {
             document.getElementById('introScreen').classList.add('hidden');
             document.getElementById('dashboardScreen').classList.remove('hidden');
 
             if(type === 'village') {
                 document.getElementById('dashboardTitle').innerHTML = '📊 동구 마을데이터 분석';
-                // 마을 데이터용 1,2,3 탭은 켜고 4번 탭은 끄기
-                document.getElementById('btn-tab1').style.display = 'flex';
-                document.getElementById('btn-tab2').style.display = 'flex';
-                document.getElementById('btn-tab3').style.display = 'flex';
-                document.getElementById('btn-tab4').style.display = 'none';
-                switchMainTab('tab1'); // 1번 탭으로 자동 시작
+                document.getElementById('sub-tabs-village').classList.remove('hidden'); // 서브 탭 켜기
+                switchMainTab('tab1');
             } else if(type === 'complaint') {
                 document.getElementById('dashboardTitle').innerHTML = '📊 동구 민원 데이터 분석';
-                // 민원 데이터용 1,2,3 탭은 끄고 4번 탭만 켜기
-                document.getElementById('btn-tab1').style.display = 'none';
-                document.getElementById('btn-tab2').style.display = 'none';
-                document.getElementById('btn-tab3').style.display = 'none';
-                document.getElementById('btn-tab4').style.display = 'flex';
-                switchMainTab('tab4'); // 4번 탭으로 자동 시작
+                document.getElementById('sub-tabs-village').classList.add('hidden'); // 서브 탭 끄기
+                
+                // 에러 없이 4번(민원) 섹션만 강제로 켜기
+                document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+                document.getElementById('section-tab4').classList.remove('hidden');
             }
-            window.dispatchEvent(new Event('resize')); // 차트 크기 오류 방지
+            window.dispatchEvent(new Event('resize')); 
         }
 
-        // 대시보드 헤더의 집(홈) 아이콘 클릭 시 대문으로 복귀
+        // 홈(집 모양) 버튼 클릭 시
         function goHome() {
+            history.pushState({ screen: 'intro' }, '', window.location.pathname);
+            goHomeUI();
+        }
+
+        function goHomeUI() {
             document.getElementById('dashboardScreen').classList.add('hidden');
             document.getElementById('introScreen').classList.remove('hidden');
         }
@@ -3160,7 +3183,12 @@
             document.getElementById('section-' + tabId).classList.remove('hidden');
             
             document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('btn-' + tabId).classList.add('active');
+            
+            // 버튼이 존재할 때만 색상을 바꾸도록 수정 (에러 방지용)
+            const targetBtn = document.getElementById('btn-' + tabId);
+            if(targetBtn) {
+                targetBtn.classList.add('active');
+            }
             
             if(tabId === 'tab1') {
                 Object.keys(chartInstances).forEach(themeKey => {
@@ -3168,303 +3196,6 @@
                     if(chartInstances[themeKey].radar) chartInstances[themeKey].radar.resize();
                 });
             }
-        }
-
-        function updateAgendaReport(dong) {
-            const textEl = document.getElementById('agendaText');
-            if (currentAgendaTab === 'raw') {
-                textEl.innerHTML = rawAgendas[dong] || '데이터가 없습니다.';
-            } else {
-                textEl.innerHTML = (agendaReports[dong] && agendaReports[dong][currentAgendaTab]) ? agendaReports[dong][currentAgendaTab] : (agendaReports['동구 평균'][currentAgendaTab] || '데이터가 없습니다.');
-            }
-        }
-
-        function renderUIElements() {
-            const cbContainer = document.getElementById('checkboxContainer');
-            const selContainer = document.getElementById('reportSelect');
-            DONG_ORDER.forEach(dong => {
-                if(dongData[dong]) {
-                    cbContainer.innerHTML += `
-                        <label class="flex items-center space-x-2 cursor-pointer hover:bg-white px-3 py-1.5 rounded-lg border border-transparent hover:border-emerald-200 transition shadow-sm bg-white break-keep">
-                            <input type="checkbox" value="${dong}" class="dong-checkbox w-4 h-4 text-emerald-600 rounded">
-                            <span class="text-gray-700 font-bold text-sm">${dong}</span>
-                        </label>
-                    `;
-                    selContainer.options.add(new Option(dong, dong));
-                }
-            });
-
-            document.querySelectorAll('.dong-checkbox').forEach(cb => {
-                cb.addEventListener('change', (e) => {
-                    if(e.target.checked) {
-                        if(!checkedOrder.includes(e.target.value)) checkedOrder.push(e.target.value);
-                    } else {
-                        checkedOrder = checkedOrder.filter(val => val !== e.target.value);
-                    }
-                    updateChartsAndTable();
-                });
-            });
-
-            selContainer.addEventListener('change', () => updateReport(selContainer.value));
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            let html = '';
-            DONG_ORDER.forEach(dong => { if(dongData[dong]) html += buildRow(dong, dongData[dong], false); });
-            if(dongData['동구 평균']) html += buildRow('동구 평균', dongData['동구 평균'], true);
-            tbody.innerHTML = html;
-        }
-
-        function buildRow(name, d, isAvg) {
-            const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
-            const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
-            const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
-            const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
-            const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
-            const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
-            const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
-            const nameClass = isAvg ? 'text-base font-black text-emerald-900 break-keep' : 'text-sm font-bold text-gray-800 break-keep';
-
-            return `
-                <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200">
-                    <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.pop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.male).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.female).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.youthPop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.eldPop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.onePop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${d.ppHouse}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${d.singleHousePct}%</td>
-                    <td class="px-4 py-3 ${houseBase}">${d.multiHousePct}%</td>
-                    <td class="px-4 py-3 ${houseBase}">${d.aptPct}%</td>
-                    <td class="px-4 py-3 ${houseBase}">${d.oldPct}%</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${Number(d.bizCount).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${bizBase}">${Number(d.bizWorker).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.socEco}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.cult}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.kin}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.wel}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${welBase}">${Number(d.pen).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${Number(d.dis).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${Number(d.forgn).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${Number(d.beds).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${d.hosp}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${d.greenPct}%</td>
-                    <td class="px-4 py-3 ${envBase}">${d.parkArea}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${d.acc}</td>
-                </tr>
-            `;
-        }
-
-        function initCharts() {
-            ['theme1', 'theme2', 'theme3', 'theme4'].forEach(themeKey => {
-                chartInstances[themeKey].bar = new Chart(document.getElementById(`barChart_${themeKey}`).getContext('2d'), { 
-                    type: 'bar', 
-                    data: { labels: [], datasets: [] }, 
-                    options: { responsive: true, maintainAspectRatio: false } 
-                });
-                
-                chartInstances[themeKey].radar = new Chart(document.getElementById(`radarChart_${themeKey}`).getContext('2d'), { 
-                    type: 'radar', 
-                    data: { labels: [], datasets: [] }, 
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        scales: { 
-                            r: { 
-                                min: 0, max: 100, 
-                                ticks: { display: false, stepSize: 20 },
-                                grid: { color: 'rgba(71, 85, 105, 0.15)', lineWidth: 1 },
-                                angleLines: { color: 'rgba(71, 85, 105, 0.20)', lineWidth: 1 },
-                                pointLabels: { font: { size: 10, weight: '700' }, color: '#334155' }
-                            } 
-                        },
-                        plugins: {
-                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 10, font: { weight: 'bold', size: 10 } } },
-                            tooltip: {
-                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                                padding: 10,
-                                callbacks: {
-                                    label: function(context) {
-                                        const rawVal = context.dataset.rawData[context.dataIndex];
-                                        return context.dataset.label + ': ' + rawVal + (context.chart.data.labels[context.dataIndex].includes('비율') || context.chart.data.labels[context.dataIndex].includes('%') ? '%' : '');
-                                    }
-                                }
-                            },
-                            datalabels: { display: false }
-                        },
-                        layout: { padding: 10 }
-                    } 
-                });
-            });
-        }
-
-        function updateReport(dong) {
-            const data = dongData[dong];
-            if(!data) return;
-            document.getElementById('reportType').innerText = data.type;
-            document.getElementById('strengthText').innerText = data.strength;
-            document.getElementById('weaknessText').innerText = data.weakness;
-            
-            const themesFullContainer = document.getElementById('themesFullContainer');
-            
-            const themeMeta = [
-                { key: 'strategy', label: '주민자치 및 공동체 활성화 전략', icon: 'fa-users-gear', color: 'border-l-emerald-500 bg-emerald-50/40 text-emerald-900' },
-                { key: 'festival', label: '맞춤형 마을 축제 및 문화 기획', icon: 'fa-wand-magic-sparkles', color: 'border-l-blue-500 bg-blue-50/40 text-blue-900' },
-                { key: 'welfare', label: '타겟 복지 및 돌봄 수요 체감도', icon: 'fa-handshake-angle', color: 'border-l-purple-500 bg-purple-50/40 text-purple-900' },
-                { key: 'media', label: '미디어 홍보 및 소통 채널 제안', icon: 'fa-photo-film', color: 'border-l-indigo-500 bg-indigo-50/40 text-indigo-900' },
-                { key: 'safety', label: '공간 정비 및 생활 안전 체계', icon: 'fa-shield-halved', color: 'border-l-amber-500 bg-amber-50/40 text-amber-900' }
-            ];
-
-            let htmlStr = '';
-            themeMeta.forEach(theme => {
-                htmlStr += `
-                    <div class="p-4 rounded-xl border border-gray-200/80 shadow-sm relative overflow-hidden flex flex-col gap-1.5 ${theme.color}" style="border-left-width: 4px;">
-                        <strong class="block text-[13.5px] font-black break-keep">
-                            <i class="fa-solid ${theme.icon} mr-1"></i> 심층 테마 : ${theme.label}
-                        </strong>
-                        <p class="text-gray-800 text-[12.5px] leading-relaxed font-medium tracking-tight pl-5 break-keep">
-                            ${data[theme.key] || '데이터 분석 수립 중'}
-                        </p>
-                    </div>
-                `;
-            });
-            
-            themesFullContainer.innerHTML = htmlStr;
-            updateAgendaReport(dong);
-        }
-
-        function updateChartsAndTable() {
-            const themesList = ['theme1', 'theme2', 'theme3', 'theme4'];
-            
-            const footnotes = {
-                'theme1': '※ 산출내역: [유소년/고령/1인가구/외국인 비율] = (해당 인구 수 ÷ 총 인구 수) × 100',
-                'theme2': '※ 산출내역: [아파트/단독/노후주택 비율] = (해당 주택 수 ÷ 전체 주택 수) × 100, [녹지비율] = (녹지 면적 ÷ 행정동 면적) × 100',
-                'theme3': '※ 산출내역: [고령/기초연금/장애인 비율] = (해당 인구 수 ÷ 총 인구 수) × 100',
-                'theme4': '※ 산출내역: [인구대비 종사자 비율] = (종사자 수 ÷ 총 인구 수) × 100, [세대당 인구] = 총 인구 수 ÷ 세대 수 (레이더 스케일 연동 보정치 반영)'
-            };
-
-            themesList.forEach(themeKey => {
-                const barDs = [], radarDs = [];
-                const currentCat = barChartCategories[themeKey];
-                
-                chartInstances[themeKey].bar.data.labels = currentCat.labels;
-                chartInstances[themeKey].radar.data.labels = currentCat.labels;
-
-                checkedOrder.forEach((dong, i) => {
-                    const d = dongData[dong];
-                    if(!d) return;
-                    const col = colors[i % colors.length];
-                    const rawData = currentCat.getData(d);
-                    const radarData = rawData.map(val => Math.min(val, 100));
-
-                    barDs.push({ label: dong, data: rawData, backgroundColor: col, borderRadius: 5 });
-                    radarDs.push({ 
-                        label: dong, 
-                        data: radarData, 
-                        rawData: rawData, 
-                        borderColor: col, 
-                        backgroundColor: col + '12',
-                        pointBackgroundColor: '#fff', 
-                        pointBorderColor: col, 
-                        pointBorderWidth: 2, 
-                        pointRadius: 3.5, 
-                        borderWidth: 2.5, 
-                        tension: 0.2 
-                    });
-                });
-                
-                const avg = dongData['동구 평균'];
-                if(avg) {
-                    const rawAvg = currentCat.getData(avg);
-                    const radarAvg = rawAvg.map(val => Math.min(val, 100));
-
-                    barDs.push({ label: '동구 평균', data: rawAvg, backgroundColor: '#10b98166', borderRadius: 5 });
-                    radarDs.push({ 
-                        label: '동구 평균', 
-                        data: radarAvg, 
-                        rawData: rawAvg, 
-                        borderColor: '#10b981', 
-                        borderDash: [4, 4], 
-                        backgroundColor: 'rgba(16, 185, 129, 0.03)', 
-                        pointBackgroundColor: '#fff', 
-                        pointBorderColor: '#10b981', 
-                        pointBorderWidth: 1.5, 
-                        pointRadius: 3, 
-                        borderWidth: 1.8, 
-                        tension: 0.2 
-                    });
-                }
-
-                chartInstances[themeKey].bar.data.datasets = barDs; 
-                chartInstances[themeKey].bar.update();
-                
-                chartInstances[themeKey].radar.data.datasets = radarDs; 
-                chartInstances[themeKey].radar.update();
-
-                document.getElementById(`dynamicFootnote_${themeKey}`).innerText = footnotes[themeKey];
-
-                const insightContainer = document.getElementById(`dynamicInsightContainer_${themeKey}`);
-                if (checkedOrder.length === 0) {
-                    insightContainer.innerHTML = '<span class="text-gray-400 text-xs break-keep">비교할 행정동을 선택하시면 해당 지역의 특이사항이 체크한 순서대로 요약되어 나타납니다.</span>';
-                } else {
-                    let htmlBoxes = '';
-                    checkedOrder.forEach((dong, idx) => {
-                        const col = colors[idx % colors.length];
-                        const insightText = regionInsights[themeKey][dong] || "해당 테마의 특이사항을 분석 중입니다.";
-                        
-                        htmlBoxes += `
-                            <div class="p-2.5 rounded-lg border bg-white flex items-start gap-2.5" style="border-left: 3.5px solid ${col}; border-color: #f1f5f9; border-left-color: ${col}; shadow-sm">
-                                <span class="font-black whitespace-nowrap px-1.5 py-0.5 rounded text-white text-[10px]" style="background-color: ${col};">${dong}</span>
-                                <p class="text-gray-700 font-semibold leading-relaxed text-[11px] break-keep">${insightText}</p>
-                            </div>
-                        `;
-                    });
-                    insightContainer.innerHTML = htmlBoxes;
-                }
-            });
-        }
-
-        function openModal(title, dataKey) {
-            const modal = document.getElementById('chartModal');
-            document.getElementById('modalTitle').innerText = ` 행정동별 비교 [ ${title} ]`;
-            modal.classList.remove('hidden');
-            const labels = [...DONG_ORDER, '동구 평균'];
-            const dataVals = labels.map(dong => dongData[dong] ? dongData[dong][dataKey] : 0);
-            if (modalChartInst) modalChartInst.destroy();
-            modalChartInst = new Chart(document.getElementById('modalChart').getContext('2d'), {
-                type: 'bar', 
-                data: { 
-                    labels: labels, 
-                    datasets: [{ 
-                        label: title, 
-                        data: dataVals, 
-                        backgroundColor: labels.map(l => l === '동구 평균' ? '#10b981' : '#3b82f6'), 
-                        borderRadius: 8 
-                    }] 
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { display: false },
-                        navigator: { display: false },
-                        datalabels: {
-                            display: true,
-                            anchor: 'end',
-                            align: 'top',
-                            formatter: function(value) {
-                                return value.toLocaleString() + (title.includes('비율') || title.includes('율') ? '%' : (title.includes('인구') || title.includes('가구') || title.includes('수급') || title.includes('등록') || title.includes('남성') || title.includes('여성') || title.includes('유소년') || title.includes('고령') ? '명' : ''));
-                            },
-                            font: { weight: 'bold', size: 12 },
-                            color: '#1e293b'
-                        }
-                    },
-                    layout: { padding: { top: 35 } }
-                }
-            });
         }
     </script>
 </body>
