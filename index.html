@@ -10,23 +10,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* 배경 이미지 적용 */
+        /* 배경 이미지 적용 및 기본 스타일 */
         body { 
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
             background-color: #f1f5f9;
-            /* 💡 아래 주석을 풀고 이미지 파일명을 적어주세요. */
-            /* background-image: url('image_cd9e55.jpg'); */
+            /* 💡 나중에 미리캔버스에서 만든 배경 이미지가 생기면 아래 주석(/* */)을 풀고 이미지 파일명을 적어주세요. */
+            /* background-image: url('my-background.png'); */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
-        }
-        
-        /* 2단 탭을 위한 대메뉴 버튼 스타일 */
-        .main-category-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 1rem 1rem 0 0;
-            cursor: pointer;
         }
         .break-keep { word-break: keep-all; overflow-wrap: break-word; }
         
@@ -59,61 +52,74 @@
     </style>
         
 </head>
-<body class="text-gray-800 relative">
+<body class="text-gray-800 relative">ㅇ
 
-    <!-- [신규] 1. 메인 대문(인트로) 화면 -->
-    <div id="introScreen" class="min-h-screen flex flex-col justify-center items-center p-6 relative hidden">
-        <!-- 💡 나중에 미리캔버스 배경 이미지 넣을 곳 (CSS에서 body에 적용하면 됩니다) -->
-        <div class="text-center space-y-4 mb-12 relative z-10">
-            <h1 class="text-4xl md:text-5xl font-black text-gray-800 tracking-tight">
-                전남광주통합특별시 동구 마을의제 · 민원 데이터
-            </h1>
-            <p class="text-gray-500 font-bold text-lg">원하시는 데이터 분석 메뉴를 선택해주세요.</p>
-        </div>
+    <!-- 기존 Loading 애니메이션 (요구사항 완벽 반영) -->
+    <div id="loading" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center text-center p-6">
+        <div class="text-2xl font-bold text-emerald-600 mb-4 animate-pulse break-keep">데이터 교정 및 시각화 연동 중입니다...</div>
+    </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10 max-w-4xl w-full">
-            <!-- 1번 카드: 마을데이터 -->
-            <div onclick="enterDashboard('village')" class="cursor-pointer bg-white rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all p-10 text-center border-t-8 border-emerald-500">
-                <i class="fa-solid fa-chart-pie text-6xl text-emerald-500 mb-6"></i>
+    <!-- [신규 추가] 첫 번째 사진과 같은 메인 인트로 화면 -->
+    <div id="introScreen" class="hidden min-h-screen flex flex-col items-center justify-center bg-[#f1f5f9] p-6 relative z-40">
+        <h1 class="text-3xl md:text-5xl font-black text-gray-800 mb-12 text-center break-keep tracking-tight">
+            동구 데이터 포털에 오신 것을 환영합니다!
+        </h1>
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- 1번 버튼: 동구 마을데이터 분석 -->
+            <button onclick="enterDashboard('village')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center w-72 md:w-80 border-t-8 border-emerald-500 group">
+                <div class="bg-emerald-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-map-location-dot text-4xl text-emerald-500"></i>
+                </div>
                 <h2 class="text-2xl font-black text-gray-800 mb-3">동구 마을데이터 분석</h2>
-                <p class="text-gray-500 font-medium">인구, 주거, 경제 지표 및 마을 리포트</p>
-            </div>
+                <p class="text-sm text-gray-500 text-center font-medium leading-relaxed">
+                    핵심 비율 다각화 분석<br>마을 리포트 및 의제<br>세부 지표 일람표
+                </p>
+            </button>
             
-            <!-- 2번 카드: 민원데이터 -->
-            <div onclick="enterDashboard('complaint')" class="cursor-pointer bg-white rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all p-10 text-center border-t-8 border-indigo-500">
-                <i class="fa-solid fa-users-viewfinder text-6xl text-indigo-500 mb-6"></i>
+            <!-- 2번 버튼: 동구 민원 데이터 분석 -->
+            <button onclick="enterDashboard('complaint')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center w-72 md:w-80 border-t-8 border-indigo-500 group">
+                <div class="bg-indigo-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-users-viewfinder text-4xl text-indigo-500"></i>
+                </div>
                 <h2 class="text-2xl font-black text-gray-800 mb-3">동구 민원 데이터 분석</h2>
-                <p class="text-gray-500 font-medium">미해결 민원 분석 및 AI 실무 제안</p>
-            </div>
+                <p class="text-sm text-gray-500 text-center font-medium leading-relaxed">
+                    13개 행정동 민원 분석<br>AI 실무 해결 제안
+                </p>
+            </button>
         </div>
     </div>
 
-    <!-- [신규] 2. 대시보드 화면 (안쪽 화면 래퍼) -->
+    <!-- [신규 추가] 헤더와 메인을 묶어줄 대시보드 컨테이너 (처음엔 숨김) -->
     <div id="dashboardScreen" class="hidden">
-        <header class="bg-white shadow-md sticky top-0 z-40">
-            <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col xl:flex-row justify-between items-center gap-4">
-                
-                <div class="w-full xl:w-auto flex items-center justify-center xl:justify-start gap-4 text-center xl:text-left">
-                    <!-- 대문으로 돌아가기(홈) 버튼 -->
-                    <button onclick="goHome()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 w-11 h-11 rounded-full flex items-center justify-center transition shadow-sm" title="메인으로 돌아가기">
-                        <i class="fa-solid fa-house"></i>
-                    </button>
-                    <!-- 타이틀 -->
-                    <h1 id="dashboardTitle" class="text-2xl font-black text-gray-800 tracking-tight break-keep">
-                        📊 동구 데이터 분석
-                    </h1>
-                </div>
-                
-                <!-- 대시보드 탭 버튼들 -->
-                <div class="tab-container flex gap-1 w-full xl:w-auto overflow-x-auto pb-1">
-                    <button onclick="switchMainTab('tab1')" id="btn-tab1" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
-                    <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
-                    <button onclick="switchMainTab('tab3')" id="btn-tab3" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
-                    <button onclick="switchMainTab('tab4')" id="btn-tab4" class="main-tab px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-users-viewfinder mr-2"></i>민원 분석 및 AI 제안</button>
-                </div>
+
+    <!-- 헤더 (4번째 탭 버튼 추가됨) -->
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col xl:flex-row justify-between items-center gap-4">
+            <div class="w-full xl:w-auto text-center xl:text-left">
+                <h1 class="text-2xl font-black text-gray-800 flex items-center justify-center xl:justify-start gap-2 tracking-tight break-keep">
+                    <span class="text-3xl">📊</span> 전남광주통합특별시 동구 마을 로컬데이터
+                </h1>
+                <p class="text-xs text-gray-500 mt-2 font-medium xl:text-left text-center flex flex-wrap items-center justify-center xl:justify-start gap-1.5 break-keep">
+                    <i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> 
+                    <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-bold">최근 업데이트: 2026.08</span> 
+                    <span>| 13개 행정동 민원 분석(동구 의회 회의록 기반)</span>
+                </p>
             </div>
-        </header>
-        <main id="mainContent" class="max-w-[1600px] mx-auto p-6">
+            
+            <div class="tab-container flex gap-1 w-full xl:w-auto overflow-x-auto pb-1">
+                <!-- [신규] 홈으로 가기 버튼 -->
+                <button onclick="goHome()" class="px-5 py-3 text-sm md:text-base whitespace-nowrap break-keep rounded-full bg-gray-700 text-white font-bold hover:bg-gray-800 transition mr-2 shadow-md flex items-center">
+                    <i class="fa-solid fa-house mr-2"></i> 처음으로
+                </button>
+                
+                <button onclick="switchMainTab('tab1')" id="btn-tab1" class="main-tab active px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
+                <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
+                <button onclick="switchMainTab('tab3')" id="btn-tab3" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
+                <button onclick="switchMainTab('tab4')" id="btn-tab4" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-users-viewfinder mr-2"></i>민원 분석 및 AI 제안</button>
+            </div>
+    </header>
+
+    <main id="mainContent" class="max-w-[1600px] mx-auto p-6 hidden">
         
         <!-- [기존 탭 1] 핵심 비율 다각화 분석 -->
         <section id="section-tab1" class="space-y-6">
@@ -417,7 +423,7 @@
         </section>
 
     </main>
-    </div>
+    </div> <!-- dashboardScreen 닫기 -->    
 
     <div id="chartModal" class="fixed inset-0 bg-black/60 hidden z-50 flex justify-center items-center backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl p-8 w-11/12 max-w-6xl relative">
@@ -2131,28 +2137,7 @@
         Chart.register(ChartDataLabels);
         Chart.defaults.set('plugins.datalabels', { display: false });
 
-       function switchMainCategory(category) {
-            const btnVillage = document.getElementById('btn-cat-village');
-            const btnComplaint = document.getElementById('btn-cat-complaint');
-            const subTabs = document.getElementById('sub-tabs-village');
-
-            btnVillage.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-gray-100 text-gray-500 hover:bg-gray-200";
-            btnComplaint.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-gray-100 text-gray-500 hover:bg-gray-200";
-
-            if (category === 'village') {
-                btnVillage.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-emerald-500 text-white shadow-md";
-                subTabs.classList.remove('hidden'); 
-                switchSubTab('tab1'); 
-            } else {
-                btnComplaint.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-indigo-600 text-white shadow-md";
-                subTabs.classList.add('hidden'); 
-                
-                document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-                document.getElementById('section-tab4').classList.remove('hidden');
-            }
-        }
-
-        function switchSubTab(tabId) {
+        function switchMainTab(tabId) {
             document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('section-' + tabId).classList.remove('hidden');
             
@@ -2988,12 +2973,6 @@
         };
 
         window.onload = function() {
-            // 1. 무조건 대문(인트로) 화면부터 즉시 띄우고 로딩 숨김 (속도 문제 해결)
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('introScreen').classList.remove('hidden');
-            document.getElementById('dashboardScreen').classList.add('hidden');
-
-            // 2. 백그라운드에서 데이터 읽어오기
             Papa.parse("data.csv", {
                 download: true,
                 header: false,
@@ -3001,6 +2980,7 @@
                 complete: function(results) {
                     try {
                         const rows = results.data;
+                        
                         let totalCount = 0;
                         let sumPop = 0, sumMale = 0, sumFemale = 0, sumYouthPop = 0, sumEldPop = 0;
                         let sumVal6 = 0, sumVal7 = 0;
@@ -3089,13 +3069,13 @@
                                 parkArea: Math.round(sumParkArea / totalCount), acc: Math.round(sumAcc / totalCount)
                             };
                         }
+
+                        document.getElementById('loading').classList.add('hidden');
+                        document.getElementById('introScreen').classList.remove('hidden'); 
                         initApp();
                     } catch (e) {
-                        initApp();
+                        document.getElementById('loading').innerHTML = `<div class="text-xl font-bold text-red-600 mb-2">데이터 분석 중 오류가 발생했습니다.</div><p class="text-gray-700">${e.message}</p>`;
                     }
-                },
-                error: function() {
-                    initApp();
                 }
             });
         };
@@ -3105,6 +3085,8 @@
             renderTable();
             initCharts();
             setupAgendaTabs();
+            
+            // Tab 4: 민원 분석 탭 초기화 (셀렉트박스 및 데이터 렌더링)
             populateComplaintSelect();
             renderComplaints('충장동');
             
@@ -3122,136 +3104,343 @@
             }
             
             document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('chartModal').classList.add('hidden'); });
-
-            // 3. 브라우저 뒤로가기를 위한 초기 주소 기록 저장
-            history.replaceState({ screen: 'intro' }, '', window.location.pathname);
         }
 
-        // [핵심] 브라우저 '<- 뒤로가기' 버튼 감지 및 화면 이동
-        window.onpopstate = function(event) {
-            if (event.state && event.state.screen === 'dashboard') {
-                enterDashboardUI(event.state.type);
-            } else {
-                goHomeUI();
-            }
-        };
-
-        // 대문에서 카드 클릭 시 (주소 기록 남기고 안쪽으로 이동)
-        function enterDashboard(type) {
-            history.pushState({ screen: 'dashboard', type: type }, '', '?menu=' + type);
-            enterDashboardUI(type);
-        }
-
-        // 실제 화면 전환 UI (민원데이터 에러 해결 완료)
-        function enterDashboardUI(type) {
-            document.getElementById('introScreen').classList.add('hidden');
-            document.getElementById('dashboardScreen').classList.remove('hidden');
-
-            if(type === 'village') {
-                document.getElementById('dashboardTitle').innerHTML = '📊 동구 마을데이터 분석';
-                document.getElementById('sub-tabs-village').classList.remove('hidden'); // 서브 탭 켜기
-                switchMainTab('tab1');
-            } else if(type === 'complaint') {
-                document.getElementById('dashboardTitle').innerHTML = '📊 동구 민원 데이터 분석';
-                document.getElementById('sub-tabs-village').classList.add('hidden'); // 서브 탭 끄기
-                
-                // 에러 없이 4번(민원) 섹션만 강제로 켜기
-                document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-                document.getElementById('section-tab4').classList.remove('hidden');
-            }
-            window.dispatchEvent(new Event('resize')); 
-        }
-
-        // 홈(집 모양) 버튼 클릭 시
-        function goHome() {
-            history.pushState({ screen: 'intro' }, '', window.location.pathname);
-            goHomeUI();
-        }
-
-        function goHomeUI() {
-            document.getElementById('dashboardScreen').classList.add('hidden');
-            document.getElementById('introScreen').classList.remove('hidden');
-        }
-
-        // 대시보드 내부 탭 전환
-        function switchMainTab(tabId) {
-            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById('section-' + tabId).classList.remove('hidden');
-            
-            document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
-            
-            // 버튼이 존재할 때만 색상을 바꾸도록 수정 (에러 방지용)
-            const targetBtn = document.getElementById('btn-' + tabId);
-            if(targetBtn) {
-                targetBtn.classList.add('active');
-            }
-            
-            if(tabId === 'tab1') {
-                Object.keys(chartInstances).forEach(themeKey => {
-                    if(chartInstances[themeKey].bar) chartInstances[themeKey].bar.resize();
-                    if(chartInstances[themeKey].radar) chartInstances[themeKey].radar.resize();
+        function setupAgendaTabs() {
+            document.querySelectorAll('.agenda-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.agenda-tab').forEach(t => {
+                        t.classList.remove('active', 'text-indigo-600', 'bg-indigo-50', 'border-indigo-200', 'shadow-sm');
+                        t.classList.add('text-gray-500', 'border-transparent');
+                    });
+                    this.classList.remove('text-gray-500', 'border-transparent');
+                    this.classList.add('active', 'text-indigo-600', 'bg-indigo-50', 'border-indigo-200', 'shadow-sm');
+                    currentAgendaTab = this.getAttribute('data-tab');
+                    updateAgendaReport(document.getElementById('reportSelect').value);
                 });
-            }
+            });
         }
-        // --------------------------------------------------------
-        // [신규 추가] 대문 <-> 대시보드 화면 전환 및 뒤로가기 로직
-        // --------------------------------------------------------
 
-        // 브라우저 뒤로가기를 위한 초기 주소 기록
-        window.addEventListener('load', function() {
-            history.replaceState({ screen: 'intro' }, '', window.location.pathname);
-        });
-
-        // 브라우저 '<- 뒤로가기' 버튼 감지
-        window.onpopstate = function(event) {
-            if (event.state && event.state.screen === 'dashboard') {
-                enterDashboardUI(event.state.type);
+        function updateAgendaReport(dong) {
+            const textEl = document.getElementById('agendaText');
+            if (currentAgendaTab === 'raw') {
+                textEl.innerHTML = rawAgendas[dong] || '데이터가 없습니다.';
             } else {
-                goHomeUI();
+                textEl.innerHTML = (agendaReports[dong] && agendaReports[dong][currentAgendaTab]) ? agendaReports[dong][currentAgendaTab] : (agendaReports['동구 평균'][currentAgendaTab] || '데이터가 없습니다.');
             }
-        };
-
-        // 대문에서 카드 클릭 시 (주소 기록 남기고 안쪽으로 이동)
-        function enterDashboard(type) {
-            history.pushState({ screen: 'dashboard', type: type }, '', '?menu=' + type);
-            enterDashboardUI(type);
         }
 
-        // 실제 화면 전환 및 에러 없는 탭 렌더링 UI
-        function enterDashboardUI(type) {
+        function renderUIElements() {
+            const cbContainer = document.getElementById('checkboxContainer');
+            const selContainer = document.getElementById('reportSelect');
+            DONG_ORDER.forEach(dong => {
+                if(dongData[dong]) {
+                    cbContainer.innerHTML += `
+                        <label class="flex items-center space-x-2 cursor-pointer hover:bg-white px-3 py-1.5 rounded-lg border border-transparent hover:border-emerald-200 transition shadow-sm bg-white break-keep">
+                            <input type="checkbox" value="${dong}" class="dong-checkbox w-4 h-4 text-emerald-600 rounded">
+                            <span class="text-gray-700 font-bold text-sm">${dong}</span>
+                        </label>
+                    `;
+                    selContainer.options.add(new Option(dong, dong));
+                }
+            });
+
+            document.querySelectorAll('.dong-checkbox').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    if(e.target.checked) {
+                        if(!checkedOrder.includes(e.target.value)) checkedOrder.push(e.target.value);
+                    } else {
+                        checkedOrder = checkedOrder.filter(val => val !== e.target.value);
+                    }
+                    updateChartsAndTable();
+                });
+            });
+
+            selContainer.addEventListener('change', () => updateReport(selContainer.value));
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+            DONG_ORDER.forEach(dong => { if(dongData[dong]) html += buildRow(dong, dongData[dong], false); });
+            if(dongData['동구 평균']) html += buildRow('동구 평균', dongData['동구 평균'], true);
+            tbody.innerHTML = html;
+        }
+
+        function buildRow(name, d, isAvg) {
+            const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
+            const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
+            const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
+            const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
+            const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
+            const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
+            const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
+            const nameClass = isAvg ? 'text-base font-black text-emerald-900 break-keep' : 'text-sm font-bold text-gray-800 break-keep';
+
+            return `
+                <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200">
+                    <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.pop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.male).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.female).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.youthPop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.eldPop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.onePop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${d.ppHouse}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${d.singleHousePct}%</td>
+                    <td class="px-4 py-3 ${houseBase}">${d.multiHousePct}%</td>
+                    <td class="px-4 py-3 ${houseBase}">${d.aptPct}%</td>
+                    <td class="px-4 py-3 ${houseBase}">${d.oldPct}%</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${Number(d.bizCount).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${bizBase}">${Number(d.bizWorker).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.socEco}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.cult}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.kin}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.wel}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${welBase}">${Number(d.pen).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${Number(d.dis).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${Number(d.forgn).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${Number(d.beds).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${d.hosp}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${d.greenPct}%</td>
+                    <td class="px-4 py-3 ${envBase}">${d.parkArea}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${d.acc}</td>
+                </tr>
+            `;
+        }
+
+        function initCharts() {
+            ['theme1', 'theme2', 'theme3', 'theme4'].forEach(themeKey => {
+                chartInstances[themeKey].bar = new Chart(document.getElementById(`barChart_${themeKey}`).getContext('2d'), { 
+                    type: 'bar', 
+                    data: { labels: [], datasets: [] }, 
+                    options: { responsive: true, maintainAspectRatio: false } 
+                });
+                
+                chartInstances[themeKey].radar = new Chart(document.getElementById(`radarChart_${themeKey}`).getContext('2d'), { 
+                    type: 'radar', 
+                    data: { labels: [], datasets: [] }, 
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        scales: { 
+                            r: { 
+                                min: 0, max: 100, 
+                                ticks: { display: false, stepSize: 20 },
+                                grid: { color: 'rgba(71, 85, 105, 0.15)', lineWidth: 1 },
+                                angleLines: { color: 'rgba(71, 85, 105, 0.20)', lineWidth: 1 },
+                                pointLabels: { font: { size: 10, weight: '700' }, color: '#334155' }
+                            } 
+                        },
+                        plugins: {
+                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 10, font: { weight: 'bold', size: 10 } } },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                padding: 10,
+                                callbacks: {
+                                    label: function(context) {
+                                        const rawVal = context.dataset.rawData[context.dataIndex];
+                                        return context.dataset.label + ': ' + rawVal + (context.chart.data.labels[context.dataIndex].includes('비율') || context.chart.data.labels[context.dataIndex].includes('%') ? '%' : '');
+                                    }
+                                }
+                            },
+                            datalabels: { display: false }
+                        },
+                        layout: { padding: 10 }
+                    } 
+                });
+            });
+        }
+
+        function updateReport(dong) {
+            const data = dongData[dong];
+            if(!data) return;
+            document.getElementById('reportType').innerText = data.type;
+            document.getElementById('strengthText').innerText = data.strength;
+            document.getElementById('weaknessText').innerText = data.weakness;
+            
+            const themesFullContainer = document.getElementById('themesFullContainer');
+            
+            const themeMeta = [
+                { key: 'strategy', label: '주민자치 및 공동체 활성화 전략', icon: 'fa-users-gear', color: 'border-l-emerald-500 bg-emerald-50/40 text-emerald-900' },
+                { key: 'festival', label: '맞춤형 마을 축제 및 문화 기획', icon: 'fa-wand-magic-sparkles', color: 'border-l-blue-500 bg-blue-50/40 text-blue-900' },
+                { key: 'welfare', label: '타겟 복지 및 돌봄 수요 체감도', icon: 'fa-handshake-angle', color: 'border-l-purple-500 bg-purple-50/40 text-purple-900' },
+                { key: 'media', label: '미디어 홍보 및 소통 채널 제안', icon: 'fa-photo-film', color: 'border-l-indigo-500 bg-indigo-50/40 text-indigo-900' },
+                { key: 'safety', label: '공간 정비 및 생활 안전 체계', icon: 'fa-shield-halved', color: 'border-l-amber-500 bg-amber-50/40 text-amber-900' }
+            ];
+
+            let htmlStr = '';
+            themeMeta.forEach(theme => {
+                htmlStr += `
+                    <div class="p-4 rounded-xl border border-gray-200/80 shadow-sm relative overflow-hidden flex flex-col gap-1.5 ${theme.color}" style="border-left-width: 4px;">
+                        <strong class="block text-[13.5px] font-black break-keep">
+                            <i class="fa-solid ${theme.icon} mr-1"></i> 심층 테마 : ${theme.label}
+                        </strong>
+                        <p class="text-gray-800 text-[12.5px] leading-relaxed font-medium tracking-tight pl-5 break-keep">
+                            ${data[theme.key] || '데이터 분석 수립 중'}
+                        </p>
+                    </div>
+                `;
+            });
+            
+            themesFullContainer.innerHTML = htmlStr;
+            updateAgendaReport(dong);
+        }
+
+        function updateChartsAndTable() {
+            const themesList = ['theme1', 'theme2', 'theme3', 'theme4'];
+            
+            const footnotes = {
+                'theme1': '※ 산출내역: [유소년/고령/1인가구/외국인 비율] = (해당 인구 수 ÷ 총 인구 수) × 100',
+                'theme2': '※ 산출내역: [아파트/단독/노후주택 비율] = (해당 주택 수 ÷ 전체 주택 수) × 100, [녹지비율] = (녹지 면적 ÷ 행정동 면적) × 100',
+                'theme3': '※ 산출내역: [고령/기초연금/장애인 비율] = (해당 인구 수 ÷ 총 인구 수) × 100',
+                'theme4': '※ 산출내역: [인구대비 종사자 비율] = (종사자 수 ÷ 총 인구 수) × 100, [세대당 인구] = 총 인구 수 ÷ 세대 수 (레이더 스케일 연동 보정치 반영)'
+            };
+
+            themesList.forEach(themeKey => {
+                const barDs = [], radarDs = [];
+                const currentCat = barChartCategories[themeKey];
+                
+                chartInstances[themeKey].bar.data.labels = currentCat.labels;
+                chartInstances[themeKey].radar.data.labels = currentCat.labels;
+
+                checkedOrder.forEach((dong, i) => {
+                    const d = dongData[dong];
+                    if(!d) return;
+                    const col = colors[i % colors.length];
+                    const rawData = currentCat.getData(d);
+                    const radarData = rawData.map(val => Math.min(val, 100));
+
+                    barDs.push({ label: dong, data: rawData, backgroundColor: col, borderRadius: 5 });
+                    radarDs.push({ 
+                        label: dong, 
+                        data: radarData, 
+                        rawData: rawData, 
+                        borderColor: col, 
+                        backgroundColor: col + '12',
+                        pointBackgroundColor: '#fff', 
+                        pointBorderColor: col, 
+                        pointBorderWidth: 2, 
+                        pointRadius: 3.5, 
+                        borderWidth: 2.5, 
+                        tension: 0.2 
+                    });
+                });
+                
+                const avg = dongData['동구 평균'];
+                if(avg) {
+                    const rawAvg = currentCat.getData(avg);
+                    const radarAvg = rawAvg.map(val => Math.min(val, 100));
+
+                    barDs.push({ label: '동구 평균', data: rawAvg, backgroundColor: '#10b98166', borderRadius: 5 });
+                    radarDs.push({ 
+                        label: '동구 평균', 
+                        data: radarAvg, 
+                        rawData: rawAvg, 
+                        borderColor: '#10b981', 
+                        borderDash: [4, 4], 
+                        backgroundColor: 'rgba(16, 185, 129, 0.03)', 
+                        pointBackgroundColor: '#fff', 
+                        pointBorderColor: '#10b981', 
+                        pointBorderWidth: 1.5, 
+                        pointRadius: 3, 
+                        borderWidth: 1.8, 
+                        tension: 0.2 
+                    });
+                }
+
+                chartInstances[themeKey].bar.data.datasets = barDs; 
+                chartInstances[themeKey].bar.update();
+                
+                chartInstances[themeKey].radar.data.datasets = radarDs; 
+                chartInstances[themeKey].radar.update();
+
+                document.getElementById(`dynamicFootnote_${themeKey}`).innerText = footnotes[themeKey];
+
+                const insightContainer = document.getElementById(`dynamicInsightContainer_${themeKey}`);
+                if (checkedOrder.length === 0) {
+                    insightContainer.innerHTML = '<span class="text-gray-400 text-xs break-keep">비교할 행정동을 선택하시면 해당 지역의 특이사항이 체크한 순서대로 요약되어 나타납니다.</span>';
+                } else {
+                    let htmlBoxes = '';
+                    checkedOrder.forEach((dong, idx) => {
+                        const col = colors[idx % colors.length];
+                        const insightText = regionInsights[themeKey][dong] || "해당 테마의 특이사항을 분석 중입니다.";
+                        
+                        htmlBoxes += `
+                            <div class="p-2.5 rounded-lg border bg-white flex items-start gap-2.5" style="border-left: 3.5px solid ${col}; border-color: #f1f5f9; border-left-color: ${col}; shadow-sm">
+                                <span class="font-black whitespace-nowrap px-1.5 py-0.5 rounded text-white text-[10px]" style="background-color: ${col};">${dong}</span>
+                                <p class="text-gray-700 font-semibold leading-relaxed text-[11px] break-keep">${insightText}</p>
+                            </div>
+                        `;
+                    });
+                    insightContainer.innerHTML = htmlBoxes;
+                }
+            });
+        }
+
+        function openModal(title, dataKey) {
+            const modal = document.getElementById('chartModal');
+            document.getElementById('modalTitle').innerText = ` 행정동별 비교 [ ${title} ]`;
+            modal.classList.remove('hidden');
+            const labels = [...DONG_ORDER, '동구 평균'];
+            const dataVals = labels.map(dong => dongData[dong] ? dongData[dong][dataKey] : 0);
+            if (modalChartInst) modalChartInst.destroy();
+            modalChartInst = new Chart(document.getElementById('modalChart').getContext('2d'), {
+                type: 'bar', 
+                data: { 
+                    labels: labels, 
+                    datasets: [{ 
+                        label: title, 
+                        data: dataVals, 
+                        backgroundColor: labels.map(l => l === '동구 평균' ? '#10b981' : '#3b82f6'), 
+                        borderRadius: 8 
+                    }] 
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { display: false },
+                        navigator: { display: false },
+                        datalabels: {
+                            display: true,
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: function(value) {
+                                return value.toLocaleString() + (title.includes('비율') || title.includes('율') ? '%' : (title.includes('인구') || title.includes('가구') || title.includes('수급') || title.includes('등록') || title.includes('남성') || title.includes('여성') || title.includes('유소년') || title.includes('고령') ? '명' : ''));
+                            },
+                            font: { weight: 'bold', size: 12 },
+                            color: '#1e293b'
+                        }
+                    },
+                    layout: { padding: { top: 35 } }
+                }
+            });
+        }
+        function enterDashboard(mode) {
             document.getElementById('introScreen').classList.add('hidden');
             document.getElementById('dashboardScreen').classList.remove('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
 
-            const tab1 = document.getElementById('btn-tab1');
-            const tab2 = document.getElementById('btn-tab2');
-            const tab3 = document.getElementById('btn-tab3');
-            const tab4 = document.getElementById('btn-tab4');
-
-            if(type === 'village') {
-                document.getElementById('dashboardTitle').innerHTML = '📊 동구 마을데이터 분석';
-                if(tab1) tab1.style.display = 'flex';
-                if(tab2) tab2.style.display = 'flex';
-                if(tab3) tab3.style.display = 'flex';
-                if(tab4) tab4.style.display = 'none';
-                switchMainTab('tab1'); 
-            } else if(type === 'complaint') {
-                document.getElementById('dashboardTitle').innerHTML = '📊 동구 민원 데이터 분석';
-                if(tab1) tab1.style.display = 'none';
-                if(tab2) tab2.style.display = 'none';
-                if(tab3) tab3.style.display = 'none';
-                if(tab4) tab4.style.display = 'flex';
-                switchMainTab('tab4'); 
+            if (mode === 'village') {
+                // 마을데이터 모드: 1, 2, 3번 탭만 보이고 4번 숨김
+                document.getElementById('btn-tab1').style.display = 'flex';
+                document.getElementById('btn-tab2').style.display = 'flex';
+                document.getElementById('btn-tab3').style.display = 'flex';
+                document.getElementById('btn-tab4').style.display = 'none';
+                switchMainTab('tab1'); // 첫 화면은 핵심 비율 다각화
+            } else if (mode === 'complaint') {
+                // 민원데이터 모드: 4번 탭만 보이고 나머지 숨김
+                document.getElementById('btn-tab1').style.display = 'none';
+                document.getElementById('btn-tab2').style.display = 'none';
+                document.getElementById('btn-tab3').style.display = 'none';
+                document.getElementById('btn-tab4').style.display = 'flex';
+                switchMainTab('tab4'); // 민원 탭으로 바로 이동
             }
-            window.dispatchEvent(new Event('resize')); 
         }
 
-        // 홈(집 모양) 버튼 클릭 시
+        // [신규 추가] 대시보드에서 홈(인트로 화면)으로 돌아가는 함수
         function goHome() {
-            history.pushState({ screen: 'intro' }, '', window.location.pathname);
-            goHomeUI();
-        }
-
-        function goHomeUI() {
             document.getElementById('dashboardScreen').classList.add('hidden');
             document.getElementById('introScreen').classList.remove('hidden');
         }
