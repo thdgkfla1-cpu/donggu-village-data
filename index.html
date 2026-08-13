@@ -10,16 +10,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* 배경 이미지 적용 및 기본 스타일 */
+        /* 배경 이미지 적용 */
         body { 
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
             background-color: #f1f5f9;
-            /* 💡 나중에 미리캔버스에서 만든 배경 이미지가 생기면 아래 주석(/* */)을 풀고 이미지 파일명을 적어주세요. */
-            /* background-image: url('my-background.png'); */
+            /* 💡 아래 주석을 풀고 이미지 파일명을 적어주세요. */
+            /* background-image: url('image_cd9e55.jpg'); */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
+        }
+        
+        /* 2단 탭을 위한 대메뉴 버튼 스타일 */
+        .main-category-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 1rem 1rem 0 0;
+            cursor: pointer;
         }
         .break-keep { word-break: keep-all; overflow-wrap: break-word; }
         
@@ -58,30 +65,40 @@
     <div id="loading" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center text-center p-6">
         <div class="text-2xl font-bold text-emerald-600 mb-4 animate-pulse break-keep">데이터 교정 및 시각화 연동 중입니다...</div>
     </div>
-
-    <!-- 헤더 (4번째 탭 버튼 추가됨) -->
-    <header class="bg-white shadow-md sticky top-0 z-40">
-        <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col xl:flex-row justify-between items-center gap-4">
-            <div class="w-full xl:w-auto text-center xl:text-left">
+    <!-- 상단 2단 탭 구조가 적용된 헤더 -->
+    <header class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-40">
+        <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col gap-3">
+            
+            <div class="w-full text-center xl:text-left">
                 <h1 class="text-2xl font-black text-gray-800 flex items-center justify-center xl:justify-start gap-2 tracking-tight break-keep">
                     <span class="text-3xl">📊</span> 전남광주통합특별시 동구 마을 로컬데이터
                 </h1>
                 <p class="text-xs text-gray-500 mt-2 font-medium xl:text-left text-center flex flex-wrap items-center justify-center xl:justify-start gap-1.5 break-keep">
                     <i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> 
-                    <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-bold">최근 업데이트: 2026.08</span> 
-                    <span>| 13개 행정동 민원 분석(동구 의회 회의록 기반)</span>
+                    <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-bold">최근 업데이트: 2026.06</span> 
+                    <span>| 13개 행정동 5개년 마을의제 분석 완료 및 모바일 UI 최적화 반영</span>
                 </p>
             </div>
             
-            <div class="tab-container flex gap-1 w-full xl:w-auto overflow-x-auto pb-1">
-                <button onclick="switchMainTab('tab1')" id="btn-tab1" class="main-tab active px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
-                <button onclick="switchMainTab('tab2')" id="btn-tab2" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
-                <button onclick="switchMainTab('tab3')" id="btn-tab3" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
-                <button onclick="switchMainTab('tab4')" id="btn-tab4" class="main-tab px-6 py-3 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-users-viewfinder mr-2"></i>민원 분석 및 AI 제안</button>
+            <!-- [1단계 메인 탭] -->
+            <div class="flex gap-2 border-b-4 border-emerald-500 mt-2">
+                <button onclick="switchMainCategory('village')" id="btn-cat-village" class="main-category-btn px-6 py-3 text-base md:text-lg font-black bg-emerald-500 text-white shadow-md">
+                    <i class="fa-solid fa-house-chimney mr-2"></i>동구 마을데이터 분석
+                </button>
+                <button onclick="switchMainCategory('complaint')" id="btn-cat-complaint" class="main-category-btn px-6 py-3 text-base md:text-lg font-black bg-gray-100 text-gray-500 hover:bg-gray-200">
+                    <i class="fa-solid fa-headset mr-2"></i>동구 민원 데이터 분석
+                </button>
             </div>
+
+            <!-- [2단계 서브 탭] -->
+            <div id="sub-tabs-village" class="tab-container flex gap-1 w-full overflow-x-auto pb-1 mt-1 mb-1">
+                <button onclick="switchSubTab('tab1')" id="btn-tab1" class="main-tab active px-5 py-2.5 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-chart-pie mr-2"></i>핵심 비율 다각화 분석</button>
+                <button onclick="switchSubTab('tab2')" id="btn-tab2" class="main-tab px-5 py-2.5 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-file-invoice mr-2"></i>마을 리포트 및 의제 분석</button>
+                <button onclick="switchSubTab('tab3')" id="btn-tab3" class="main-tab px-5 py-2.5 text-sm md:text-base whitespace-nowrap break-keep"><i class="fa-solid fa-table-cells mr-2"></i>세부 지표 일람표</button>
+            </div>
+
         </div>
     </header>
-
     <main id="mainContent" class="max-w-[1600px] mx-auto p-6 hidden">
         
         <!-- [기존 탭 1] 핵심 비율 다각화 분석 -->
@@ -2099,7 +2116,28 @@
         Chart.register(ChartDataLabels);
         Chart.defaults.set('plugins.datalabels', { display: false });
 
-        function switchMainTab(tabId) {
+       function switchMainCategory(category) {
+            const btnVillage = document.getElementById('btn-cat-village');
+            const btnComplaint = document.getElementById('btn-cat-complaint');
+            const subTabs = document.getElementById('sub-tabs-village');
+
+            btnVillage.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-gray-100 text-gray-500 hover:bg-gray-200";
+            btnComplaint.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-gray-100 text-gray-500 hover:bg-gray-200";
+
+            if (category === 'village') {
+                btnVillage.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-emerald-500 text-white shadow-md";
+                subTabs.classList.remove('hidden'); 
+                switchSubTab('tab1'); 
+            } else {
+                btnComplaint.className = "main-category-btn px-6 py-3 text-base md:text-lg font-black bg-indigo-600 text-white shadow-md";
+                subTabs.classList.add('hidden'); 
+                
+                document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+                document.getElementById('section-tab4').classList.remove('hidden');
+            }
+        }
+
+        function switchSubTab(tabId) {
             document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('section-' + tabId).classList.remove('hidden');
             
@@ -3052,7 +3090,7 @@
             populateComplaintSelect();
             renderComplaints('충장동');
             
-            switchMainTab('tab1');
+            switchMainCategory('village');
             
             const initialDong = document.querySelector('input[value="충장동"]');
             if(initialDong) { 
