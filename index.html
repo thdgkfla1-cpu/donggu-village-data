@@ -48,6 +48,13 @@
         ::-webkit-scrollbar { height: 8px; width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        /* 커스텀 그림자 애니메이션 */
+        .card-hover-effect {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-8px);
+        }
     </style>
         
 </head>
@@ -58,73 +65,107 @@
         <div class="text-2xl font-bold text-emerald-600 mb-4 animate-pulse break-keep">데이터 교정 및 시각화 연동 중입니다...</div>
     </div>
 
-   <!-- [신규 추가] 고퀄리티 카드형 메인 인트로 화면 -->
-    <div id="introScreen" class="hidden min-h-screen flex flex-col items-center justify-center bg-white/40 backdrop-blur-sm p-6 relative z-40">
-        <h1 class="text-3xl md:text-5xl font-black text-gray-800 mb-14 text-center break-keep tracking-tight drop-shadow-sm">
-            동구 데이터 포털에 오신 것을 환영합니다!
-        </h1>
+   <!-- [신규 추가] 3번째 업그레이드 버전: 모던, 글래스모피즘, 그라데이션 디자인 -->
+    <div id="introScreen" class="hidden min-h-screen flex flex-col items-center justify-center relative z-40">
         
-        <div class="flex flex-col md:flex-row gap-8 w-full max-w-4xl justify-center">
+        <!-- 타이틀 영역 -->
+        <div class="mb-16 text-center space-y-3">
+            <div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 mb-4 shadow-sm">
+                <span class="text-xs font-bold text-blue-600 tracking-wider">DONG-GU DATA PORTAL</span>
+            </div>
+            <h1 class="text-4xl md:text-[3.5rem] font-black text-gray-800 leading-tight tracking-tight break-keep drop-shadow-sm">
+                동구 데이터 포털에<br class="hidden md:block"> 오신 것을 환영합니다
+            </h1>
+        </div>
+        
+        <div class="flex flex-col md:flex-row gap-8 lg:gap-12 w-full justify-center px-4">
             
-            <!-- 1번 카드: 동구 마을데이터 분석 -->
-            <button onclick="enterDashboard('village')" class="relative flex flex-col bg-white rounded-3xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_-10px_rgba(20,184,166,0.3)] transition-all duration-300 transform hover:-translate-y-2 w-full md:w-[400px] overflow-hidden group text-left">
+            <!-- 1번 카드: 마을데이터 분석 (그린 톤) -->
+            <button onclick="enterDashboard('village')" class="card-hover-effect flex flex-col bg-white rounded-[2.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.06)] hover:shadow-[0_30px_60px_-15px_rgba(16,185,129,0.25)] w-full md:w-[420px] overflow-hidden group text-left relative z-10 border border-gray-100/50">
                 
-                <!-- 상단 둥근 컬러 헤더 -->
-                <div class="w-full h-20 bg-gradient-to-r from-emerald-500 to-teal-400 flex items-center px-6 rounded-b-[1.5rem] z-10 shadow-sm relative">
-                    <span class="text-white font-black tracking-widest opacity-90 text-sm">VILLAGE DATA</span>
-                    <!-- 우측 상단 뱃지 느낌 -->
-                    <span class="absolute top-4 right-5 bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-full font-bold backdrop-blur-md">13개 동</span>
+                <!-- 상단 그라데이션 헤더 (부드러운 곡선 적용) -->
+                <div class="w-full pt-7 pb-6 px-8 bg-gradient-to-br from-[#2dd4bf] to-[#10b981] flex justify-between items-center relative overflow-hidden rounded-b-[2rem]">
+                    <!-- 장식용 배경 원 -->
+                    <div class="absolute top-[-20px] right-[-20px] w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    
+                    <span class="text-white/95 font-bold tracking-widest text-[13px] relative z-10 uppercase">Village Data</span>
+                    <div class="bg-white/20 backdrop-blur-md border border-white/30 text-white text-[11.5px] px-3 py-1 rounded-full font-bold relative z-10 shadow-sm">
+                        13개 동
+                    </div>
                 </div>
 
-                <!-- 콘텐츠 영역 -->
-                <div class="p-8 pt-10 flex flex-col items-center flex-grow">
-                    <!-- 아이콘 (살짝 떠있는 느낌) -->
-                    <div class="bg-emerald-50/80 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-emerald-100 transition-all duration-300 shadow-sm">
-                        <i class="fa-solid fa-map-location-dot text-[40px] text-emerald-500 group-hover:text-emerald-600 transition-colors"></i>
+                <!-- 메인 콘텐츠 영역 -->
+                <div class="px-8 pb-10 pt-12 flex flex-col items-center flex-grow bg-white relative z-0 -mt-4 rounded-t-[2.5rem]">
+                    
+                    <!-- 아이콘 (소프트한 글로우 효과) -->
+                    <div class="relative mb-8">
+                        <div class="absolute inset-0 bg-emerald-300 blur-xl opacity-30 rounded-full group-hover:opacity-60 transition-opacity duration-500"></div>
+                        <div class="bg-emerald-50/80 border border-emerald-100/50 w-[110px] h-[110px] rounded-full flex items-center justify-center relative z-10 group-hover:scale-105 group-hover:bg-white transition-all duration-500 shadow-sm">
+                            <i class="fa-solid fa-map-location-dot text-[46px] text-emerald-500 group-hover:text-emerald-600 transition-colors"></i>
+                        </div>
                     </div>
                     
-                    <h2 class="text-[22px] font-black text-gray-800 mb-3 whitespace-nowrap tracking-tight group-hover:text-emerald-600 transition-colors">동구 마을데이터 분석</h2>
+                    <!-- 제목 (그라데이션 호버) -->
+                    <h2 class="text-[26px] font-black text-gray-800 mb-4 whitespace-nowrap tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-teal-500 transition-all duration-300">
+                        동구 마을데이터 분석
+                    </h2>
                     
-                    <p class="text-sm text-gray-500 text-center font-medium leading-relaxed mb-6">
-                        핵심 비율 다각화 분석<br>마을 리포트 및 의제<br>세부 지표 일람표
+                    <!-- 설명 텍스트 -->
+                    <p class="text-[14.5px] text-gray-500 text-center font-medium leading-relaxed mb-8">
+                        핵심 비율 다각화 분석<br>
+                        마을 리포트 및 의제<br>
+                        세부 지표 일람표
                     </p>
 
-                    <!-- 하단 화살표 버튼 (두번째 사진 스타일 차용) -->
+                    <!-- 하단 액션 버튼 -->
                     <div class="mt-auto w-full flex justify-end">
-                        <div class="w-10 h-10 rounded-full border-2 border-emerald-100 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all duration-300">
-                            <i class="fa-solid fa-arrow-right font-bold"></i>
+                        <div class="w-12 h-12 rounded-full border-2 border-emerald-100 flex items-center justify-center text-emerald-500 bg-emerald-50/30 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all duration-500 shadow-sm group-hover:shadow-md">
+                            <i class="fa-solid fa-arrow-right font-bold text-lg group-hover:translate-x-1 transition-transform duration-300"></i>
                         </div>
                     </div>
                 </div>
             </button>
             
-            <!-- 2번 카드: 동구 민원 데이터 분석 -->
-            <button onclick="enterDashboard('complaint')" class="relative flex flex-col bg-white rounded-3xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_-10px_rgba(99,102,241,0.3)] transition-all duration-300 transform hover:-translate-y-2 w-full md:w-[400px] overflow-hidden group text-left">
+            <!-- 2번 카드: 민원 데이터 분석 (블루/퍼플 톤) -->
+            <button onclick="enterDashboard('complaint')" class="card-hover-effect flex flex-col bg-white rounded-[2.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.06)] hover:shadow-[0_30px_60px_-15px_rgba(99,102,241,0.25)] w-full md:w-[420px] overflow-hidden group text-left relative z-10 border border-gray-100/50">
                 
-                <!-- 상단 둥근 컬러 헤더 -->
-                <div class="w-full h-20 bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center px-6 rounded-b-[1.5rem] z-10 shadow-sm relative">
-                    <span class="text-white font-black tracking-widest opacity-90 text-sm">COMPLAINT AI</span>
-                    <!-- 우측 상단 뱃지 느낌 -->
-                    <span class="absolute top-4 right-5 bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-full font-bold backdrop-blur-md">AI 제안</span>
+                <!-- 상단 그라데이션 헤더 -->
+                <div class="w-full pt-7 pb-6 px-8 bg-gradient-to-br from-[#6366f1] to-[#3b82f6] flex justify-between items-center relative overflow-hidden rounded-b-[2rem]">
+                    <!-- 장식용 배경 원 -->
+                    <div class="absolute top-[-20px] right-[-20px] w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    
+                    <span class="text-white/95 font-bold tracking-widest text-[13px] relative z-10 uppercase">Complaint AI</span>
+                    <div class="bg-white/20 backdrop-blur-md border border-white/30 text-white text-[11.5px] px-3 py-1 rounded-full font-bold relative z-10 shadow-sm">
+                        AI 제안
+                    </div>
                 </div>
 
-                <!-- 콘텐츠 영역 -->
-                <div class="p-8 pt-10 flex flex-col items-center flex-grow">
-                    <!-- 아이콘 (살짝 떠있는 느낌) -->
-                    <div class="bg-indigo-50/80 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300 shadow-sm">
-                        <i class="fa-solid fa-users-viewfinder text-[40px] text-indigo-500 group-hover:text-indigo-600 transition-colors"></i>
+                <!-- 메인 콘텐츠 영역 -->
+                <div class="px-8 pb-10 pt-12 flex flex-col items-center flex-grow bg-white relative z-0 -mt-4 rounded-t-[2.5rem]">
+                    
+                    <!-- 아이콘 -->
+                    <div class="relative mb-8">
+                        <div class="absolute inset-0 bg-indigo-300 blur-xl opacity-30 rounded-full group-hover:opacity-60 transition-opacity duration-500"></div>
+                        <div class="bg-indigo-50/80 border border-indigo-100/50 w-[110px] h-[110px] rounded-full flex items-center justify-center relative z-10 group-hover:scale-105 group-hover:bg-white transition-all duration-500 shadow-sm">
+                            <i class="fa-solid fa-users-viewfinder text-[46px] text-indigo-500 group-hover:text-indigo-600 transition-colors"></i>
+                        </div>
                     </div>
                     
-                    <h2 class="text-[22px] font-black text-gray-800 mb-3 whitespace-nowrap tracking-tight group-hover:text-indigo-600 transition-colors">동구 민원 데이터 분석</h2>
+                    <!-- 제목 -->
+                    <h2 class="text-[26px] font-black text-gray-800 mb-4 whitespace-nowrap tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-blue-500 transition-all duration-300">
+                        동구 민원 데이터 분석
+                    </h2>
                     
-                    <p class="text-sm text-gray-500 text-center font-medium leading-relaxed mb-6">
-                        13개 행정동 민원 분석<br>AI 실무 해결 제안
+                    <!-- 설명 텍스트 -->
+                    <p class="text-[14.5px] text-gray-500 text-center font-medium leading-relaxed mb-8">
+                        13개 행정동 민원 분석<br>
+                        AI 실무 해결 제안
                     </p>
 
-                    <!-- 하단 화살표 버튼 (두번째 사진 스타일 차용) -->
+                    <!-- 하단 액션 버튼 -->
                     <div class="mt-auto w-full flex justify-end">
-                        <div class="w-10 h-10 rounded-full border-2 border-indigo-100 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-indigo-500 transition-all duration-300">
-                            <i class="fa-solid fa-arrow-right font-bold"></i>
+                        <div class="w-12 h-12 rounded-full border-2 border-indigo-100 flex items-center justify-center text-indigo-500 bg-indigo-50/30 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-indigo-500 transition-all duration-500 shadow-sm group-hover:shadow-md">
+                            <i class="fa-solid fa-arrow-right font-bold text-lg group-hover:translate-x-1 transition-transform duration-300"></i>
                         </div>
                     </div>
                 </div>
