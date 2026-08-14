@@ -51,40 +51,45 @@
     </style>
         
 </head>
-<body class="text-gray-800 relative">ㅇ
+<body class="text-gray-800 relative">
 
     <!-- 기존 Loading 애니메이션 (요구사항 완벽 반영) -->
     <div id="loading" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center text-center p-6">
         <div class="text-2xl font-bold text-emerald-600 mb-4 animate-pulse break-keep">데이터 교정 및 시각화 연동 중입니다...</div>
     </div>
 
-    <!-- [신규 추가] 첫 번째 사진과 같은 메인 인트로 화면 -->
-    <div id="introScreen" class="hidden min-h-screen flex flex-col items-center justify-center bg-white/60 p-6 relative z-40">
-        <h1 class="text-3xl md:text-5xl font-black text-gray-800 mb-12 text-center break-keep tracking-tight">
+   <!-- [신규 추가] 첫 번째 사진과 같은 메인 인트로 화면 -->
+    <div id="introScreen" class="hidden min-h-screen flex flex-col items-center justify-center bg-white/40 backdrop-blur-sm p-6 relative z-40">
+        <h1 class="text-3xl md:text-5xl font-black text-gray-800 mb-12 text-center break-keep tracking-tight drop-shadow-sm">
             동구 데이터 포털에 오신 것을 환영합니다!
         </h1>
         <div class="flex flex-col md:flex-row gap-8">
+            
             <!-- 1번 버튼: 동구 마을데이터 분석 -->
-            <button onclick="enterDashboard('village')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center w-72 md:w-80 border-t-8 border-emerald-500 group">
-                <div class="bg-emerald-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <!-- 수정포인트: 너비 확장(w-[380px]), 부드러운 커스텀 그림자(shadow-[...]), 모서리 둥글게 깎기(overflow-hidden) -->
+            <button onclick="enterDashboard('village')" class="bg-white p-10 rounded-[2rem] shadow-[0_15px_40px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center w-[320px] md:w-[380px] border-t-[8px] border-emerald-400 overflow-hidden group">
+                <div class="bg-emerald-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <i class="fa-solid fa-map-location-dot text-4xl text-emerald-500"></i>
                 </div>
-                <h2 class="text-2xl font-black text-gray-800 mb-3">동구 마을데이터 분석</h2>
+                <!-- 수정포인트: whitespace-nowrap으로 줄바꿈 원천 차단 -->
+                <h2 class="text-2xl font-black text-gray-800 mb-3 whitespace-nowrap tracking-tight">동구 마을데이터 분석</h2>
                 <p class="text-sm text-gray-500 text-center font-medium leading-relaxed">
                     핵심 비율 다각화 분석<br>마을 리포트 및 의제<br>세부 지표 일람표
                 </p>
             </button>
             
             <!-- 2번 버튼: 동구 민원 데이터 분석 -->
-            <button onclick="enterDashboard('complaint')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center w-72 md:w-80 border-t-8 border-indigo-500 group">
-                <div class="bg-indigo-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <button onclick="enterDashboard('complaint')" class="bg-white p-10 rounded-[2rem] shadow-[0_15px_40px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center w-[320px] md:w-[380px] border-t-[8px] border-indigo-400 overflow-hidden group">
+                <div class="bg-indigo-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <i class="fa-solid fa-users-viewfinder text-4xl text-indigo-500"></i>
                 </div>
-                <h2 class="text-2xl font-black text-gray-800 mb-3">동구 민원 데이터 분석</h2>
+                <!-- 수정포인트: whitespace-nowrap으로 줄바꿈 원천 차단 -->
+                <h2 class="text-2xl font-black text-gray-800 mb-3 whitespace-nowrap tracking-tight">동구 민원 데이터 분석</h2>
                 <p class="text-sm text-gray-500 text-center font-medium leading-relaxed">
                     13개 행정동 민원 분석<br>AI 실무 해결 제안
                 </p>
             </button>
+            
         </div>
     </div>
 
@@ -324,6 +329,14 @@
         </section>
         <!-- Tab 4: 민원 분석 및 AI 해결 제안 -->
         <section id="section-tab4" class="hidden space-y-6">
+            
+            <!-- [신규 추가] 데이터 출처 안내 문구 (우측 정렬 뱃지 스타일) -->
+            <div class="flex justify-end -mb-2">
+                <span class="text-[12px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-lg shadow-sm tracking-tight">
+                    <i class="fa-solid fa-circle-info mr-1"></i> ※ 동구 의회 회의록 기반 데이터 추출
+                </span>
+            </div>
+
            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 flex flex-col items-center justify-center shadow-inner">
                         <div class="text-gray-500 font-bold mb-2 text-sm flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-users"></i> 총 민원 건수</div>
