@@ -2321,9 +2321,34 @@
             // 1. 아코디언 렌더링 (미해결 민원 분석 & AI 제안)
             let accordionHtml = '';
             data.unresolved.forEach((item, idx) => {
+                
+                // [가독성 대폭 개선] 마을 주도 방안 텍스트를 Step 카드로 자동 분리하기
+                let villageStepsHtml = '';
+                if (item.ai_village) {
+                    // <br> 기준으로 텍스트를 쪼개서 배열로 만듭니다
+                    const steps = item.ai_village.split('<br>').filter(s => s.trim() !== '');
+                    steps.forEach((step, sIdx) => {
+                        villageStepsHtml += `
+                        <div class="flex gap-2.5 items-start bg-white p-3.5 rounded-lg border border-teal-100 shadow-sm mb-2.5 hover:border-teal-300 transition-colors">
+                            <div class="bg-teal-500 text-white font-black text-[11px] px-2 py-0.5 rounded-md shrink-0 mt-0.5 shadow-sm">
+                                Step ${sIdx + 1}
+                            </div>
+                            <p class="text-teal-950 text-[13.5px] leading-relaxed font-medium break-keep">
+                                ${step.trim()}
+                            </p>
+                        </div>`;
+                    });
+                } else {
+                    villageStepsHtml = `
+                    <div class="flex items-center gap-2 text-teal-600/60 p-4 bg-white rounded-lg border border-teal-50">
+                        <i class="fa-solid fa-pen"></i>
+                        <span class="text-[13px] font-bold">마을 주도 방안 데이터가 아직 입력되지 않았습니다.</span>
+                    </div>`;
+                }
+
                 accordionHtml += `
-                <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm transition-shadow hover:shadow-md">
-                    <!-- 제목 부분: 모바일에서는 위아래로 분리(flex-col), PC에서는 양옆으로(md:flex-row) -->
+                <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm transition-shadow hover:shadow-md mb-4">
+                    <!-- 아코디언 제목 버튼 -->
                     <button class="w-full text-left px-5 py-4 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-start md:items-center focus:outline-none" onclick="toggleAccordion(this)">
                         <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 pr-4">
                             <span class="bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-md text-xs font-black whitespace-nowrap shadow-sm w-max">${item.category}</span>
@@ -2331,6 +2356,8 @@
                         </div>
                         <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 mt-1 md:mt-0 flex-shrink-0"></i>
                     </button>
+                    
+                    <!-- 아코디언 펼쳐지는 내용 -->
                     <div class="accordion-content hidden px-5 py-5 border-t border-gray-100 space-y-5 text-sm md:text-[14.5px]">
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/80 p-4 rounded-lg border border-gray-100">
@@ -2344,7 +2371,6 @@
                             </div>
                         </div>
                         
-                        <!-- 글이 길어지는 본문은 replace를 이용해 <br> 태그마다 여백을 줍니다 -->
                         <div class="bg-white">
                             <strong class="text-rose-800 block mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 현황 및 문제점</strong>
                             <p class="text-gray-700 leading-relaxed font-medium break-keep">
@@ -2366,10 +2392,12 @@
                             </p>
                         </div>
                         
+                        <!-- AI 제안: 관 vs 민 듀얼 레이아웃 -->
                         <div class="mt-6 pt-5 border-t border-gray-200">
                             <strong class="text-purple-800 block mb-4 text-[15px] font-black"><i class="fa-solid fa-robot mr-1"></i> AI 맞춤형 듀얼(민·관) 해결 제안</strong>
                             
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <!-- 좌측: 관(행정) 주도 -->
                                 <div class="space-y-3 bg-white border border-indigo-100 rounded-xl p-4 shadow-sm">
                                     <div class="flex items-center gap-1.5 mb-2 border-b border-indigo-50 pb-2">
                                         <i class="fa-solid fa-building-columns text-indigo-500"></i>
@@ -2390,21 +2418,22 @@
                                     </div>
                                 </div>
 
-                                <div class="bg-white border border-teal-100 rounded-xl p-4 shadow-sm flex flex-col">
-                                    <div class="flex items-center gap-1.5 mb-3 border-b border-teal-50 pb-2">
-                                        <i class="fa-solid fa-people-roof text-teal-500"></i>
+                                <!-- 우측: 민(마을/주민) 주도 (가독성 향상 스텝 디자인) -->
+                                <div class="bg-teal-50/40 border border-teal-100 rounded-xl p-4 shadow-sm flex flex-col">
+                                    <div class="flex items-center gap-1.5 mb-3 border-b border-teal-100 pb-2">
+                                        <i class="fa-solid fa-people-roof text-teal-600"></i>
                                         <span class="font-bold text-teal-900 text-[14px]">민(마을/주민자치회) 주도 역할</span>
                                     </div>
                                     
-                                    <div class="bg-teal-50/60 border border-teal-100 p-4 rounded-lg flex-grow">
-                                        <span class="inline-block bg-teal-500 text-white text-[11px] font-bold px-2 py-0.5 rounded mb-2 shadow-sm">마을 자체 해결 및 협력 방안</span>
-                                        <p class="text-teal-950 leading-relaxed font-medium break-keep text-[13.5px]">
-                                            ${item.ai_village ? item.ai_village.replace(/<br>/g, '<br><span class="block h-1"></span>') : '<span class="text-teal-600/60"><i class="fa-solid fa-pen mr-1"></i>마을 주도 방안 데이터가 아직 입력되지 않았습니다.<br><br>※ 대규모 시설은 행정에 청원하고, 마을은 순찰/캠페인을 주도하는 내용을 추가해 보세요.</span>'}
-                                        </p>
+                                    <div class="flex-grow">
+                                        ${villageStepsHtml}
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                    </div> <!-- accordion-content 닫기 -->
+                </div> <!-- 전체 카드 닫기 -->
                 `;
             });
             container.innerHTML = accordionHtml;
