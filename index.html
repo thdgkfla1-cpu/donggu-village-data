@@ -10,8 +10,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* 1. 빙그레체 웹 폰트 불러오기 */
+        @font-face {
+            font-family: 'Binggrae';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body { 
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
+            /* 2. 기존 폰트 맨 앞에 'Binggrae' 추가 */
+            font-family: 'Binggrae', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
             background-color: #f1f5f9;
             /* 아래처럼 방금 깃허브에 올린 파일명을 괄호 안에 정확히 적어주세요. */
             background-image: url('bg-main1.png'); 
@@ -71,7 +80,7 @@
        <!-- 타이틀 영역 -->
         <div class="mb-16 text-center space-y-3">
             <h1 class="text-4xl md:text-[3.5rem] font-black text-gray-800 leading-tight tracking-tight break-keep drop-shadow-sm">
-                전남광주통합특별시 동구 데이터 포털에<br class="hidden md:block"> 오신 것을 환영합니다
+                전남광주통합특별시 동구 데이터 포털
             </h1>
         </div>
         
