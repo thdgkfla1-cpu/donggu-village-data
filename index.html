@@ -2437,7 +2437,7 @@
             });
             container.innerHTML = accordionHtml;
 
-            // 2. 무편집본 리스트 렌더링 (제기자 우측, 최종상태 하단 강조 배치)
+            // 2. 무편집본 리스트 렌더링 (제기자 제목 우측 밀착, 최종상태 박스 자동 줄바꿈)
             let rawHtml = '';
             data.rawList.forEach(raw => {
                 const match = raw.match(/^(.*?)\(최종상태:\s*(.*?)\)\s*-\s*제기자:\s*(.*)$/);
@@ -2448,21 +2448,22 @@
                     const proposerText = match[3].trim();
 
                     rawHtml += `
-                    <li class="py-4 border-b border-gray-100 break-keep leading-relaxed flex flex-col gap-2.5">
-                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                            <div class="font-bold text-gray-800 text-[14.5px] leading-snug flex-1">
-                                <span class="text-indigo-500 mr-1">•</span> ${textContent}
-                            </div>
-                            <div class="shrink-0 mt-1 md:mt-0">
-                                <span class="inline-flex items-center text-indigo-700 font-bold text-[12.5px] bg-indigo-50/80 px-2.5 py-1.5 rounded-md border border-indigo-100/50 shadow-sm">
-                                    <i class="fa-solid fa-user-pen mr-1.5 text-indigo-400"></i> 제기자: <span class="text-gray-700 ml-1">${proposerText}</span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mt-0.5 pl-4">
-                            <span class="inline-flex items-center w-max text-rose-700 font-black px-3 py-1.5 bg-rose-50 rounded-md text-[13.5px] border border-rose-200 shadow-sm">
-                                <i class="fa-solid fa-flag mr-1.5 text-rose-500"></i> 최종상태: ${statusText}
+                    <li class="py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                        <!-- 1. 제목 & 제기자 (제목 바로 옆에 밀착) -->
+                        <div class="font-bold text-gray-800 text-[14.5px] leading-snug break-keep">
+                            <span class="text-indigo-500 mr-1 text-lg align-middle">•</span>
+                            <span class="align-middle">${textContent}</span>
+                            <span class="inline-flex items-center text-indigo-800 font-bold text-[12px] bg-indigo-50/80 px-2.5 py-1 rounded-md border border-indigo-200 shadow-sm ml-2 align-middle mt-1 md:mt-0">
+                                <i class="fa-solid fa-user-pen mr-1 text-indigo-500"></i> 제기자: <span class="text-gray-700 ml-1">${proposerText}</span>
                             </span>
+                        </div>
+                        
+                        <!-- 2. 최종상태 (단 넘김 허용, 박스 벗어남 방지) -->
+                        <div class="pl-4 mt-0.5">
+                            <div class="block w-full text-rose-800 font-medium px-4 py-2.5 bg-rose-50/80 rounded-lg text-[13.5px] border border-rose-200 shadow-sm leading-relaxed break-keep">
+                                <strong class="text-rose-600 font-black mr-1.5"><i class="fa-solid fa-flag mr-1"></i>최종상태:</strong> 
+                                ${statusText}
+                            </div>
                         </div>
                     </li>`;
                 } else {
