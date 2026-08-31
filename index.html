@@ -3415,7 +3415,7 @@
                             let avgEldPct = avgPop > 0 ? parseFloat(((avgEldPop / avgPop) * 100).toFixed(1)) : 0;
                             let avgOnePct = avgPop > 0 ? parseFloat(((avgOnePop / avgPop) * 100).toFixed(1)) : 0;
 
-                            // 👇👇👇👇👇 [여기에 아래 코드를 추가하세요] 👇👇👇👇👇
+                            // ===== [신규 추가] 동구 전체 합계 데이터 객체 생성 =====
                             let totalOnePop = sumVal6 > (10 * totalCount) ? sumVal6 : sumVal7; 
 
                             dongData['동구 합계'] = {
@@ -3427,12 +3427,12 @@
                                 eldPop: sumEldPop, 
                                 eldPct: avgEldPct,
                                 ppHouse: avgPpHouse, 
-                                onePop: totalOnePop, 
+                                onePop: totalOnePop,
                                 onePct: avgOnePct, 
-                                singleHousePct: parseFloat((sumSingleHousePct / totalCount).toFixed(1)), 
-                                multiHousePct: parseFloat((sumMultiHousePct / totalCount).toFixed(1)), 
-                                aptPct: parseFloat((sumAptPct / totalCount).toFixed(1)), 
-                                oldPct: parseFloat((sumOldPct / totalCount).toFixed(1)), 
+                                singleHousePct: '-',   // <- 수정됨
+                                multiHousePct: '-',    // <- 수정됨
+                                aptPct: '-',           // <- 수정됨
+                                oldPct: '-',           // <- 수정됨
                                 bizCount: sumBizCount, 
                                 bizWorker: sumBizWorker, 
                                 socEco: sumSocEco, 
@@ -3444,8 +3444,8 @@
                                 forgn: sumForgn, 
                                 beds: sumBeds, 
                                 hosp: sumHosp, 
-                                greenPct: parseFloat((sumGreenPct / totalCount).toFixed(1)), 
-                                parkArea: sumParkArea, 
+                                greenPct: '-',         // <- 수정됨
+                                parkArea: '-',         // <- 수정됨
                                 acc: sumAcc
                             };
 
