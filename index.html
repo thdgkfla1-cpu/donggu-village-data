@@ -3578,22 +3578,34 @@
         }
 
         function buildRow(name, d, isAvg) {
-    const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
+    // 💡 '동구 합계'일 때는 은은한 분홍색 배경, '동구 평균'일 때는 기존 연두색 배경 적용
+    let bgClass = '!bg-white';
+    let rowClass = 'hover:bg-gray-50 transition';
+    let nameClass = 'text-sm font-bold text-gray-800 break-keep';
+
+    if (name === '동구 합계') {
+        bgClass = '!bg-[#fff1f2]'; // 분홍색 계열 (Tailwind rose-50 톤)
+        rowClass = 'border-t-2 border-rose-300 !bg-[#fff1f2]'; // 위쪽 테두리 강조
+        nameClass = 'text-base font-black text-rose-900 break-keep';
+    } else if (name === '동구 평균') {
+        bgClass = '!bg-[#ecfdf5]'; // 연두색 계열
+        rowClass = 'row-average'; 
+        nameClass = 'text-base font-black text-emerald-900 break-keep';
+    }
+
     const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
     const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
     const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
     const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
     const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
     const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
-    const nameClass = isAvg ? 'text-base font-black text-emerald-900 break-keep' : 'text-sm font-bold text-gray-800 break-keep';
 
-    // 💡 값이 '-' 이면 그대로 '-', 숫자이면 뒤에 '%'를 붙임
     const formatPct = (val) => val === '-' ? '-' : val + '%';
     const formatNum = (val) => val === '-' ? '-' : Number(val).toLocaleString();
     const formatRaw = (val) => val === '-' ? '-' : val;
 
     return `
-        <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200">
+        <tr data-dong="${name}" class="${rowClass} border-b border-gray-200">
             <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
             <td class="px-4 py-3 ${popBase}">${formatNum(d.pop)}</td>
             <td class="px-4 py-3 ${popBase}">${formatNum(d.male)}</td>
@@ -3602,14 +3614,10 @@
             <td class="px-4 py-3 ${popBase}">${formatNum(d.eldPop)}</td>
             <td class="px-4 py-3 ${popBase}">${formatNum(d.onePop)}</td>
             <td class="px-4 py-3 ${popBase}">${formatRaw(d.ppHouse)}</td>
-            
-            <!-- 👇 기존 하드코딩된 '%'를 없애고 formatPct를 적용했습니다 👇 -->
             <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${formatPct(d.singleHousePct)}</td>
             <td class="px-4 py-3 ${houseBase}">${formatPct(d.multiHousePct)}</td>
             <td class="px-4 py-3 ${houseBase}">${formatPct(d.aptPct)}</td>
             <td class="px-4 py-3 ${houseBase}">${formatPct(d.oldPct)}</td>
-            <!-- 👆 ------------------------------------------------- 👆 -->
-            
             <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${formatNum(d.bizCount)}</td>
             <td class="px-4 py-3 ${bizBase}">${formatNum(d.bizWorker)}</td>
             <td class="px-4 py-3 ${bizBase}">${formatRaw(d.socEco)}</td>
@@ -3621,11 +3629,7 @@
             <td class="px-4 py-3 ${welBase}">${formatNum(d.forgn)}</td>
             <td class="px-4 py-3 ${welBase}">${formatNum(d.beds)}</td>
             <td class="px-4 py-3 ${welBase}">${formatRaw(d.hosp)}</td>
-            
-            <!-- 👇 녹지비율 역시 '%'를 없애고 formatPct를 적용했습니다 👇 -->
             <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${formatPct(d.greenPct)}</td>
-            <!-- 👆 ------------------------------------------------- 👆 -->
-            
             <td class="px-4 py-3 ${envBase}">${formatRaw(d.parkArea)}</td>
             <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${formatRaw(d.acc)}</td>
         </tr>
