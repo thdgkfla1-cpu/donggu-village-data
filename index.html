@@ -3578,47 +3578,59 @@
         }
 
         function buildRow(name, d, isAvg) {
-            const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
-            const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
-            const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
-            const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
-            const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
-            const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
-            const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
-            const nameClass = isAvg ? 'text-base font-black text-emerald-900 break-keep' : 'text-sm font-bold text-gray-800 break-keep';
+    const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
+    const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
+    const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
+    const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
+    const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
+    const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
+    const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
+    const nameClass = isAvg ? 'text-base font-black text-emerald-900 break-keep' : 'text-sm font-bold text-gray-800 break-keep';
 
-            return `
-                <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200">
-                    <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.pop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.male).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.female).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.youthPop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.eldPop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${Number(d.onePop).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${popBase}">${d.ppHouse}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${d.singleHousePct}%</td>
-                    <td class="px-4 py-3 ${houseBase}">${d.multiHousePct}%</td>
-                    <td class="px-4 py-3 ${houseBase}">${d.aptPct}%</td>
-                    <td class="px-4 py-3 ${houseBase}">${d.oldPct}%</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${Number(d.bizCount).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${bizBase}">${Number(d.bizWorker).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.socEco}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.cult}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.kin}</td>
-                    <td class="px-4 py-3 ${bizBase}">${d.wel}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${welBase}">${Number(d.pen).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${Number(d.dis).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${Number(d.forgn).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${Number(d.beds).toLocaleString()}</td>
-                    <td class="px-4 py-3 ${welBase}">${d.hosp}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${d.greenPct}%</td>
-                    <td class="px-4 py-3 ${envBase}">${d.parkArea}</td>
-                    <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${d.acc}</td>
-                </tr>
-            `;
-        }
+    // 💡 값이 '-' 이면 그대로 '-', 숫자이면 뒤에 '%'를 붙임
+    const formatPct = (val) => val === '-' ? '-' : val + '%';
+    const formatNum = (val) => val === '-' ? '-' : Number(val).toLocaleString();
+    const formatRaw = (val) => val === '-' ? '-' : val;
 
+    return `
+        <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200">
+            <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
+            <td class="px-4 py-3 ${popBase}">${formatNum(d.pop)}</td>
+            <td class="px-4 py-3 ${popBase}">${formatNum(d.male)}</td>
+            <td class="px-4 py-3 ${popBase}">${formatNum(d.female)}</td>
+            <td class="px-4 py-3 ${popBase}">${formatNum(d.youthPop)}</td>
+            <td class="px-4 py-3 ${popBase}">${formatNum(d.eldPop)}</td>
+            <td class="px-4 py-3 ${popBase}">${formatNum(d.onePop)}</td>
+            <td class="px-4 py-3 ${popBase}">${formatRaw(d.ppHouse)}</td>
+            
+            <!-- 👇 기존 하드코딩된 '%'를 없애고 formatPct를 적용했습니다 👇 -->
+            <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${formatPct(d.singleHousePct)}</td>
+            <td class="px-4 py-3 ${houseBase}">${formatPct(d.multiHousePct)}</td>
+            <td class="px-4 py-3 ${houseBase}">${formatPct(d.aptPct)}</td>
+            <td class="px-4 py-3 ${houseBase}">${formatPct(d.oldPct)}</td>
+            <!-- 👆 ------------------------------------------------- 👆 -->
+            
+            <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${formatNum(d.bizCount)}</td>
+            <td class="px-4 py-3 ${bizBase}">${formatNum(d.bizWorker)}</td>
+            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.socEco)}</td>
+            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.cult)}</td>
+            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.kin)}</td>
+            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.wel)}</td>
+            <td class="px-4 py-3 border-l-2 border-gray-200 ${welBase}">${formatNum(d.pen)}</td>
+            <td class="px-4 py-3 ${welBase}">${formatNum(d.dis)}</td>
+            <td class="px-4 py-3 ${welBase}">${formatNum(d.forgn)}</td>
+            <td class="px-4 py-3 ${welBase}">${formatNum(d.beds)}</td>
+            <td class="px-4 py-3 ${welBase}">${formatRaw(d.hosp)}</td>
+            
+            <!-- 👇 녹지비율 역시 '%'를 없애고 formatPct를 적용했습니다 👇 -->
+            <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${formatPct(d.greenPct)}</td>
+            <!-- 👆 ------------------------------------------------- 👆 -->
+            
+            <td class="px-4 py-3 ${envBase}">${formatRaw(d.parkArea)}</td>
+            <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${formatRaw(d.acc)}</td>
+        </tr>
+    `;
+}
         function initCharts() {
             ['theme1', 'theme2', 'theme3', 'theme4'].forEach(themeKey => {
                 chartInstances[themeKey].bar = new Chart(document.getElementById(`barChart_${themeKey}`).getContext('2d'), { 
