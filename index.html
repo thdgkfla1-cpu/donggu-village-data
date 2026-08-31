@@ -3546,7 +3546,7 @@
 
         // 2. 표의 각 줄(행)을 만드는 함수
         function buildRow(dong, rowData, isHighlight = false) {
-            // 데이터가 없을 경우 에러로 인해 로딩이 멈추는 현상 방지
+            // 데이터가 없을 경우 에러 방지
             if (!rowData) rowData = {};
 
             // 빈 값이면 '-'로 표기
@@ -3560,6 +3560,12 @@
             const tdClassHouse = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap font-medium text-amber-600';
             const tdClassBiz = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap font-medium text-purple-600';
 
+            // 동구 합계일 경우 퍼센트(%) 기호를 생략하기 위한 논리
+            const houseFormat = (val) => {
+                if(dong === '동구 합계' || val === '-' || val === undefined) return '-';
+                return val + '%';
+            };
+
             // 엑셀의 헤더 띄어쓰기가 달라져도 무조건 값을 찾아오도록 ||(또는) 이중 안전장치 적용
             return `
                 <tr class="${trClass}">
@@ -3570,11 +3576,11 @@
                     <td class="${tdClassPop}">${formatNum(rowData['유소년 인구(명)'] || rowData['유소년(명)'])}</td>
                     <td class="${tdClassPop}">${formatNum(rowData['고령인구(명)'] || rowData['고령(명)'])}</td>
                     <td class="${tdClassPop}">${formatNum(rowData['1인가구(명)'])}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData['세대당 인구수(명)'])}</td>
-                    <td class="${tdClassHouse}">${formatNum(rowData['단독 주택 비율(%)'] || rowData['단독주택(%)'])}</td>
-                    <td class="${tdClassHouse}">${formatNum(rowData['연립/다세대 주택 비율(%)'] || rowData['연립다세대(%)'])}</td>
-                    <td class="${tdClassHouse}">${formatNum(rowData['아파트 비율(%)'] || rowData['아파트(%)'])}</td>
-                    <td class="${tdClassHouse}">${formatNum(rowData['노후주택(30년↑)(%)'] || rowData['노후주택(%)'])}</td>
+                    <td class="${tdClassPop}">${formatNum(rowData['세대당 인구수(명)'] || rowData['세대당 인구수(명)'] || '-')}</td>
+                    <td class="${tdClassHouse}">${houseFormat(rowData['단독 주택 비율(%)'] || rowData['단독주택(%)'])}</td>
+                    <td class="${tdClassHouse}">${houseFormat(rowData['연립/다세대 주택 비율(%)'] || rowData['연립다세대(%)'])}</td>
+                    <td class="${tdClassHouse}">${houseFormat(rowData['아파트 비율(%)'] || rowData['아파트(%)'])}</td>
+                    <td class="${tdClassHouse}">${houseFormat(rowData['노후주택(30년↑)(%)'] || rowData['노후주택(%)'])}</td>
                     <td class="${tdClassBiz}">${formatNum(rowData['사업체 수(개)'] || rowData['사업체(개)'])}</td>
                     <td class="${tdClassBiz}">${formatNum(rowData['종사자 수(명)'] || rowData['종사자(명)'])}</td>
                     <td class="${tdClassBiz}">${formatNum(rowData['사회연대경제(개)'] || rowData['사회적경제기업'])}</td>
