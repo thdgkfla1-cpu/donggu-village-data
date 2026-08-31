@@ -3415,6 +3415,40 @@
                             let avgEldPct = avgPop > 0 ? parseFloat(((avgEldPop / avgPop) * 100).toFixed(1)) : 0;
                             let avgOnePct = avgPop > 0 ? parseFloat(((avgOnePop / avgPop) * 100).toFixed(1)) : 0;
 
+                            // 👇👇👇👇👇 [여기에 아래 코드를 추가하세요] 👇👇👇👇👇
+                            let totalOnePop = sumVal6 > (10 * totalCount) ? sumVal6 : sumVal7; 
+
+                            dongData['동구 합계'] = {
+                                pop: sumPop, 
+                                male: sumMale, 
+                                female: sumFemale, 
+                                youthPop: sumYouthPop, 
+                                youthPct: avgYouthPct, 
+                                eldPop: sumEldPop, 
+                                eldPct: avgEldPct,
+                                ppHouse: avgPpHouse, 
+                                onePop: totalOnePop, 
+                                onePct: avgOnePct, 
+                                singleHousePct: parseFloat((sumSingleHousePct / totalCount).toFixed(1)), 
+                                multiHousePct: parseFloat((sumMultiHousePct / totalCount).toFixed(1)), 
+                                aptPct: parseFloat((sumAptPct / totalCount).toFixed(1)), 
+                                oldPct: parseFloat((sumOldPct / totalCount).toFixed(1)), 
+                                bizCount: sumBizCount, 
+                                bizWorker: sumBizWorker, 
+                                socEco: sumSocEco, 
+                                cult: sumCult, 
+                                kin: sumKin, 
+                                wel: sumWel, 
+                                pen: sumPen, 
+                                dis: sumDis, 
+                                forgn: sumForgn, 
+                                beds: sumBeds, 
+                                hosp: sumHosp, 
+                                greenPct: parseFloat((sumGreenPct / totalCount).toFixed(1)), 
+                                parkArea: sumParkArea, 
+                                acc: sumAcc
+                            };
+
                             const aiAvg = aiReports['동구 평균'] || {};
                             dongData['동구 평균'] = {
                                 type: aiAvg.type, strength: aiAvg.strength, weakness: aiAvg.weakness,
