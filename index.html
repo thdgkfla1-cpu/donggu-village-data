@@ -3530,8 +3530,16 @@
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             let html = '';
+            
+            // 1. 일반 13개 동 렌더링
             DONG_ORDER.forEach(dong => { if(dongData[dong]) html += buildRow(dong, dongData[dong], false); });
+            
+            // 👇 2. [추가된 부분] 동구 평균 바로 위에 '동구 합계' 렌더링 (true를 줘서 배경색 강조)
+            if(dongData['동구 합계']) html += buildRow('동구 합계', dongData['동구 합계'], true);
+            
+            // 3. 기존 '동구 평균' 렌더링
             if(dongData['동구 평균']) html += buildRow('동구 평균', dongData['동구 평균'], true);
+            
             tbody.innerHTML = html;
         }
 
