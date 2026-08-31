@@ -3360,8 +3360,7 @@
                             let row = rows[i];
                             if (row.length < 10) continue;
                             let dong = row[0] ? row[0].trim() : '';
-                            
-                            if (!DONG_ORDER.includes(dong) && dong !== '동구 합계') continue; 
+                            if (!DONG_ORDER.includes(dong)) continue; 
 
                             let pop = cleanNum(row[1]); let male = cleanNum(row[2]); let female = cleanNum(row[3]);
                             let youthPop = cleanNum(row[4]); let eldPop = cleanNum(row[5]);
@@ -3393,18 +3392,16 @@
                                 bizCount, bizWorker, socEco, cult, kin, wel, pen, dis, forgn, beds, hosp, greenPct, parkArea, acc
                             };
 
-                            if (dong !== '동구 합계') {
-                                totalCount++;
-                                sumPop += pop; sumMale += male; sumFemale += female; 
-                                sumYouthPop += youthPop; sumEldPop += eldPop;
-                                sumVal6 += val6; sumVal7 += val7;
-                                sumSingleHousePct += singleHousePct; sumMultiHousePct += multiHousePct;
-                                sumAptPct += aptPct; sumOldPct += oldPct;
-                                sumBizCount += bizCount; sumBizWorker += bizWorker;
-                                sumSocEco += socEco; sumCult += cult; sumKin += kin; sumWel += wel;
-                                sumPen += pen; sumDis += dis; sumForgn += forgn; sumBeds += beds;
-                                sumHosp += hosp; sumGreenPct += greenPct; sumParkArea += parkArea; sumAcc += acc;
-                            }
+                            totalCount++;
+                            sumPop += pop; sumMale += male; sumFemale += female; 
+                            sumYouthPop += youthPop; sumEldPop += eldPop;
+                            sumVal6 += val6; sumVal7 += val7;
+                            sumSingleHousePct += singleHousePct; sumMultiHousePct += multiHousePct;
+                            sumAptPct += aptPct; sumOldPct += oldPct;
+                            sumBizCount += bizCount; sumBizWorker += bizWorker;
+                            sumSocEco += socEco; sumCult += cult; sumKin += kin; sumWel += wel;
+                            sumPen += pen; sumDis += dis; sumForgn += forgn; sumBeds += beds;
+                            sumHosp += hosp; sumGreenPct += greenPct; sumParkArea += parkArea; sumAcc += acc;
                         }
 
                         if (totalCount > 0) {
@@ -3447,22 +3444,6 @@
                     } catch (e) {
                         document.getElementById('loading').innerHTML = `<div class="text-xl font-bold text-red-600 mb-2">데이터 분석 중 오류가 발생했습니다.</div><p class="text-gray-700">${e.message}</p>`;
                     }
-                },
-                // [핵심 추가] 파일 읽기 실패 시 무한 로딩을 방지하는 에러 처리 코드
-                error: function(err, file, inputElem, reason) {
-                    document.getElementById('loading').innerHTML = `
-                        <div class="text-2xl font-black text-rose-600 mb-4">데이터 파일(data.csv)을 불러올 수 없습니다.</div>
-                        <div class="text-gray-700 text-left bg-gray-50 p-6 rounded-xl border border-gray-200 break-keep leading-relaxed">
-                            <p class="font-bold mb-2">💡 원인 확인:</p>
-                            <ul class="list-disc pl-5 mb-4 space-y-1">
-                                <li>HTML 파일과 <b>동일한 폴더에 'data.csv' 파일이 있는지</b> 확인해 주세요.</li>
-                                <li>HTML 파일을 더블클릭해서 열었을 경우(주소창이 file://로 시작), 브라우저 보안 정책상 CSV 파일을 읽을 수 없습니다.</li>
-                            </ul>
-                            <p class="font-bold mb-2">🚀 해결 방법:</p>
-                            <p>VS Code 에디터를 사용 중이시라면 <b>'Live Server'</b> 확장 프로그램을 설치한 뒤, 마우스 우클릭 -> <b>'Open with Live Server'</b>로 실행해 주세요.</p>
-                        </div>
-                    `;
-                    document.getElementById('loading').classList.remove('animate-pulse');
                 }
             });
         };
@@ -3473,6 +3454,7 @@
             initCharts();
             setupAgendaTabs();
             
+            // Tab 4: 민원 분석 탭 초기화 (셀렉트박스 및 데이터 렌더링)
             populateComplaintSelect();
             renderComplaints('충장동');
             
@@ -3545,94 +3527,60 @@
             selContainer.addEventListener('change', () => updateReport(selContainer.value));
         }
 
-        // [핵심 수정 3] 엉켜있던 구문을 완벽하게 복구한 테이블 렌더링 함수입니다.
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             let html = '';
             
+            // 1. 일반 13개 동 렌더링
             DONG_ORDER.forEach(dong => { if(dongData[dong]) html += buildRow(dong, dongData[dong], false); });
+            
+            // 👇 2. [추가된 부분] 동구 평균 바로 위에 '동구 합계' 렌더링 (true를 줘서 배경색 강조)
             if(dongData['동구 합계']) html += buildRow('동구 합계', dongData['동구 합계'], true);
+            
+            // 3. 기존 '동구 평균' 렌더링
             if(dongData['동구 평균']) html += buildRow('동구 평균', dongData['동구 평균'], true);
             
             tbody.innerHTML = html;
         }
 
-        function buildRow(dong, rowData, isHighlight = false) {
-            if (!rowData) rowData = {};
-
-            const formatNum = (val) => {
-                if (val === undefined || val === null || val === '') return '-';
-                return val.toLocaleString ? val.toLocaleString() : val;
-            };
-
-            const trClass = isHighlight ? 'bg-emerald-50/80 font-black text-emerald-900' : 'border-b border-gray-100 hover:bg-teal-50 transition-colors text-center text-[13.5px]';
-            const tdClassPop = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap text-blue-600';
-            const tdClassHouse = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap font-medium text-amber-600';
-            const tdClassBiz = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap font-medium text-purple-600';
-
-            const houseFormat = (val) => {
-                if(dong === '동구 합계' || val === '-' || val === undefined || val === 0) return '-';
-                return val + '%';
-            };
+        function buildRow(name, d, isAvg) {
+            const bgClass = isAvg ? '!bg-[#ecfdf5]' : '!bg-white';
+            const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
+            const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
+            const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
+            const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
+            const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
+            const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
+            const nameClass = isAvg ? 'text-base font-black text-emerald-900 break-keep' : 'text-sm font-bold text-gray-800 break-keep';
 
             return `
-                <tr class="${trClass}">
-                    <td class="px-4 py-3 font-bold ${isHighlight ? '' : 'bg-gray-50/50'} sticky left-0 z-10 border-r border-gray-200">${dong}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData.pop)}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData.male)}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData.female)}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData.youthPop)}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData.eldPop)}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData.onePop)}</td>
-                    <td class="${tdClassPop}">${dong === '동구 합계' ? formatNum(rowData.ppHouse) : formatNum(rowData.ppHouse)}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData.singleHousePct)}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData.multiHousePct)}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData.aptPct)}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData.oldPct)}</td>
-                    <td class="${tdClassBiz}">${formatNum(rowData.bizCount)}</td>
-                    <td class="${tdClassBiz}">${formatNum(rowData.bizWorker)}</td>
-                    <td class="${tdClassBiz}">${formatNum(rowData.socEco)}</td>
-                </tr>
-            `;
-        }
-
-            // CSV 데이터에서 쉼표(,)를 제거하고 숫자로 변환하여 천 단위 콤마를 다시 찍어주는 안전한 포맷팅
-            const formatNum = (val) => {
-                if(val === undefined || val === null || val === '-' || val === '') return '-';
-                // 문자가 섞여 있으면 그대로 반환 (예: 2.1)
-                if(isNaN(String(val).replace(/,/g, ''))) return val;
-                const num = Number(String(val).replace(/,/g, ''));
-                return num.toLocaleString();
-            };
-
-            const trClass = isHighlight ? 'bg-emerald-50/80 font-black text-emerald-900' : 'border-b border-gray-100 hover:bg-teal-50 transition-colors text-center text-[13.5px]';
-            const tdClassPop = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap text-blue-600';
-            const tdClassHouse = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap font-medium text-amber-600';
-            const tdClassBiz = isHighlight ? 'px-3 py-3.5 whitespace-nowrap text-emerald-700' : 'px-3 py-3 whitespace-nowrap font-medium text-purple-600';
-
-            // 동구 합계일 경우 퍼센트(%) 기호를 생략하기 위한 논리
-            const houseFormat = (val) => {
-                if(dong === '동구 합계' || val === '-' || val === undefined) return '-';
-                return val + '%';
-            };
-
-            return `
-                <tr class="${trClass}">
-                    <td class="px-4 py-3 font-bold ${isHighlight ? '' : 'bg-gray-50/50'} sticky left-0 z-10 border-r border-gray-200">${dong}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData['총 인구(명)'])}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData['남성(명)'])}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData['여성(명)'])}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData['유소년(명)'])}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData['고령(명)'])}</td>
-                    <td class="${tdClassPop}">${formatNum(rowData['1인가구(명)'])}</td>
-                    <td class="${tdClassPop}">${rowData['세대당 인구수(명)'] || '-'}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData['단독주택(%)'])}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData['연립다세대(%)'])}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData['아파트(%)'])}</td>
-                    <td class="${tdClassHouse}">${houseFormat(rowData['노후주택(%)'])}</td>
-                    <td class="${tdClassBiz}">${formatNum(rowData['사업체(개)'])}</td>
-                    <td class="${tdClassBiz}">${formatNum(rowData['종사자(명)'])}</td>
-                    <td class="${tdClassBiz}">${formatNum(rowData['사회적경제기업'])}</td>
+                <tr data-dong="${name}" class="${isAvg ? 'row-average' : 'hover:bg-gray-50 transition'} border-b border-gray-200">
+                    <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.pop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.male).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.female).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.youthPop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.eldPop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${Number(d.onePop).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${popBase}">${d.ppHouse}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${d.singleHousePct}%</td>
+                    <td class="px-4 py-3 ${houseBase}">${d.multiHousePct}%</td>
+                    <td class="px-4 py-3 ${houseBase}">${d.aptPct}%</td>
+                    <td class="px-4 py-3 ${houseBase}">${d.oldPct}%</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${Number(d.bizCount).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${bizBase}">${Number(d.bizWorker).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.socEco}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.cult}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.kin}</td>
+                    <td class="px-4 py-3 ${bizBase}">${d.wel}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${welBase}">${Number(d.pen).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${Number(d.dis).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${Number(d.forgn).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${Number(d.beds).toLocaleString()}</td>
+                    <td class="px-4 py-3 ${welBase}">${d.hosp}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${d.greenPct}%</td>
+                    <td class="px-4 py-3 ${envBase}">${d.parkArea}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${d.acc}</td>
                 </tr>
             `;
         }
