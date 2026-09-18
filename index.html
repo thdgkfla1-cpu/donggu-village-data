@@ -382,6 +382,7 @@
                                 <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('여성', 'female')">여성(명)<span class="date-badge text-blue-500/70">26. 7.</span></th>
                                 <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('유소년', 'youthPop')">유소년(명)<span class="date-badge text-blue-500/70">26. 7.</span></th>
                                 <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('고령', 'eldPop')">고령(명)<span class="date-badge text-blue-500/70">26. 7.</span></th>
+                                <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('세대수', 'households')">세대수(개)<span class="date-badge text-blue-500/70">26. 7.</span></th>
                                 <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('1인가구', 'onePop')">1인가구(명)<span class="date-badge text-blue-500/70">26. 7.</span></th>
                                 <th class="px-4 py-4 bg-blue-50 text-blue-900 border-b-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="openModal('세대당 인구수', 'ppHouse')">세대당 인구수(명)<span class="date-badge text-blue-500/70">26. 7.</span></th>
                                 
@@ -3341,7 +3342,8 @@
         };
 
         window.onload = function() {
-            Papa.parse("data.csv", {
+            // 👇 새로 올리신 data_2.csv 파일로 연결합니다.
+            Papa.parse("data_2.csv", {
                 download: true,
                 header: false,
                 skipEmptyLines: true,
@@ -3352,6 +3354,7 @@
                         let totalCount = 0;
                         let sumPop = 0, sumMale = 0, sumFemale = 0, sumYouthPop = 0, sumEldPop = 0;
                         let sumVal6 = 0, sumVal7 = 0;
+                        let sumHouseholds = 0; // 세대수 합계 변수
                         let sumSingleHousePct = 0, sumMultiHousePct = 0, sumAptPct = 0, sumOldPct = 0;
                         let sumBizCount = 0, sumBizWorker = 0, sumSocEco = 0, sumCult = 0, sumKin = 0, sumWel = 0;
                         let sumPen = 0, sumDis = 0, sumForgn = 0, sumBeds = 0, sumHosp = 0, sumGreenPct = 0, sumParkArea = 0, sumAcc = 0;
@@ -3360,23 +3363,30 @@
                             let row = rows[i];
                             if (row.length < 10) continue;
                             let dong = row[0] ? row[0].trim() : '';
-                            if (!DONG_ORDER.includes(dong)) continue; 
+                            
+                            if (!DONG_ORDER.includes(dong) && dong !== '동구 합계') continue; 
 
                             let pop = cleanNum(row[1]); let male = cleanNum(row[2]); let female = cleanNum(row[3]);
                             let youthPop = cleanNum(row[4]); let eldPop = cleanNum(row[5]);
-                            let val6 = cleanNum(row[6]); let val7 = cleanNum(row[7]);
-                            let onePop = val6 > 10 ? val6 : (val7 > 10 ? val7 : 0);
-                            let ppHouse = (val6 > 0 && val6 < 10) ? val6 : ((val7 > 0 && val7 < 10) ? val7 : 0);
+                            let val6 = cleanNum(row[6]); 
                             
-                            let singleHousePct = cleanNum(row[8]); let multiHousePct = cleanNum(row[9]);
-                            let aptPct = cleanNum(row[10]); let oldPct = cleanNum(row[11]);
-                            let bizCount = cleanNum(row[12]); let bizWorker = cleanNum(row[13]);
-                            let socEco = cleanNum(row[14]); let cult = cleanNum(row[15]);
-                            let kin = cleanNum(row[16]); let wel = cleanNum(row[17]);
-                            let pen = cleanNum(row[19]); let dis = cleanNum(row[20]);
-                            let forgn = cleanNum(row[21]); let beds = cleanNum(row[23]);
-                            let hosp = cleanNum(row[24]); let greenPct = cleanNum(row[25]);
-                            let parkArea = cleanNum(row[26]); let acc = cleanNum(row[28]);
+                            // 👇 CSV 구조 밀림 적용: 7번째가 세대수, 8번째가 세대당 인구수
+                            let households = cleanNum(row[7]); 
+                            let val8 = cleanNum(row[8]); 
+
+                            let onePop = val6 > 10 ? val6 : (val8 > 10 ? val8 : 0);
+                            let ppHouse = (val6 > 0 && val6 < 10) ? val6 : ((val8 > 0 && val8 < 10) ? val8 : 0);
+                            
+                            // 👇 나머지도 1칸씩 인덱스 뒤로 밀림 적용 완료
+                            let singleHousePct = cleanNum(row[9]); let multiHousePct = cleanNum(row[10]);
+                            let aptPct = cleanNum(row[11]); let oldPct = cleanNum(row[12]);
+                            let bizCount = cleanNum(row[13]); let bizWorker = cleanNum(row[14]);
+                            let socEco = cleanNum(row[15]); let cult = cleanNum(row[16]);
+                            let kin = cleanNum(row[17]); let wel = cleanNum(row[18]);
+                            let pen = cleanNum(row[20]); let dis = cleanNum(row[21]);
+                            let forgn = cleanNum(row[22]); let beds = cleanNum(row[24]);
+                            let hosp = cleanNum(row[25]); let greenPct = cleanNum(row[26]);
+                            let parkArea = cleanNum(row[27]); let acc = cleanNum(row[29]);
 
                             let youthPct = pop > 0 ? parseFloat(((youthPop / pop) * 100).toFixed(1)) : 0;
                             let eldPct = pop > 0 ? parseFloat(((eldPop / pop) * 100).toFixed(1)) : 0;
@@ -3388,20 +3398,24 @@
                                 strategy: ai.strategy, festival: ai.festival, welfare: ai.welfare,
                                 media: ai.media, safety: ai.safety,
                                 pop, male, female, youthPop, youthPct, eldPop, eldPct,
+                                households, // 추가된 세대수 데이터 연결
                                 ppHouse, onePop, onePct, singleHousePct, multiHousePct, aptPct, oldPct, 
                                 bizCount, bizWorker, socEco, cult, kin, wel, pen, dis, forgn, beds, hosp, greenPct, parkArea, acc
                             };
 
-                            totalCount++;
-                            sumPop += pop; sumMale += male; sumFemale += female; 
-                            sumYouthPop += youthPop; sumEldPop += eldPop;
-                            sumVal6 += val6; sumVal7 += val7;
-                            sumSingleHousePct += singleHousePct; sumMultiHousePct += multiHousePct;
-                            sumAptPct += aptPct; sumOldPct += oldPct;
-                            sumBizCount += bizCount; sumBizWorker += bizWorker;
-                            sumSocEco += socEco; sumCult += cult; sumKin += kin; sumWel += wel;
-                            sumPen += pen; sumDis += dis; sumForgn += forgn; sumBeds += beds;
-                            sumHosp += hosp; sumGreenPct += greenPct; sumParkArea += parkArea; sumAcc += acc;
+                            if (dong !== '동구 합계') {
+                                totalCount++;
+                                sumPop += pop; sumMale += male; sumFemale += female; 
+                                sumYouthPop += youthPop; sumEldPop += eldPop;
+                                sumVal6 += val6; sumVal7 += val8; 
+                                sumHouseholds += households; // 세대수 누적
+                                sumSingleHousePct += singleHousePct; sumMultiHousePct += multiHousePct;
+                                sumAptPct += aptPct; sumOldPct += oldPct;
+                                sumBizCount += bizCount; sumBizWorker += bizWorker;
+                                sumSocEco += socEco; sumCult += cult; sumKin += kin; sumWel += wel;
+                                sumPen += pen; sumDis += dis; sumForgn += forgn; sumBeds += beds;
+                                sumHosp += hosp; sumGreenPct += greenPct; sumParkArea += parkArea; sumAcc += acc;
+                            }
                         }
 
                         if (totalCount > 0) {
@@ -3410,43 +3424,23 @@
                             let avgEldPop = Math.round(sumEldPop / totalCount);
                             let avgOnePop = sumVal6 > (10 * totalCount) ? Math.round(sumVal6 / totalCount) : Math.round(sumVal7 / totalCount);
                             let avgPpHouse = (sumVal6 > 0 && sumVal6 < (10 * totalCount)) ? parseFloat((sumVal6 / totalCount).toFixed(2)) : parseFloat((sumVal7 / totalCount).toFixed(2));
+                            let avgHouseholds = Math.round(sumHouseholds / totalCount);
 
                             let avgYouthPct = avgPop > 0 ? parseFloat(((avgYouthPop / avgPop) * 100).toFixed(1)) : 0;
                             let avgEldPct = avgPop > 0 ? parseFloat(((avgEldPop / avgPop) * 100).toFixed(1)) : 0;
                             let avgOnePct = avgPop > 0 ? parseFloat(((avgOnePop / avgPop) * 100).toFixed(1)) : 0;
 
-                            // ===== [신규 추가] 동구 전체 합계 데이터 객체 생성 =====
                             let totalOnePop = sumVal6 > (10 * totalCount) ? sumVal6 : sumVal7; 
 
+                            // 강제로 합계 객체에도 households 추가
                             dongData['동구 합계'] = {
-                                pop: sumPop, 
-                                male: sumMale, 
-                                female: sumFemale, 
-                                youthPop: sumYouthPop, 
-                                youthPct: avgYouthPct, 
-                                eldPop: sumEldPop, 
-                                eldPct: avgEldPct,
-                                ppHouse: avgPpHouse, 
-                                onePop: totalOnePop,
-                                onePct: avgOnePct, 
-                                singleHousePct: '-',   // <- 수정됨
-                                multiHousePct: '-',    // <- 수정됨
-                                aptPct: '-',           // <- 수정됨
-                                oldPct: '-',           // <- 수정됨
-                                bizCount: sumBizCount, 
-                                bizWorker: sumBizWorker, 
-                                socEco: sumSocEco, 
-                                cult: sumCult, 
-                                kin: sumKin, 
-                                wel: sumWel, 
-                                pen: sumPen, 
-                                dis: sumDis, 
-                                forgn: sumForgn, 
-                                beds: sumBeds, 
-                                hosp: sumHosp, 
-                                greenPct: '-',         // <- 수정됨
-                                parkArea: '-',         // <- 수정됨
-                                acc: sumAcc
+                                pop: sumPop, male: sumMale, female: sumFemale, 
+                                youthPop: sumYouthPop, youthPct: avgYouthPct, eldPop: sumEldPop, eldPct: avgEldPct,
+                                households: sumHouseholds, // 세대수 합계
+                                ppHouse: avgPpHouse, onePop: totalOnePop, onePct: avgOnePct, 
+                                singleHousePct: '-', multiHousePct: '-', aptPct: '-', oldPct: '-', 
+                                bizCount: sumBizCount, bizWorker: sumBizWorker, socEco: sumSocEco, cult: sumCult, kin: sumKin, wel: sumWel, 
+                                pen: sumPen, dis: sumDis, forgn: sumForgn, beds: sumBeds, hosp: sumHosp, greenPct: '-', parkArea: '-', acc: sumAcc
                             };
 
                             const aiAvg = aiReports['동구 평균'] || {};
@@ -3456,6 +3450,7 @@
                                 media: aiAvg.media, safety: aiAvg.safety,
                                 pop: avgPop, male: Math.round(sumMale / totalCount), female: Math.round(sumFemale / totalCount), 
                                 youthPop: avgYouthPop, youthPct: avgYouthPct, eldPop: avgEldPop, eldPct: avgEldPct,
+                                households: avgHouseholds, // 세대수 평균
                                 ppHouse: avgPpHouse, onePop: avgOnePop, onePct: avgOnePct, 
                                 singleHousePct: parseFloat((sumSingleHousePct / totalCount).toFixed(1)), 
                                 multiHousePct: parseFloat((sumMultiHousePct / totalCount).toFixed(1)), 
@@ -3478,6 +3473,10 @@
                     } catch (e) {
                         document.getElementById('loading').innerHTML = `<div class="text-xl font-bold text-red-600 mb-2">데이터 분석 중 오류가 발생했습니다.</div><p class="text-gray-700">${e.message}</p>`;
                     }
+                },
+                error: function(err) {
+                    document.getElementById('loading').innerHTML = `<div class="text-2xl font-black text-rose-600 mb-4">데이터 파일(data_2.csv)을 불러올 수 없습니다.</div>`;
+                    document.getElementById('loading').classList.remove('animate-pulse');
                 }
             });
         };
@@ -3578,63 +3577,65 @@
         }
 
         function buildRow(name, d, isAvg) {
-    // 💡 '동구 합계'일 때는 은은한 분홍색 배경, '동구 평균'일 때는 기존 연두색 배경 적용
-    let bgClass = '!bg-white';
-    let rowClass = 'hover:bg-gray-50 transition';
-    let nameClass = 'text-sm font-bold text-gray-800 break-keep';
+            // 💡 '동구 합계'일 때는 은은한 분홍색 배경, '동구 평균'일 때는 기존 연두색 배경 적용
+            let bgClass = '!bg-white';
+            let rowClass = 'hover:bg-gray-50 transition';
+            let nameClass = 'text-sm font-bold text-gray-800 break-keep';
 
-    if (name === '동구 합계') {
-        bgClass = '!bg-[#fff1f2]'; // 분홍색 계열 (Tailwind rose-50 톤)
-        rowClass = 'border-t-2 border-rose-300 !bg-[#fff1f2]'; // 위쪽 테두리 강조
-        nameClass = 'text-base font-black text-rose-900 break-keep';
-    } else if (name === '동구 평균') {
-        bgClass = '!bg-[#ecfdf5]'; // 연두색 계열
-        rowClass = 'row-average'; 
-        nameClass = 'text-base font-black text-emerald-900 break-keep';
-    }
+            if (name === '동구 합계') {
+                bgClass = '!bg-[#fff1f2]'; // 분홍색 계열 (Tailwind rose-50 톤)
+                rowClass = 'border-t-2 border-rose-300 !bg-[#fff1f2]'; // 위쪽 테두리 강조
+                nameClass = 'text-base font-black text-rose-900 break-keep';
+            } else if (name === '동구 평균') {
+                bgClass = '!bg-[#ecfdf5]'; // 연두색 계열
+                rowClass = 'row-average'; 
+                nameClass = 'text-base font-black text-emerald-900 break-keep';
+            }
 
-    const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
-    const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
-    const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
-    const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
-    const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
-    const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
+            const popBase = isAvg ? 'text-[1.05rem] font-black text-blue-800' : 'text-sm font-bold text-blue-600';
+            const houseBase = isAvg ? 'text-[1.05rem] font-black text-amber-800' : 'text-sm font-bold text-amber-600';
+            const bizBase = isAvg ? 'text-[1.05rem] font-black text-purple-800' : 'text-sm font-bold text-purple-600';
+            const welBase = isAvg ? 'text-[1.05rem] font-black text-rose-700' : 'text-sm font-bold text-rose-500';
+            const envBase = isAvg ? 'text-[1.05rem] font-black text-emerald-800' : 'text-sm font-bold text-emerald-600';
+            const accBase = isAvg ? 'text-[1.05rem] font-black text-orange-800' : 'text-sm font-bold text-orange-600';
 
-    const formatPct = (val) => val === '-' ? '-' : val + '%';
-    const formatNum = (val) => val === '-' ? '-' : Number(val).toLocaleString();
-    const formatRaw = (val) => val === '-' ? '-' : val;
+            const formatPct = (val) => (val === '-' || val === undefined) ? '-' : val + '%';
+            const formatNum = (val) => (val === '-' || val === undefined) ? '-' : Number(val).toLocaleString();
+            const formatRaw = (val) => (val === '-' || val === undefined) ? '-' : val;
 
-    return `
-        <tr data-dong="${name}" class="${rowClass} border-b border-gray-200">
-            <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
-            <td class="px-4 py-3 ${popBase}">${formatNum(d.pop)}</td>
-            <td class="px-4 py-3 ${popBase}">${formatNum(d.male)}</td>
-            <td class="px-4 py-3 ${popBase}">${formatNum(d.female)}</td>
-            <td class="px-4 py-3 ${popBase}">${formatNum(d.youthPop)}</td>
-            <td class="px-4 py-3 ${popBase}">${formatNum(d.eldPop)}</td>
-            <td class="px-4 py-3 ${popBase}">${formatNum(d.onePop)}</td>
-            <td class="px-4 py-3 ${popBase}">${formatRaw(d.ppHouse)}</td>
-            <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${formatPct(d.singleHousePct)}</td>
-            <td class="px-4 py-3 ${houseBase}">${formatPct(d.multiHousePct)}</td>
-            <td class="px-4 py-3 ${houseBase}">${formatPct(d.aptPct)}</td>
-            <td class="px-4 py-3 ${houseBase}">${formatPct(d.oldPct)}</td>
-            <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${formatNum(d.bizCount)}</td>
-            <td class="px-4 py-3 ${bizBase}">${formatNum(d.bizWorker)}</td>
-            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.socEco)}</td>
-            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.cult)}</td>
-            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.kin)}</td>
-            <td class="px-4 py-3 ${bizBase}">${formatRaw(d.wel)}</td>
-            <td class="px-4 py-3 border-l-2 border-gray-200 ${welBase}">${formatNum(d.pen)}</td>
-            <td class="px-4 py-3 ${welBase}">${formatNum(d.dis)}</td>
-            <td class="px-4 py-3 ${welBase}">${formatNum(d.forgn)}</td>
-            <td class="px-4 py-3 ${welBase}">${formatNum(d.beds)}</td>
-            <td class="px-4 py-3 ${welBase}">${formatRaw(d.hosp)}</td>
-            <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${formatPct(d.greenPct)}</td>
-            <td class="px-4 py-3 ${envBase}">${formatRaw(d.parkArea)}</td>
-            <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${formatRaw(d.acc)}</td>
-        </tr>
-    `;
-}
+            return `
+                <tr data-dong="${name}" class="${rowClass} border-b border-gray-200">
+                    <td class="px-4 py-3 sticky-col ${bgClass} ${nameClass} border-r border-gray-200">${name}</td>
+                    <td class="px-4 py-3 ${popBase}">${formatNum(d.pop)}</td>
+                    <td class="px-4 py-3 ${popBase}">${formatNum(d.male)}</td>
+                    <td class="px-4 py-3 ${popBase}">${formatNum(d.female)}</td>
+                    <td class="px-4 py-3 ${popBase}">${formatNum(d.youthPop)}</td>
+                    <td class="px-4 py-3 ${popBase}">${formatNum(d.eldPop)}</td>
+                    <td class="px-4 py-3 ${popBase}">${formatNum(d.onePop)}</td>
+                    <!-- 👇 [세대수] 새로 추가된 칸입니다! -->
+                    <td class="px-4 py-3 ${popBase}">${formatNum(d.households)}</td>
+                    <td class="px-4 py-3 ${popBase}">${formatRaw(d.ppHouse)}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${formatPct(d.singleHousePct)}</td>
+                    <td class="px-4 py-3 ${houseBase}">${formatPct(d.multiHousePct)}</td>
+                    <td class="px-4 py-3 ${houseBase}">${formatPct(d.aptPct)}</td>
+                    <td class="px-4 py-3 ${houseBase}">${formatPct(d.oldPct)}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${bizBase}">${formatNum(d.bizCount)}</td>
+                    <td class="px-4 py-3 ${bizBase}">${formatNum(d.bizWorker)}</td>
+                    <td class="px-4 py-3 ${bizBase}">${formatRaw(d.socEco)}</td>
+                    <td class="px-4 py-3 ${bizBase}">${formatRaw(d.cult)}</td>
+                    <td class="px-4 py-3 ${bizBase}">${formatRaw(d.kin)}</td>
+                    <td class="px-4 py-3 ${bizBase}">${formatRaw(d.wel)}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${welBase}">${formatNum(d.pen)}</td>
+                    <td class="px-4 py-3 ${welBase}">${formatNum(d.dis)}</td>
+                    <td class="px-4 py-3 ${welBase}">${formatNum(d.forgn)}</td>
+                    <td class="px-4 py-3 ${welBase}">${formatNum(d.beds)}</td>
+                    <td class="px-4 py-3 ${welBase}">${formatRaw(d.hosp)}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${envBase}">${formatPct(d.greenPct)}</td>
+                    <td class="px-4 py-3 ${envBase}">${formatRaw(d.parkArea)}</td>
+                    <td class="px-4 py-3 border-l-2 border-gray-200 ${accBase}">${formatRaw(d.acc)}</td>
+                </tr>
+            `;
+        }
         function initCharts() {
             ['theme1', 'theme2', 'theme3', 'theme4'].forEach(themeKey => {
                 chartInstances[themeKey].bar = new Chart(document.getElementById(`barChart_${themeKey}`).getContext('2d'), { 
