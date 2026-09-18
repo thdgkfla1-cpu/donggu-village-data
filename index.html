@@ -3342,19 +3342,18 @@
         };
 
         window.onload = function() {
-            // 👇 새로 올리신 data_2.csv 파일로 연결합니다.
-            Papa.parse("data_2.csv", {
+            // 🚨 깃허브에 올린 파일명에 맞춰 "data.csv" 또는 "data_2.csv"로 수정하세요!
+            Papa.parse("data.csv", {
                 download: true,
                 header: false,
                 skipEmptyLines: true,
                 complete: function(results) {
                     try {
                         const rows = results.data;
-                        
                         let totalCount = 0;
                         let sumPop = 0, sumMale = 0, sumFemale = 0, sumYouthPop = 0, sumEldPop = 0;
-                        let sumVal6 = 0, sumVal7 = 0;
-                        let sumHouseholds = 0; // 세대수 합계 변수
+                        let sumHouseholds = 0; 
+                        let sumVal7 = 0, sumVal8 = 0;
                         let sumSingleHousePct = 0, sumMultiHousePct = 0, sumAptPct = 0, sumOldPct = 0;
                         let sumBizCount = 0, sumBizWorker = 0, sumSocEco = 0, sumCult = 0, sumKin = 0, sumWel = 0;
                         let sumPen = 0, sumDis = 0, sumForgn = 0, sumBeds = 0, sumHosp = 0, sumGreenPct = 0, sumParkArea = 0, sumAcc = 0;
@@ -3363,21 +3362,19 @@
                             let row = rows[i];
                             if (row.length < 10) continue;
                             let dong = row[0] ? row[0].trim() : '';
-                            
                             if (!DONG_ORDER.includes(dong) && dong !== '동구 합계') continue; 
 
                             let pop = cleanNum(row[1]); let male = cleanNum(row[2]); let female = cleanNum(row[3]);
                             let youthPop = cleanNum(row[4]); let eldPop = cleanNum(row[5]);
-                            let val6 = cleanNum(row[6]); 
                             
-                            // 👇 CSV 구조 밀림 적용: 7번째가 세대수, 8번째가 세대당 인구수
-                            let households = cleanNum(row[7]); 
-                            let val8 = cleanNum(row[8]); 
+                            // 💡 사진에 맞춰 순서 완벽 적용 (세대수가 6번 칸으로 옴)
+                            let households = cleanNum(row[6]); 
+                            let val7 = cleanNum(row[7]); // 1인가구
+                            let val8 = cleanNum(row[8]); // 세대당 인구수
 
-                            let onePop = val6 > 10 ? val6 : (val8 > 10 ? val8 : 0);
-                            let ppHouse = (val6 > 0 && val6 < 10) ? val6 : ((val8 > 0 && val8 < 10) ? val8 : 0);
+                            let onePop = val7 > 10 ? val7 : (val8 > 10 ? val8 : 0);
+                            let ppHouse = (val7 > 0 && val7 < 10) ? val7 : ((val8 > 0 && val8 < 10) ? val8 : 0);
                             
-                            // 👇 나머지도 1칸씩 인덱스 뒤로 밀림 적용 완료
                             let singleHousePct = cleanNum(row[9]); let multiHousePct = cleanNum(row[10]);
                             let aptPct = cleanNum(row[11]); let oldPct = cleanNum(row[12]);
                             let bizCount = cleanNum(row[13]); let bizWorker = cleanNum(row[14]);
@@ -3398,7 +3395,7 @@
                                 strategy: ai.strategy, festival: ai.festival, welfare: ai.welfare,
                                 media: ai.media, safety: ai.safety,
                                 pop, male, female, youthPop, youthPct, eldPop, eldPct,
-                                households, // 추가된 세대수 데이터 연결
+                                households, // 세대수 저장
                                 ppHouse, onePop, onePct, singleHousePct, multiHousePct, aptPct, oldPct, 
                                 bizCount, bizWorker, socEco, cult, kin, wel, pen, dis, forgn, beds, hosp, greenPct, parkArea, acc
                             };
@@ -3407,8 +3404,8 @@
                                 totalCount++;
                                 sumPop += pop; sumMale += male; sumFemale += female; 
                                 sumYouthPop += youthPop; sumEldPop += eldPop;
-                                sumVal6 += val6; sumVal7 += val8; 
-                                sumHouseholds += households; // 세대수 누적
+                                sumHouseholds += households;
+                                sumVal7 += val7; sumVal8 += val8; 
                                 sumSingleHousePct += singleHousePct; sumMultiHousePct += multiHousePct;
                                 sumAptPct += aptPct; sumOldPct += oldPct;
                                 sumBizCount += bizCount; sumBizWorker += bizWorker;
@@ -3418,54 +3415,68 @@
                             }
                         }
 
-                        if (totalCount > 0) {
-                            let avgPop = Math.round(sumPop / totalCount);
-                            let avgYouthPop = Math.round(sumYouthPop / totalCount);
-                            let avgEldPop = Math.round(sumEldPop / totalCount);
-                            let avgOnePop = sumVal6 > (10 * totalCount) ? Math.round(sumVal6 / totalCount) : Math.round(sumVal7 / totalCount);
-                            let avgPpHouse = (sumVal6 > 0 && sumVal6 < (10 * totalCount)) ? parseFloat((sumVal6 / totalCount).toFixed(2)) : parseFloat((sumVal7 / totalCount).toFixed(2));
-                            let avgHouseholds = Math.round(sumHouseholds / totalCount);
-
-                            let avgYouthPct = avgPop > 0 ? parseFloat(((avgYouthPop / avgPop) * 100).toFixed(1)) : 0;
-                            let avgEldPct = avgPop > 0 ? parseFloat(((avgEldPop / avgPop) * 100).toFixed(1)) : 0;
-                            let avgOnePct = avgPop > 0 ? parseFloat(((avgOnePop / avgPop) * 100).toFixed(1)) : 0;
-
-                            let totalOnePop = sumVal6 > (10 * totalCount) ? sumVal6 : sumVal7; 
-
-                            // 강제로 합계 객체에도 households 추가
-                            dongData['동구 합계'] = {
-                                pop: sumPop, male: sumMale, female: sumFemale, 
-                                youthPop: sumYouthPop, youthPct: avgYouthPct, eldPop: sumEldPop, eldPct: avgEldPct,
-                                households: sumHouseholds, // 세대수 합계
-                                ppHouse: avgPpHouse, onePop: totalOnePop, onePct: avgOnePct, 
-                                singleHousePct: '-', multiHousePct: '-', aptPct: '-', oldPct: '-', 
-                                bizCount: sumBizCount, bizWorker: sumBizWorker, socEco: sumSocEco, cult: sumCult, kin: sumKin, wel: sumWel, 
-                                pen: sumPen, dis: sumDis, forgn: sumForgn, beds: sumBeds, hosp: sumHosp, greenPct: '-', parkArea: '-', acc: sumAcc
-                            };
-
-                            const aiAvg = aiReports['동구 평균'] || {};
-                            dongData['동구 평균'] = {
-                                type: aiAvg.type, strength: aiAvg.strength, weakness: aiAvg.weakness,
-                                strategy: aiAvg.strategy, festival: aiAvg.festival, welfare: aiAvg.welfare,
-                                media: aiAvg.media, safety: aiAvg.safety,
-                                pop: avgPop, male: Math.round(sumMale / totalCount), female: Math.round(sumFemale / totalCount), 
-                                youthPop: avgYouthPop, youthPct: avgYouthPct, eldPop: avgEldPop, eldPct: avgEldPct,
-                                households: avgHouseholds, // 세대수 평균
-                                ppHouse: avgPpHouse, onePop: avgOnePop, onePct: avgOnePct, 
-                                singleHousePct: parseFloat((sumSingleHousePct / totalCount).toFixed(1)), 
-                                multiHousePct: parseFloat((sumMultiHousePct / totalCount).toFixed(1)), 
-                                aptPct: parseFloat((sumAptPct / totalCount).toFixed(1)), 
-                                oldPct: parseFloat((sumOldPct / totalCount).toFixed(1)), 
-                                bizCount: Math.round(sumBizCount / totalCount), 
-                                bizWorker: Math.round(sumBizWorker / totalCount), 
-                                socEco: Math.round(sumSocEco / totalCount), 
-                                cult: Math.round(sumCult / totalCount), kin: Math.round(sumKin / totalCount), wel: Math.round(sumWel / totalCount), 
-                                pen: Math.round(sumPen / totalCount), dis: Math.round(sumDis / totalCount), forgn: Math.round(sumForgn / totalCount), 
-                                beds: Math.round(sumBeds / totalCount), hosp: Math.round(sumHosp / totalCount), 
-                                greenPct: parseFloat((sumGreenPct / totalCount).toFixed(1)), 
-                                parkArea: Math.round(sumParkArea / totalCount), acc: Math.round(sumAcc / totalCount)
-                            };
+                        // 🚨 [방어 코드] 파일을 못 읽었거나 데이터가 없을 때 빈 화면 멈춤 방지
+                        if (totalCount === 0) {
+                            document.getElementById('loading').innerHTML = `
+                                <div class="text-2xl font-black text-rose-600 mb-4">⚠️ CSV 데이터를 찾을 수 없습니다!</div>
+                                <div class="text-gray-700 text-left bg-gray-50 p-6 rounded-xl border border-gray-200">
+                                    <p class="font-bold mb-2">GitHub 서버에서 파일을 정상적으로 읽지 못했습니다.</p>
+                                    <ul class="list-disc pl-5 space-y-2 text-[14px]">
+                                        <li>현재 코드에는 파일명이 <b>"data.csv"</b>로 되어 있습니다. 만약 깃허브에 올리신 이름이 <b>data_2.csv</b>라면 코드를 고쳐주세요.</li>
+                                        <li>대소문자(Data.csv 등)가 틀렸을 수도 있습니다.</li>
+                                        <li>방금 업로드하셨다면 아직 서버에 반영되지 않았을 수 있습니다. 2분 뒤 <b>Ctrl + Shift + R</b>을 눌러주세요.</li>
+                                    </ul>
+                                </div>
+                            `;
+                            document.getElementById('loading').classList.remove('animate-pulse');
+                            return; // 여기서 강제 종료
                         }
+
+                        let avgPop = Math.round(sumPop / totalCount);
+                        let avgYouthPop = Math.round(sumYouthPop / totalCount);
+                        let avgEldPop = Math.round(sumEldPop / totalCount);
+                        let avgHouseholds = Math.round(sumHouseholds / totalCount);
+                        let avgOnePop = sumVal7 > (10 * totalCount) ? Math.round(sumVal7 / totalCount) : Math.round(sumVal8 / totalCount);
+                        let avgPpHouse = (sumVal7 > 0 && sumVal7 < (10 * totalCount)) ? parseFloat((sumVal7 / totalCount).toFixed(2)) : parseFloat((sumVal8 / totalCount).toFixed(2));
+
+                        let avgYouthPct = avgPop > 0 ? parseFloat(((avgYouthPop / avgPop) * 100).toFixed(1)) : 0;
+                        let avgEldPct = avgPop > 0 ? parseFloat(((avgEldPop / avgPop) * 100).toFixed(1)) : 0;
+                        let avgOnePct = avgPop > 0 ? parseFloat(((avgOnePop / avgPop) * 100).toFixed(1)) : 0;
+
+                        let totalOnePop = sumVal7 > (10 * totalCount) ? sumVal7 : sumVal8; 
+
+                        dongData['동구 합계'] = {
+                            pop: sumPop, male: sumMale, female: sumFemale, 
+                            youthPop: sumYouthPop, youthPct: avgYouthPct, eldPop: sumEldPop, eldPct: avgEldPct,
+                            households: sumHouseholds, 
+                            ppHouse: avgPpHouse, onePop: totalOnePop, onePct: avgOnePct, 
+                            singleHousePct: '-', multiHousePct: '-', aptPct: '-', oldPct: '-', 
+                            bizCount: sumBizCount, bizWorker: sumBizWorker, socEco: sumSocEco, cult: sumCult, kin: sumKin, wel: sumWel, 
+                            pen: sumPen, dis: sumDis, forgn: sumForgn, beds: sumBeds, hosp: sumHosp, greenPct: '-', parkArea: '-', acc: sumAcc
+                        };
+
+                        const aiAvg = aiReports['동구 평균'] || {};
+                        dongData['동구 평균'] = {
+                            type: aiAvg.type, strength: aiAvg.strength, weakness: aiAvg.weakness,
+                            strategy: aiAvg.strategy, festival: aiAvg.festival, welfare: aiAvg.welfare,
+                            media: aiAvg.media, safety: aiAvg.safety,
+                            pop: avgPop, male: Math.round(sumMale / totalCount), female: Math.round(sumFemale / totalCount), 
+                            youthPop: avgYouthPop, youthPct: avgYouthPct, eldPop: avgEldPop, eldPct: avgEldPct,
+                            households: avgHouseholds, 
+                            ppHouse: avgPpHouse, onePop: avgOnePop, onePct: avgOnePct, 
+                            singleHousePct: parseFloat((sumSingleHousePct / totalCount).toFixed(1)), 
+                            multiHousePct: parseFloat((sumMultiHousePct / totalCount).toFixed(1)), 
+                            aptPct: parseFloat((sumAptPct / totalCount).toFixed(1)), 
+                            oldPct: parseFloat((sumOldPct / totalCount).toFixed(1)), 
+                            bizCount: Math.round(sumBizCount / totalCount), 
+                            bizWorker: Math.round(sumBizWorker / totalCount), 
+                            socEco: Math.round(sumSocEco / totalCount), 
+                            cult: Math.round(sumCult / totalCount), kin: Math.round(sumKin / totalCount), wel: Math.round(sumWel / totalCount), 
+                            pen: Math.round(sumPen / totalCount), dis: Math.round(sumDis / totalCount), forgn: Math.round(sumForgn / totalCount), 
+                            beds: Math.round(sumBeds / totalCount), hosp: Math.round(sumHosp / totalCount), 
+                            greenPct: parseFloat((sumGreenPct / totalCount).toFixed(1)), 
+                            parkArea: Math.round(sumParkArea / totalCount), acc: Math.round(sumAcc / totalCount)
+                        };
 
                         document.getElementById('loading').classList.add('hidden');
                         document.getElementById('introScreen').classList.remove('hidden'); 
@@ -3475,7 +3486,7 @@
                     }
                 },
                 error: function(err) {
-                    document.getElementById('loading').innerHTML = `<div class="text-2xl font-black text-rose-600 mb-4">데이터 파일(data_2.csv)을 불러올 수 없습니다.</div>`;
+                    document.getElementById('loading').innerHTML = `<div class="text-2xl font-black text-rose-600 mb-4">데이터 파일(data.csv)을 불러올 수 없습니다.</div>`;
                     document.getElementById('loading').classList.remove('animate-pulse');
                 }
             });
