@@ -3624,8 +3624,9 @@
                     <td class="px-4 py-3 ${popBase}">${formatNum(d.eldPop)}</td>
                     <td class="px-4 py-3 ${popBase}">${formatNum(d.onePop)}</td>
                     <!-- 👇 [세대수] 새로 추가된 칸입니다! -->
-                    <td class="px-4 py-3 ${popBase}">${formatNum(d.households)}</td>
-                    <td class="px-4 py-3 ${popBase}">${formatRaw(d.ppHouse)}</td>
+                   <td class="px-4 py-3 ${popBase}">${formatNum(d.households)}</td>
+                   <!-- 동구 합계의 세대당 인구수는 - 표시 -->
+                   <td class="px-4 py-3 ${popBase}"> ${name === '동구 합계' ? '-' : formatRaw(d.ppHouse)} </td>
                     <td class="px-4 py-3 border-l-2 border-gray-200 ${houseBase}">${formatPct(d.singleHousePct)}</td>
                     <td class="px-4 py-3 ${houseBase}">${formatPct(d.multiHousePct)}</td>
                     <td class="px-4 py-3 ${houseBase}">${formatPct(d.aptPct)}</td>
