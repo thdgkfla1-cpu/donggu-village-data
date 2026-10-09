@@ -65,7 +65,517 @@
             transform: translateY(-8px);
         }
     </style>
-        
+
+    <!-- STEP 1 START: 공통 대시보드 스타일 -->
+<style id="portal-common-style">
+    /* 공통 색상·테두리·그림자 */
+    :root {
+        --portal-bg: #f3f6f9;
+        --portal-surface: #ffffff;
+        --portal-soft: #f8fafc;
+        --portal-border: #dce4ec;
+        --portal-text: #1e293b;
+        --portal-muted: #64748b;
+        --portal-primary: #047857;
+        --portal-primary-hover: #065f46;
+        --portal-primary-soft: #ecfdf5;
+        --portal-focus: #2563eb;
+        --portal-radius: 14px;
+        --portal-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    /*
+     * 첫 화면의 body 배경 이미지는 유지.
+     * 대시보드가 열렸을 때만 밝은 회색 바탕 적용.
+     * display, visibility, hidden 관련 속성은 변경하지 않음.
+     */
+    #dashboardScreen {
+        min-height: 100vh;
+        background-color: var(--portal-bg);
+        color: var(--portal-text);
+    }
+
+    /* 헤더: 기존 sticky 위치와 z-index 유지 */
+    #dashboardScreen > header {
+        background-color: var(--portal-surface);
+        border-bottom: 1px solid var(--portal-border);
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.035);
+    }
+
+    #dashboardScreen > header h1 {
+        color: var(--portal-text);
+        line-height: 1.45;
+    }
+
+    /* 상단 탭: 기존 표시/숨김과 가로 스크롤 유지 */
+    #dashboardScreen .tab-container {
+        padding: 5px;
+        gap: 4px;
+        background-color: #eef2f6;
+        border: 1px solid var(--portal-border);
+        border-radius: 12px;
+        box-shadow: none;
+    }
+
+    #dashboardScreen .main-tab {
+        padding: 10px 14px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        color: var(--portal-muted);
+        font-size: 0.875rem;
+        font-weight: 700;
+        line-height: 1.5;
+        box-shadow: none;
+        transform: none;
+        transition:
+            background-color 150ms ease,
+            border-color 150ms ease,
+            color 150ms ease;
+    }
+
+    #dashboardScreen .main-tab:hover {
+        color: var(--portal-primary);
+        background-color: var(--portal-surface);
+        border-color: var(--portal-border);
+    }
+
+    #dashboardScreen .main-tab.active {
+        color: #ffffff;
+        background-color: var(--portal-primary);
+        border-color: var(--portal-primary);
+        box-shadow: 0 1px 3px rgba(4, 120, 87, 0.15);
+        transform: none;
+    }
+
+    #dashboardScreen .main-tab.active:hover {
+        background-color: var(--portal-primary-hover);
+        border-color: var(--portal-primary-hover);
+    }
+
+    /* 처음으로 버튼: 기존 onclick과 배치 유지 */
+    #dashboardScreen .tab-container > button:first-child {
+        padding: 10px 14px;
+        border: 1px solid #334155;
+        border-radius: 9px;
+        background-color: #334155;
+        color: #ffffff;
+        box-shadow: none;
+    }
+
+    #dashboardScreen .tab-container > button:first-child:hover {
+        background-color: #1e293b;
+        border-color: #1e293b;
+    }
+
+    /* 각 탭의 주요 카드: 기존 grid/flex와 높이 유지 */
+    #mainContent > section > .bg-white,
+    #mainContent > section > .grid > .bg-white {
+        background-color: var(--portal-surface);
+        border-color: var(--portal-border);
+        border-radius: var(--portal-radius);
+        box-shadow: var(--portal-shadow);
+    }
+
+    /* 제목의 크기와 콘텐츠는 유지 */
+    #mainContent h2,
+    #mainContent h3 {
+        line-height: 1.5;
+        letter-spacing: -0.025em;
+    }
+
+    /* 행정동 선택 패널 */
+    #checkboxContainer {
+        padding: 14px;
+        gap: 8px;
+        background-color: var(--portal-soft);
+        border: 1px solid var(--portal-border);
+        border-radius: 10px;
+    }
+
+    #checkboxContainer > label {
+        padding: 8px 10px;
+        border-color: var(--portal-border);
+        border-radius: 8px;
+        background-color: var(--portal-surface);
+        box-shadow: none;
+        transition:
+            background-color 150ms ease,
+            border-color 150ms ease;
+    }
+
+    #checkboxContainer > label:hover {
+        background-color: var(--portal-primary-soft);
+        border-color: #6ee7b7;
+    }
+
+    #checkboxContainer .dong-checkbox {
+        accent-color: var(--portal-primary);
+        flex-shrink: 0;
+    }
+
+    /* 선택창: 옵션·change 이벤트 유지 */
+    #mainContent select {
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        background-color: var(--portal-surface);
+        color: var(--portal-text);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        box-shadow: none;
+        transition:
+            border-color 150ms ease,
+            background-color 150ms ease;
+    }
+
+    #mainContent select:hover {
+        border-color: #94a3b8;
+    }
+
+    /* 의제 버튼: JS에서 지정하는 활성 색상 유지 */
+    #mainContent .agenda-tab {
+        min-height: 42px;
+        border-radius: 9px;
+        line-height: 1.5;
+    }
+
+    /* 키보드 조작 시 현재 위치 표시 */
+    #dashboardScreen button:focus-visible,
+    #mainContent select:focus-visible,
+    #mainContent input:focus-visible,
+    #chartModal button:focus-visible {
+        outline: 2px solid var(--portal-focus);
+        outline-offset: 3px;
+    }
+
+    /* 세부 지표 표: 스크롤·고정 열·합계/평균 색상 유지 */
+    #section-tab3 .table-container {
+        border-color: var(--portal-border);
+        border-radius: 10px;
+        box-shadow: none;
+    }
+
+    #section-tab3 table {
+        font-variant-numeric: tabular-nums;
+    }
+
+    #section-tab3 thead {
+        border-bottom-color: #cbd5e1;
+    }
+
+    #section-tab3 th {
+        font-weight: 700;
+    }
+
+    #section-tab3 th[onclick] {
+        transition: filter 150ms ease;
+    }
+
+    #section-tab3 th[onclick]:hover {
+        filter: brightness(0.97);
+    }
+
+    /* 기준일 배지: 기존 날짜와 색상 구분 유지 */
+    #section-tab3 .date-badge {
+        margin-top: 5px;
+        font-size: 0.6875rem;
+        line-height: 1.4;
+    }
+
+    /* 모달: 캔버스 크기·표시/숨김·닫기 기능 유지 */
+    #chartModal > div {
+        border: 1px solid var(--portal-border);
+        border-radius: 16px;
+        box-shadow: 0 16px 48px rgba(15, 23, 42, 0.18);
+    }
+
+    /* 대시보드 내부 스크롤바 */
+    #dashboardScreen ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    #dashboardScreen ::-webkit-scrollbar-track {
+        background-color: #f1f5f9;
+    }
+
+    #dashboardScreen ::-webkit-scrollbar-thumb {
+        background-color: #b8c5d3;
+        border: 2px solid #f1f5f9;
+        border-radius: 999px;
+    }
+
+    #dashboardScreen ::-webkit-scrollbar-thumb:hover {
+        background-color: #94a3b8;
+    }
+</style>
+< 공통 대시보드 스타일 >
+
+<!-- STEP 2 MAP SCRIPT START -->
+<script>
+    let portalDetailMap = null;
+    let portalMapAuthFailed = false;
+
+    function setDetailMapStatus(message) {
+        const status = document.getElementById('detailMapStatus');
+        if (status) status.textContent = message;
+    }
+
+    // NAVER 지도 인증 실패 시 지도 영역에만 안내
+    window.navermap_authFailure = function () {
+        portalMapAuthFailed = true;
+        setDetailMapStatus(
+            '지도 인증에 실패했습니다. Client ID와 등록한 Web 서비스 URL을 확인해주세요.'
+        );
+    };
+
+    function initDetailMap() {
+        const mapElement = document.getElementById('detailMap');
+
+        // 지도 영역이 없거나 숨겨져 있으면 초기화하지 않음
+        if (!mapElement ||
+            mapElement.clientWidth === 0 ||
+            mapElement.clientHeight === 0) {
+            return;
+        }
+
+        if (portalMapAuthFailed) {
+            setDetailMapStatus(
+                '지도 인증에 실패했습니다. Client ID와 등록한 Web 서비스 URL을 확인해주세요.'
+            );
+            return;
+        }
+
+        if (!window.naver ||
+            !window.naver.maps ||
+            typeof window.naver.maps.Map !== 'function') {
+            setDetailMapStatus(
+                '지도 API를 사용할 수 없습니다. 로딩이 끝나도 표시되지 않으면 연결 설정을 확인해주세요.'
+            );
+            return;
+        }
+
+        try {
+            if (!portalDetailMap) {
+                portalDetailMap = new naver.maps.Map(mapElement, {
+                    // 테스트 화면의 시작 위치: 광주 동구 도심 부근
+                    center: new naver.maps.LatLng(35.146, 126.923),
+                    zoom: 13,
+                    zoomControl: true,
+                    scrollWheel: false
+                });
+            } else {
+                // 다른 탭에서 돌아왔을 때 지도 크기 재조정
+                const previousCenter = portalDetailMap.getCenter();
+
+                portalDetailMap.setSize(
+                    new naver.maps.Size(
+                        mapElement.clientWidth,
+                        mapElement.clientHeight
+                    )
+                );
+
+                portalDetailMap.setCenter(previousCenter);
+            }
+
+            if (!portalMapAuthFailed) {
+                setDetailMapStatus(
+                    '지도 객체가 준비되었습니다. 배경지도 표시와 이동·확대를 확인해주세요.'
+                );
+            }
+        } catch (error) {
+            setDetailMapStatus(
+                '지도 초기화 중 오류가 발생했습니다. 기존 표와 다른 탭은 계속 사용할 수 있습니다.'
+            );
+            console.warn('세부 지표 지도 초기화 실패');
+        }
+    }
+
+    // 창 크기가 바뀌면 보이는 지도만 크기 재조정
+    window.addEventListener('resize', function () {
+        if (portalDetailMap) {
+            window.requestAnimationFrame(initDetailMap);
+        }
+    });
+</script>
+
+<script
+    id="naver-maps-sdk"
+    defer
+    src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=X-NCP-APIGW-API-KEY-ID&amp;callback=initDetailMap"
+    onerror="setDetailMapStatus('지도 API 파일을 불러오지 못했습니다. 네트워크 연결을 확인해주세요.');">
+</script>
+<!-- STEP 2 MAP SCRIPT END -->
+
+    <!-- STEP 3 GIS STYLE START -->
+<style id="portal-gis-style">
+    /* 세부 지표 탭의 지도 영역에만 적용 */
+    #section-tab3 .portal-gis {
+        margin-bottom: 24px;
+        background: var(--portal-surface, #ffffff);
+        border: 1px solid var(--portal-border, #dce4ec);
+        border-radius: 14px;
+        box-shadow: var(
+            --portal-shadow,
+            0 2px 8px rgba(15, 23, 42, 0.04)
+        );
+        overflow: hidden;
+    }
+
+    #section-tab3 .portal-gis-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 16px 20px;
+        border-bottom: 1px solid #dce4ec;
+    }
+
+    #section-tab3 .portal-gis-title {
+        margin: 0;
+        color: #1e293b;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.5;
+    }
+
+    #section-tab3 .portal-gis-badge {
+        padding: 5px 9px;
+        border: 1px solid #a7f3d0;
+        border-radius: 6px;
+        background: #ecfdf5;
+        color: #047857;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    #section-tab3 .portal-gis-layout {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    #section-tab3 .portal-gis-sidebar {
+        min-width: 0;
+        padding: 18px;
+        background: #f8fafc;
+        border-right: 1px solid #dce4ec;
+    }
+
+    #section-tab3 .portal-gis-filter-title {
+        margin: 0 0 4px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    #section-tab3 .portal-gis-note {
+        margin: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.6;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+    }
+
+    #section-tab3 .portal-gis-field {
+        margin-top: 15px;
+    }
+
+    #section-tab3 .portal-gis-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    #section-tab3 .portal-gis-control {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+        padding: 9px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #334155;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+        box-shadow: none;
+    }
+
+    #section-tab3 .portal-gis-control:disabled {
+        background: #f1f5f9;
+        color: #64748b;
+        cursor: not-allowed;
+        opacity: 1;
+    }
+
+    #section-tab3 .portal-gis-control::placeholder {
+        color: #64748b;
+        opacity: 1;
+    }
+
+    #section-tab3 .portal-gis-info {
+        margin-top: 18px;
+        padding-top: 15px;
+        border-top: 1px solid #dce4ec;
+    }
+
+    #section-tab3 .portal-gis-info-title {
+        margin: 0 0 7px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    #section-tab3 .portal-gis-map-wrap {
+        min-width: 0;
+        position: relative;
+        background: #f1f5f9;
+    }
+
+    #section-tab3 #detailMap {
+        position: relative;
+        z-index: 0;
+        width: 100%;
+        height: 520px;
+        background: #f1f5f9;
+    }
+
+    #section-tab3 .portal-gis-status {
+        margin: 0;
+        padding: 11px 20px;
+        border-top: 1px solid #dce4ec;
+        background: #ffffff;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-wrap: break-word;
+    }
+
+    /* 좁은 화면에서는 필터 다음에 지도 배치 */
+    @media (max-width: 1023px) {
+        #section-tab3 .portal-gis-layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        #section-tab3 .portal-gis-sidebar {
+            border-right: 0;
+            border-bottom: 1px solid #dce4ec;
+        }
+
+        #section-tab3 #detailMap {
+            height: 360px;
+        }
+    }
+</style>
+<!-- STEP 3 GIS STYLE END -->
+    
 </head>
 <body class="text-gray-800 relative">
 
@@ -366,6 +876,122 @@
 
         <!-- [기존 탭 3] 세부 지표 일람표 -->
         <section id="section-tab3" class="hidden">
+            <!-- STEP 3 GIS PANEL START -->
+<div class="portal-gis">
+
+    <div class="portal-gis-header">
+        <h2 class="portal-gis-title">
+            <i
+                class="fa-solid fa-map-location-dot"
+                aria-hidden="true"
+                style="color:#047857; margin-right:6px;">
+            </i>
+            동구 마을지표 지도
+        </h2>
+
+        <span class="portal-gis-badge">
+            동구 13개 행정동
+        </span>
+    </div>
+
+    <div class="portal-gis-layout">
+
+        <!-- 좌측: 필터와 지역 정보 -->
+        <aside class="portal-gis-sidebar" aria-label="지도 탐색 조건">
+
+            <h3 class="portal-gis-filter-title">탐색 조건</h3>
+            <p class="portal-gis-note">
+                지역·지표 선택 기능은 준비 중입니다.
+            </p>
+
+            <div class="portal-gis-field">
+                <label
+                    for="detailMapSearch"
+                    class="portal-gis-label">
+                    지역 검색
+                </label>
+
+                <input
+                    id="detailMapSearch"
+                    type="search"
+                    class="portal-gis-control"
+                    placeholder="행정동 검색 준비 중"
+                    disabled>
+            </div>
+
+            <div class="portal-gis-field">
+                <label
+                    for="detailMapDongSelect"
+                    class="portal-gis-label">
+                    행정동 선택
+                </label>
+
+                <select
+                    id="detailMapDongSelect"
+                    class="portal-gis-control"
+                    disabled>
+                    <option value="">동구 전체</option>
+                </select>
+            </div>
+
+            <div class="portal-gis-field">
+                <label
+                    for="detailMapMetricSelect"
+                    class="portal-gis-label">
+                    표시 지표
+                </label>
+
+                <select
+                    id="detailMapMetricSelect"
+                    class="portal-gis-control"
+                    disabled>
+                    <option value="">지표 선택 준비 중</option>
+                </select>
+            </div>
+
+            <div class="portal-gis-info">
+                <h3 class="portal-gis-info-title">범례</h3>
+
+                <div id="detailMapLegend">
+                    <p class="portal-gis-note">
+                        지표별 색상 범례는 준비 중입니다.
+                    </p>
+                </div>
+            </div>
+
+            <div class="portal-gis-info">
+                <h3 class="portal-gis-info-title">선택 지역 요약</h3>
+
+                <div id="detailMapSummary">
+                    <p class="portal-gis-note">
+                        선택된 행정동이 없습니다.
+                    </p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- 우측: STEP 2의 지도 id 유지 -->
+        <div class="portal-gis-map-wrap">
+            <div
+                id="detailMap"
+                aria-label="광주 동구 기본 지도">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- STEP 2의 상태 안내 id 유지 -->
+    <p
+        id="detailMapStatus"
+        class="portal-gis-status"
+        role="status"
+        aria-live="polite">
+        지도 연결을 준비하고 있습니다.
+    </p>
+
+</div>
+<!-- STEP 3 GIS PANEL END -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <div class="mb-4 flex flex-col md:flex-row md:items-end gap-2">
                     <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 break-keep"><i class="fa-solid fa-table-list text-gray-500"></i> 행정동별 세부 지표 일람표</h2>
@@ -2504,22 +3130,39 @@
         Chart.defaults.set('plugins.datalabels', { display: false });
 
         function switchMainTab(tabId) {
-            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById('section-' + tabId).classList.remove('hidden');
-            
-            document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('btn-' + tabId).classList.add('active');
-            
-            // [핵심 추가] 탭 전환 시 화면을 맨 위로 부드럽게 끌어올려 모바일 하단 점프 현상 완벽 방지
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            if(tabId === 'tab1') {
-                Object.keys(chartInstances).forEach(themeKey => {
-                    if(chartInstances[themeKey].bar) chartInstances[themeKey].bar.resize();
-                    if(chartInstances[themeKey].radar) chartInstances[themeKey].radar.resize();
-                });
+            function switchMainTab(tabId) {
+    document.querySelectorAll('main > section').forEach(sec => {
+        sec.classList.add('hidden');
+    });
+
+    document.getElementById('section-' + tabId).classList.remove('hidden');
+
+    document.querySelectorAll('.main-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    document.getElementById('btn-' + tabId).classList.add('active');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 기존 탭 1 차트 크기 조정 유지
+    if (tabId === 'tab1') {
+        Object.keys(chartInstances).forEach(themeKey => {
+            if (chartInstances[themeKey].bar) {
+                chartInstances[themeKey].bar.resize();
             }
-        }
+            if (chartInstances[themeKey].radar) {
+                chartInstances[themeKey].radar.resize();
+            }
+        });
+    }
+
+    // STEP 2 MAP HOOK START
+    if (tabId === 'tab3' && typeof initDetailMap === 'function') {
+        window.requestAnimationFrame(initDetailMap);
+    }
+    // STEP 2 MAP HOOK END
+}
 
         function makePhase12Template(items, dongKey, phaseKey) {
             let html = '<div class="space-y-4">';
