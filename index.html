@@ -409,7 +409,7 @@
 <script
     id="naver-maps-sdk"
     defer
-    src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=X-NCP-APIGW-API-KEY-ID&amp;callback=initDetailMap"
+    src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=c6nrbf1oos&amp;callback=initDetailMap"
     onerror="setDetailMapStatus('지도 API 파일을 불러오지 못했습니다. 네트워크 연결을 확인해주세요.');">
 </script>
 <!-- STEP 2 MAP SCRIPT END -->
@@ -4614,7 +4614,7 @@
             timer = setTimeout(() => controller.abort(), 15000);
 
             const response = await fetch(
-                './data/dong-gu-boundary.geojson',
+                './dong-gu-boundary.geojson',
                 { signal: controller.signal }
             );
 
