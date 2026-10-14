@@ -907,7 +907,7 @@
 
             <h3 class="portal-gis-filter-title">탐색 조건</h3>
             <p class="portal-gis-note">
-                지도 또는 행정동 목록에서 지역을 선택하세요. 현재 표시 지표는 고령인구 수입니다.
+                행정동과 표시 지표를 선택하세요. 지표를 바꾸면 지도 색상과 범례가 함께 변경됩니다.
             </p>
 
             <div class="portal-gis-field">
@@ -4768,6 +4768,8 @@ function initDetailElderMetric() {
     let infoWindow;
     let dongSelect;
     let onDongChange;
+    let metricSelect;
+    let onMetricChange;
     const originalStyle = layer.getStyle();
 
     try {
@@ -4779,18 +4781,86 @@ function initDetailElderMetric() {
             throw new Error('지도 선택·범례·요약 영역을 확인해주세요.');
         }
 
-        // 원자료는 읽기만 하며, 색상 구간만 별도로 정의합니다.
-        const bins = [
-            { max: 1000, color: '#d1fae5', label: '1,000명 미만' },
-            { max: 2000, color: '#6ee7b7', label: '1,000명 이상 ~ 2,000명 미만' },
-            { max: 3000, color: '#34d399', label: '2,000명 이상 ~ 3,000명 미만' },
-            { max: 4000, color: '#059669', label: '3,000명 이상 ~ 4,000명 미만' },
-            { max: Infinity, color: '#064e3b', label: '4,000명 이상' }
-        ];
+        // 통계값이 아니라 지표 이름·단위·화면 색상 기준만 정의합니다.
+const metrics = {
+    eldPop: {
+        label: '고령인구 수', unit: '명', mode: 'number',
+        cuts: [1000, 2000, 3000, 4000]
+    },
+    pop: {
+        label: '총 인구', unit: '명', mode: 'number',
+        cuts: [5000, 10000, 15000, 20000]
+    },
+    youthPop: {
+        label: '유소년 인구', unit: '명', mode: 'number',
+        cuts: [500, 1000, 1500, 2000]
+    },
+    ppHouse: {
+        label: '세대당 인구수', unit: '명', mode: 'raw',
+        cuts: [1.5, 2, 2.5, 3]
+    },
+    singleHousePct: {
+        label: '단독주택 비율', unit: '%', mode: 'raw',
+        cuts: [20, 40, 60, 80]
+    },
+    aptPct: {
+        label: '아파트 비율', unit: '%', mode: 'raw',
+        cuts: [20, 40, 60, 80]
+    },
+    oldPct: {
+        label: '노후주택 비율', unit: '%', mode: 'raw',
+        cuts: [20, 40, 60, 80]
+    },
+    bizCount: {
+        label: '사업체 수', unit: '개', mode: 'number',
+        cuts: [500, 1000, 2000, 4000]
+    },
+    wel: {
+        label: '사회복지시설 수', unit: '개', mode: 'raw',
+        cuts: [5, 10, 20, 30]
+    }
+};
 
-        const valid = value => Number.isFinite(value) && value >= 0;
-        const format = value =>
-            valid(value) ? value.toLocaleString('ko-KR') : '자료 없음';
+const palette = [
+    '#d1fae5', '#6ee7b7', '#34d399', '#059669', '#064e3b'
+];
+
+const valid = value => Number.isFinite(value) && value >= 0;
+let metricKey = 'eldPop';
+let bins = [];
+
+// 기존 표와 같은 숫자 표시 방식을 사용합니다.
+// 비율·세대당 인구수는 새로 반올림하지 않습니다.
+function metricText(value, metric) {
+    if (!valid(value)) return '자료 없음';
+
+    const text = metric.mode === 'number'
+        ? Number(value).toLocaleString()
+        : String(value);
+
+    return text + metric.unit;
+}
+
+// 선택한 지표의 색상 구간과 범례 문구를 준비합니다.
+function updateBins() {
+    const metric = metrics[metricKey];
+    const cuts = metric.cuts;
+    const labelValue = value =>
+        value.toLocaleString('ko-KR') + metric.unit;
+
+    bins = [...cuts, Infinity].map((max, index) => ({
+        max,
+        color: palette[index],
+        label: index === 0
+            ? labelValue(max) + ' 미만'
+            : labelValue(cuts[index - 1]) + ' 이상' +
+              (max === Infinity
+                  ? ''
+                  : ' ~ ' + labelValue(max) + ' 미만')
+    }));
+}
+
+updateBins();
 
         const features = new Map();
         let selected = '';
@@ -4808,7 +4878,7 @@ function initDetailElderMetric() {
         function paint() {
             layer.setStyle(feature => {
                 const name = feature.getProperty('dong_key');
-                const value = dongData[name]?.eldPop;
+                const value = dongData[name]?.[metricKey];
                 const active = name === selected;
                 const over = name === hovered;
 
@@ -4830,29 +4900,55 @@ function initDetailElderMetric() {
 
         // 요약 카드와 정보창에서 동일한 기존 값을 표시합니다.
         function makeCard(name) {
-            const data = dongData[name];
-            const card = document.createElement('div');
+    const data = dongData[name];
+    const card = document.createElement('div');
 
-            card.style.cssText =
-                'padding:12px;font-size:13px;line-height:1.8;color:#334155;';
+    card.style.cssText =
+        'padding:12px;font-size:13px;line-height:1.8;color:#334155;';
 
-            const title = document.createElement('strong');
-            title.textContent = name;
-            card.appendChild(title);
+    const title = document.createElement('strong');
+    title.textContent = name;
+    card.appendChild(title);
 
-            [
-                ['고령인구', data.eldPop, '명'],
-                ['전체 인구', data.pop, '명'],
-                ['세대수', data.households, '세대']
-            ].forEach(([label, value, unit]) => {
-                const row = document.createElement('div');
-                row.textContent =
-                    label + ': ' + format(value) + (valid(value) ? unit : '');
-                card.appendChild(row);
-            });
+    // 현재 선택한 지표를 먼저 강조해서 표시합니다.
+    const metric = metrics[metricKey];
+    const selectedValue = document.createElement('div');
 
-            return card;
+    selectedValue.style.cssText =
+        'font-weight:700;color:#047857;margin:4px 0;';
+
+    selectedValue.textContent =
+        metric.label + ': ' + metricText(data[metricKey], metric);
+
+    card.appendChild(selectedValue);
+
+    // 기존 핵심 통계도 유지하되 같은 항목은 중복 표시하지 않습니다.
+    const core = [
+        {
+            key: 'eldPop', label: '고령인구',
+            unit: '명', mode: 'number'
+        },
+        {
+            key: 'pop', label: '전체 인구',
+            unit: '명', mode: 'number'
+        },
+        {
+            key: 'households', label: '세대수',
+            unit: '세대', mode: 'number'
         }
+    ];
+
+    core.filter(item => item.key !== metricKey).forEach(item => {
+        const row = document.createElement('div');
+
+        row.textContent =
+            item.label + ': ' + metricText(data[item.key], item);
+
+        card.appendChild(row);
+    });
+
+    return card;
+}
 
         infoWindow = new naver.maps.InfoWindow({
             content: '',
@@ -4897,27 +4993,79 @@ function initDetailElderMetric() {
             infoWindow.open(portalDetailMap, position);
         }
 
-        // 범례 생성
-        legend.replaceChildren();
+        // 지표를 바꿀 때마다 같은 영역의 범례를 갱신합니다.
+function renderMetricLegend() {
+    legend.replaceChildren();
 
-        [...bins, { color: '#cbd5e1', label: '자료 없음' }].forEach(bin => {
-            const row = document.createElement('div');
-            row.style.cssText =
-                'display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px;';
+    const title = document.createElement('strong');
+    title.style.cssText =
+        'display:block;font-size:12px;margin-bottom:8px;';
 
-            const swatch = document.createElement('span');
-            swatch.style.cssText =
-                'width:18px;height:12px;flex:none;border:1px solid #94a3b8;';
-            swatch.style.backgroundColor = bin.color;
+    title.textContent =
+        metrics[metricKey].label + ' (' + metrics[metricKey].unit + ')';
 
-            const label = document.createElement('span');
-            label.textContent = bin.label;
+    legend.appendChild(title);
 
-            row.append(swatch, label);
-            legend.appendChild(row);
-        });
+    [...bins, { color: '#cbd5e1', label: '자료 없음' }].forEach(bin => {
+        const row = document.createElement('div');
 
-        // 기존 행정동 순서대로 선택 목록을 구성합니다.
+        row.style.cssText =
+            'display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px;';
+
+        const swatch = document.createElement('span');
+
+        swatch.style.cssText =
+            'width:18px;height:12px;flex:none;border:1px solid #94a3b8;';
+
+        swatch.style.backgroundColor = bin.color;
+
+        const label = document.createElement('span');
+        label.textContent = bin.label;
+
+        row.append(swatch, label);
+        legend.appendChild(row);
+    });
+}
+
+// 기존 표시 지표 select에 선택 항목을 채웁니다.
+metricSelect = document.getElementById('detailMapMetricSelect');
+
+if (!metricSelect) {
+    throw new Error('표시 지표 선택창을 확인해주세요.');
+}
+
+metricSelect.replaceChildren();
+
+Object.entries(metrics).forEach(([key, metric]) => {
+    metricSelect.add(
+        new Option(metric.label + ' (' + metric.unit + ')', key)
+    );
+});
+
+metricSelect.value = metricKey;
+
+// 지표 변경 시 선택한 동과 지도 위치는 유지합니다.
+onMetricChange = () => {
+    const nextKey = metricSelect.value;
+
+    if (!Object.prototype.hasOwnProperty.call(metrics, nextKey)) {
+        return;
+    }
+
+    metricKey = nextKey;
+
+    updateBins();
+    paint();
+    renderMetricLegend();
+
+    if (selected) {
+        summary.replaceChildren(makeCard(selected));
+        infoWindow.setContent(makeCard(selected));
+    }
+};
+
+metricSelect.addEventListener('change', onMetricChange);
+renderMetricLegend();
         dongSelect.replaceChildren(new Option('동구 전체', ''));
 
         DONG_ORDER.forEach(name => {
@@ -4961,6 +5109,7 @@ function initDetailElderMetric() {
             '지도 또는 행정동 목록에서 지역을 선택해주세요.';
 
         dongSelect.disabled = false;
+        metricSelect.disabled = false;
         portalElderLayer = layer;
 
     } catch (error) {
@@ -4975,7 +5124,13 @@ function initDetailElderMetric() {
             }
             dongSelect.disabled = true;
         }
+        if (metricSelect) {
+            if (onMetricChange) {
+                metricSelect.removeEventListener('change', onMetricChange);
+    }
 
+    metricSelect.disabled = true;
+        }
         if (infoWindow) infoWindow.close();
 
         layer.setStyle(originalStyle);
