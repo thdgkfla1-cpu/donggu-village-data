@@ -661,6 +661,189 @@
     }
 </style>
 <!-- MAP VIEW FIX STYLE END -->
+
+    <!-- STEP 8 STYLE START: 핵심 비율 다각화 분석 -->
+<style id="portal-analysis-style">
+    /* 첫 번째 분석 탭에만 적용 */
+    #section-tab1 {
+        min-width: 0;
+    }
+
+    #section-tab1 > div {
+        min-width: 0;
+        padding: 20px;
+    }
+
+    /* 행정동 선택: 같은 너비로 정렬 */
+    #section-tab1 #checkboxContainer {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 8px;
+        padding: 12px;
+    }
+
+    #section-tab1 #checkboxContainer > label {
+        min-width: 0;
+        min-height: 44px;
+        margin: 0;
+        padding: 8px 10px;
+        justify-content: center;
+        border: 1px solid #dce4ec;
+        border-radius: 8px;
+        background-color: #ffffff;
+    }
+
+    #section-tab1 #checkboxContainer > label > span {
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+    #section-tab1 #checkboxContainer > label:hover {
+        border-color: #6ee7b7;
+        background-color: #f0fdf4;
+    }
+
+    #section-tab1 #checkboxContainer > label:has(input:checked) {
+        border-color: #059669;
+        background-color: #ecfdf5;
+        box-shadow: inset 0 0 0 1px #059669;
+    }
+
+    #section-tab1 #checkboxContainer input:checked + span {
+        color: #065f46;
+    }
+
+    #section-tab1 #checkboxContainer > label:focus-within {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+    }
+
+    /* 네 가지 분석 카드 제목 */
+    #section-tab1 > div > h3 {
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 17px;
+        line-height: 1.5;
+    }
+
+    #section-tab1 > div > h3 > span {
+        flex-shrink: 0;
+        width: 5px;
+        height: 20px;
+    }
+
+    /* 제목 바로 아래의 기존 차트 grid */
+    #section-tab1 > div > h3 + .grid {
+        gap: 16px;
+        min-width: 0;
+    }
+
+    #section-tab1 > div > h3 + .grid > div,
+    #section-tab1 > div > h3 + .grid > div > div {
+        min-width: 0;
+    }
+
+    /* 막대차트 카드, 레이더차트 카드, Point 카드 */
+    #section-tab1 > div > h3 + .grid > div:first-child,
+    #section-tab1 > div > h3 + .grid > div:last-child > div {
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background-color: #f8fafc;
+    }
+
+    #section-tab1 h4 {
+        color: #334155;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* 설명은 기존 차트 색상과 연결을 유지 */
+    #section-tab1 [id^="dynamicInsightContainer_"] {
+        gap: 10px;
+    }
+
+    #section-tab1 [id^="dynamicInsightContainer_"] p {
+        font-size: 12px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    #section-tab1 [id^="dynamicFootnote_"] {
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    /* 태블릿: 행정동 선택을 네 열로 */
+    @media (max-width: 1099px) {
+        #section-tab1 #checkboxContainer {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    /* 차트가 세로로 배치되는 화면 */
+    @media (max-width: 1023px) {
+        #section-tab1 > div > h3 + .grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        /* 막대차트 영역의 높이를 명확하게 지정 */
+        #section-tab1 > div > h3 + .grid > div:first-child {
+            height: 420px;
+            min-height: 420px;
+        }
+
+        #section-tab1 > div > h3 + .grid > div:first-child > div {
+            min-height: 0;
+        }
+
+        /* 레이더차트와 Point를 담는 오른쪽 열 */
+        #section-tab1 > div > h3 + .grid > div:last-child {
+            height: auto;
+            min-height: 0;
+        }
+
+        /* 레이더차트 영역 */
+        #section-tab1 > div > h3 + .grid > div:last-child > div:first-child {
+            height: 350px;
+            min-height: 350px;
+        }
+
+        #section-tab1 > div > h3 + .grid > div:last-child > div:first-child > div {
+            height: auto;
+            min-height: 0;
+        }
+
+        /* 작은 화면에서는 Point를 페이지 스크롤로 읽기 */
+        #section-tab1 > div > h3 + .grid > div:last-child > div:last-child {
+            min-height: 0;
+            overflow: visible;
+        }
+    }
+
+    @media (max-width: 767px) {
+        #section-tab1 > div {
+            padding: 16px;
+        }
+
+        #section-tab1 #checkboxContainer {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            padding: 10px;
+        }
+
+        #section-tab1 > div > h3 {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 479px) {
+        #section-tab1 #checkboxContainer {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
+<!-- STEP 8 STYLE END: 핵심 비율 다각화 분석 -->
+    
 </head>
 <body class="text-gray-800 relative">
 
