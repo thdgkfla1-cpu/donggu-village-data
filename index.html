@@ -1109,6 +1109,236 @@
     }
 </style>
 <!-- STEP 9 PANEL ORDER END -->
+
+<!-- STEP 10 STYLE START: 민원 분석 및 AI 제안 -->
+<style id="portal-complaint-style">
+    /* 민원 탭에만 적용 */
+    #section-tab4 {
+        min-width: 0;
+    }
+
+    #section-tab4 > .grid {
+        gap: 20px;
+        min-width: 0;
+    }
+
+    #section-tab4 > .grid > div,
+    #section-tab4 > .bg-white {
+        min-width: 0;
+        padding: 20px;
+        border-radius: 14px;
+    }
+
+    /* 출처 안내 */
+    #section-tab4 > div:first-child > span {
+        max-width: 100%;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        box-shadow: none;
+    }
+
+    /* 총 민원·해결·미해결 현황 카드 */
+    #section-tab4 > .grid:nth-child(2) > div {
+        align-items: flex-start;
+        gap: 6px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    #section-tab4 > .grid:nth-child(2) > div > div {
+        margin-bottom: 0;
+        white-space: normal;
+        line-height: 1.5;
+    }
+
+    #section-tab4 > .grid:nth-child(2) > div > p {
+        font-size: 32px;
+        line-height: 1.2;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* 카테고리 분포와 행정동별 표 */
+    #section-tab4 > .grid:nth-child(3) {
+        align-items: start;
+    }
+
+    #section-tab4 h3 {
+        min-width: 0;
+        font-size: 18px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    #section-tab4 h3 > i {
+        flex-shrink: 0;
+    }
+
+    /* 표는 화면 밖으로 밀리지 않고 내부에서 가로스크롤 */
+    #section-tab4 .overflow-x-auto {
+        max-width: 100%;
+        border-color: #dce4ec;
+        border-radius: 10px;
+        box-shadow: none;
+    }
+
+    #section-tab4 table {
+        min-width: 760px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* 가로스크롤 중에도 행정동 이름 유지 */
+    #section-tab4 table th:first-child,
+    #section-tab4 table td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background-color: #ffffff;
+        box-shadow: 1px 0 0 #e2e8f0;
+    }
+
+    #section-tab4 table thead th:first-child,
+    #section-tab4 table tbody tr:last-child td:first-child {
+        background-color: #f1f5f9;
+    }
+
+    /* AI 분석 제목 아래에 지역 선택창 배치 */
+    #section-tab4 > .bg-white > div:first-child {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding-bottom: 16px;
+        margin-bottom: 20px;
+        border-bottom-color: #e2e8f0;
+    }
+
+    #section-tab4 #complaintSelect {
+        width: 100%;
+        max-width: 320px;
+        min-height: 46px;
+        background-color: #ffffff;
+        border-color: #cbd5e1;
+        color: #334155;
+        font-size: 15px;
+    }
+
+    /* 민원 아코디언 */
+    #section-tab4 #accordionContainer {
+        margin-bottom: 28px;
+    }
+
+    #section-tab4 #accordionContainer > div {
+        border-color: #dce4ec;
+        border-radius: 10px;
+        box-shadow: none;
+    }
+
+    #section-tab4 #accordionContainer > div > button {
+        min-height: 52px;
+        padding: 16px;
+        gap: 12px;
+        background-color: #f8fafc;
+    }
+
+    #section-tab4 #accordionContainer > div > button:hover {
+        background-color: #eff6ff;
+    }
+
+    #section-tab4 #accordionContainer > div > button > div {
+        min-width: 0;
+        padding-right: 0;
+        align-items: flex-start;
+    }
+
+    /* 긴 카테고리명과 제목의 넘침 방지 */
+    #section-tab4 #accordionContainer > div > button > div > span {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.6;
+    }
+
+    /*
+     * hidden/display 속성은 변경하지 않습니다.
+     * 기존 아코디언 열기·닫기 기능 유지.
+     */
+    #section-tab4 .accordion-content {
+        padding: 20px;
+    }
+
+    #section-tab4 .accordion-content .grid > div,
+    #section-tab4 .accordion-content .flex > p {
+        min-width: 0;
+    }
+
+    #section-tab4 .accordion-content p {
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    /* 전체 민원 목록 */
+    #section-tab4 #rawComplaintsContainer {
+        padding-left: 0;
+    }
+
+    #section-tab4 #rawComplaintsContainer > li {
+        min-width: 0;
+        line-height: 1.8;
+        list-style-position: inside;
+    }
+
+    #section-tab4 #rawComplaintsContainer > li > div {
+        min-width: 0;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    /* 제기자 배지가 긴 경우에도 카드 안에서 줄바꿈 */
+    #section-tab4 #rawComplaintsContainer > li > div:first-child > span:last-child {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 767px) {
+        #section-tab4 > .grid {
+            gap: 12px;
+        }
+
+        #section-tab4 > .grid > div,
+        #section-tab4 > .bg-white {
+            padding: 16px;
+        }
+
+        /* 모바일 현황 카드는 가로형으로 간결하게 */
+        #section-tab4 > .grid:nth-child(2) > div {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        #section-tab4 > .grid:nth-child(2) > div > p {
+            font-size: 28px;
+        }
+
+        #section-tab4 h3 {
+            font-size: 16px;
+        }
+
+        #section-tab4 #complaintSelect {
+            max-width: none;
+        }
+
+        #section-tab4 #accordionContainer > div > button {
+            padding: 14px;
+        }
+
+        #section-tab4 .accordion-content {
+            padding: 14px;
+        }
+    }
+</style>
+<!-- STEP 10 STYLE END: 민원 분석 및 AI 제안 -->
     
 </head>
 <body class="text-gray-800 relative">
