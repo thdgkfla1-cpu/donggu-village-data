@@ -843,6 +843,228 @@
     }
 </style>
 <!-- STEP 8 STYLE END: 핵심 비율 다각화 분석 -->
+
+<!-- STEP 9 STYLE START: 마을 리포트 및 의제 분석 -->
+<style id="portal-report-style">
+    /* 이 탭 내부에만 적용 */
+    #section-tab2 {
+        min-width: 0;
+    }
+
+    /* 상단 행정동 선택 패널 */
+    #section-tab2 > div:first-child {
+        align-items: stretch;
+        padding: 20px;
+    }
+
+    #section-tab2 > div:first-child > div {
+        display: grid;
+        grid-template-columns: 190px minmax(0, 360px);
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    #section-tab2 > div:first-child label {
+        margin-bottom: 0;
+        text-align: left;
+        color: #334155;
+        line-height: 1.6;
+    }
+
+    #section-tab2 #reportSelect {
+        width: 100%;
+        min-width: 0;
+        min-height: 46px;
+        text-align: left;
+        font-size: 15px;
+        background-color: #ffffff;
+        border-color: #cbd5e1;
+    }
+
+    /* 리포트와 의제 패널 */
+    #section-tab2 > .grid {
+        gap: 20px;
+        min-width: 0;
+    }
+
+    #section-tab2 > .grid > div {
+        min-width: 0;
+        padding: 20px;
+    }
+
+    /* 제목과 지역 유형 배지가 겹치지 않도록 */
+    #section-tab2 > .grid > div > div:first-child {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        padding-bottom: 14px;
+        border-bottom-color: #e2e8f0;
+    }
+
+    #section-tab2 h2 {
+        min-width: 0;
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    #section-tab2 #reportType {
+        max-width: 100%;
+        padding: 6px 10px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        background-color: #eff6ff;
+        color: #1e40af;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.5;
+    }
+
+    /* 왼쪽 리포트의 기존 스크롤 영역 */
+    #section-tab2 > .grid > div:first-child > div:last-child {
+        min-height: 0;
+        gap: 14px;
+        padding-right: 6px;
+    }
+
+    /* 주요 강점 및 취약점 카드 */
+    #section-tab2 > .grid > div:first-child > div:last-child > .bg-blue-50,
+    #section-tab2 > .grid > div:first-child > div:last-child > .bg-orange-50 {
+        padding: 16px;
+        border-radius: 10px;
+        box-shadow: none;
+    }
+
+    #section-tab2 #strengthText,
+    #section-tab2 #weaknessText {
+        display: block;
+        margin-top: 6px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    /* 기존 심층 테마의 구분 색상은 유지 */
+    #section-tab2 #themesFullContainer > div {
+        padding: 16px;
+        border-radius: 10px;
+        box-shadow: none;
+    }
+
+    #section-tab2 #themesFullContainer strong {
+        line-height: 1.6;
+    }
+
+    #section-tab2 #themesFullContainer p {
+        margin-top: 4px;
+        padding-left: 0;
+        font-size: 13px;
+        line-height: 1.8;
+        letter-spacing: normal;
+        overflow-wrap: anywhere;
+    }
+
+    /* 기존 네 가지 의제 탭 */
+    #section-tab2 .agenda-tab {
+        min-width: 0;
+        min-height: 46px;
+        padding: 10px 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background-color: #ffffff;
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.5;
+        box-shadow: none;
+    }
+
+    #section-tab2 .agenda-tab:hover {
+        background-color: #f8fafc;
+        border-color: #94a3b8;
+    }
+
+    #section-tab2 .agenda-tab.active {
+        background-color: #eff6ff;
+        border-color: #2563eb;
+        color: #1d4ed8;
+        box-shadow: inset 0 0 0 1px #2563eb;
+    }
+
+    /* 의제 본문 */
+    #section-tab2 #agendaContentBox {
+        min-width: 0;
+        min-height: 0;
+        padding: 18px;
+        border-color: #e2e8f0;
+        border-radius: 10px;
+        background-color: #f8fafc;
+        box-shadow: none;
+    }
+
+    #section-tab2 #agendaText {
+        min-width: 0;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    #section-tab2 #agendaText p,
+    #section-tab2 #agendaText li {
+        line-height: 1.8;
+    }
+
+    /*
+     * 연도별 모아보기 안쪽의 중첩 스크롤 해제.
+     * 데스크톱에서는 바깥 agendaContentBox가 스크롤을 담당.
+     */
+    #section-tab2 #agendaText > div.overflow-y-auto {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+    }
+
+    /* 태블릿과 모바일: 내용 길이에 맞춰 펼치기 */
+    @media (max-width: 1023px) {
+        #section-tab2 > .grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        #section-tab2 > .grid > div {
+            height: auto;
+            min-height: 0;
+        }
+
+        #section-tab2 > .grid > div:first-child > div:last-child {
+            overflow: visible;
+            padding-right: 0;
+        }
+
+        #section-tab2 #agendaContentBox {
+            overflow: visible;
+        }
+    }
+
+    @media (max-width: 767px) {
+        #section-tab2 > div:first-child,
+        #section-tab2 > .grid > div {
+            padding: 16px;
+        }
+
+        #section-tab2 > div:first-child > div {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 8px;
+        }
+
+        #section-tab2 h2 {
+            font-size: 17px;
+        }
+
+        #section-tab2 #agendaContentBox {
+            padding: 14px;
+        }
+    }
+</style>
+<!-- STEP 9 STYLE END: 마을 리포트 및 의제 분석 -->
     
 </head>
 <body class="text-gray-800 relative">
