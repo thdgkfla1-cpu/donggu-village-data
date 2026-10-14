@@ -4688,7 +4688,10 @@
             // 기존 지도에 경계 레이어 추가
             portalBoundaryLayer = new naver.maps.Data();
 
-            const added = portalBoundaryLayer.addGeoJson(geo);
+            const added = portalBoundaryLayer.addGeoJson({
+    type: 'FeatureCollection',
+    features: geo.features
+});
 
             if (added.length !== 13) {
                 throw new Error(
