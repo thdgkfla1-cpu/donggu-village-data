@@ -1529,6 +1529,166 @@
     }
 </style>
 <!-- STEP 11 STYLE END: 메인페이지 디자인 -->
+
+<!-- STEP 12 STYLE START: 반응형 보완 -->
+<style id="portal-responsive-style">
+    /* 지도 필터 접기/펼치기 */
+    #section-tab3 .portal-filter-toggle {
+        min-height: 44px;
+        padding: 10px 0;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.6;
+        cursor: pointer;
+    }
+
+    #section-tab3 .portal-filter-toggle:focus-visible {
+        outline: 2px solid #2563eb;
+        outline-offset: 3px;
+        border-radius: 6px;
+    }
+
+    #section-tab3 #detailMapFilters[open] > summary {
+        margin-bottom: 8px;
+    }
+
+    /* 표와 탭이 페이지 전체 너비를 밀어내지 않도록 */
+    #mainContent,
+    #mainContent > section,
+    #dashboardScreen > header > div {
+        min-width: 0;
+    }
+
+    #dashboardScreen .tab-container {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    #dashboardScreen .tab-container > button {
+        flex-shrink: 0;
+    }
+
+    #section-tab3 .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    /* 모달: 화면보다 커지면 내부에서 스크롤 */
+    #chartModal {
+        padding: 12px;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+
+    #chartModal > div {
+        min-width: 0;
+        max-height: calc(100vh - 24px);
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+    }
+
+    #chartModal #closeModalBtn {
+        width: 44px;
+        height: 44px;
+        line-height: 1;
+    }
+
+    #chartModal #modalTitle {
+        padding-right: 44px;
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 1023px) {
+        #section-tab3 .portal-gis-sidebar {
+            padding: 12px 16px;
+        }
+
+        /* 기존 지도 크기 보완 CSS보다 뒤에서 적용 */
+        #section-tab3 .portal-gis-map-wrap {
+            height: clamp(280px, 45vh, 360px);
+            min-height: 280px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        #mainContent {
+            padding: 12px;
+        }
+
+        #dashboardScreen > header > div {
+            padding: 10px 12px;
+            gap: 10px;
+        }
+
+        #dashboardScreen > header h1 {
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        #dashboardScreen > header h1 > span {
+            flex-shrink: 0;
+            font-size: 22px;
+        }
+
+        #dashboardScreen > header p {
+            margin-top: 4px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        #dashboardScreen .tab-container > button {
+            min-height: 44px;
+            padding: 9px 12px;
+            font-size: 13px;
+        }
+
+        #section-tab3 > .bg-white {
+            padding: 14px;
+        }
+
+        #section-tab3 .portal-gis-header {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* 작은 화면에서도 입력 글자를 충분히 확보 */
+        #mainContent select,
+        #section-tab3 .portal-gis-control {
+            font-size: 16px;
+        }
+
+        #chartModal > div {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        #chartModal #closeModalBtn {
+            top: 8px;
+            right: 8px;
+        }
+
+        #chartModal #modalTitle {
+            margin-bottom: 16px;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* 기존 550px 차트 영역을 화면 높이에 맞춤 */
+        #chartModal > div > div:last-child {
+            height: clamp(240px, 55vh, 440px);
+        }
+    }
+
+    /* 높이가 낮은 모바일 가로 화면에서는 헤더 고정 해제 */
+    @media (max-width: 1023px) and (max-height: 500px) {
+        #dashboardScreen > header {
+            position: static;
+        }
+    }
+</style>
+<!-- STEP 12 STYLE END: 반응형 보완 -->
     
 </head>
 <body class="text-gray-800 relative">
@@ -1851,9 +2011,8 @@
     <div class="portal-gis-layout">
 
         <!-- 좌측: 필터와 지역 정보 -->
-        <aside class="portal-gis-sidebar" aria-label="지도 탐색 조건">
-
-            <h3 class="portal-gis-filter-title">탐색 조건</h3>
+        <details id="detailMapFilters" class="portal-gis-sidebar" aria-label="지도 탐색 조건" open>
+           <summary class="portal-filter-toggle">탐색 조건 · 펼치기/접기</summary>
             <p class="portal-gis-note">
                 행정동과 표시 지표를 선택하세요. 지표를 바꾸면 지도 색상과 범례가 함께 변경됩니다.
             </p>
@@ -1923,7 +2082,7 @@
                 </div>
             </div>
 
-        </aside>
+        </details>
 
         <!-- 우측: STEP 2의 지도 id 유지 -->
         <div class="portal-gis-map-wrap">
@@ -6337,5 +6496,25 @@ function initDetailTableSync(onSelect) {
 })();
 </script>
 <!-- MAP VIEW FIX SCRIPT END -->
+    <!-- STEP 12 FILTER SCRIPT START -->
+<script>
+(function () {
+    const filters = document.getElementById('detailMapFilters');
+    if (!filters) return;
+
+    const smallScreen = window.matchMedia('(max-width: 1023px)');
+
+    function applyFilterLayout() {
+        // PC: 펼침 / 태블릿·모바일: 접힘
+        filters.open = !smallScreen.matches;
+    }
+
+    applyFilterLayout();
+
+    // 화면이 기준 너비를 넘나들 때만 기본 배치를 갱신
+    smallScreen.addEventListener('change', applyFilterLayout);
+})();
+</script>
+<!-- STEP 12 FILTER SCRIPT END -->
 </body>
 </html>
