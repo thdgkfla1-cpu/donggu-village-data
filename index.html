@@ -362,8 +362,14 @@
                     // 테스트 화면의 시작 위치: 광주 동구 도심 부근
                     center: new naver.maps.LatLng(35.146, 126.923),
                     zoom: 13,
-                    zoomControl: true,
-                    scrollWheel: false
+                    zoomControl: false,
+                    draggable: false,
+                    scrollWheel: false,
+                    pinchZoom: false,
+                    keyboardShortcuts: false,
+                    disableDoubleClickZoom: true,
+                    disableDoubleTapZoom: true,
+                    disableTwoFingerTapZoom: true
                 });
             } else {
                 // 다른 탭에서 돌아왔을 때 지도 크기 재조정
@@ -626,6 +632,35 @@
     }
 </style>
 <!-- STEP 7 TABLE STYLE END -->
+    <!-- MAP VIEW FIX STYLE START -->
+<style id="portal-map-view-fix">
+    /* 지도 바깥 영역은 왼쪽 필터 높이에 맞춰 늘어납니다. */
+    #section-tab3 .portal-gis-layout {
+        align-items: stretch;
+    }
+
+    #section-tab3 .portal-gis-map-wrap {
+        position: relative;
+        min-height: 520px;
+    }
+
+    /* 고정된 520px 대신 바깥 영역을 전부 채웁니다. */
+    #section-tab3 #detailMap {
+        position: absolute;
+        inset: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* 모바일·태블릿은 필터 아래에 적정 높이로 표시합니다. */
+    @media (max-width: 1023px) {
+        #section-tab3 .portal-gis-map-wrap {
+            height: 360px;
+            min-height: 360px;
+        }
+    }
+</style>
+<!-- MAP VIEW FIX STYLE END -->
 </head>
 <body class="text-gray-800 relative">
 
@@ -5033,7 +5068,7 @@ updateBins();
             const position =
                 coord || features.get(name).getBounds().getCenter();
 
-            if (!coord) portalDetailMap.setCenter(position);
+            // 지도 중심을 이동하지 않고 선택 강조와 정보창만 갱신합니다.
 
             infoWindow.setContent(makeCard(name));
             infoWindow.open(portalDetailMap, position);
@@ -5299,5 +5334,61 @@ function initDetailTableSync(onSelect) {
 }
 </script>
 <!-- STEP 7 TABLE SCRIPT END -->
+    <!-- MAP VIEW FIX SCRIPT START -->
+<script>
+(function () {
+    const wrap = document.querySelector(
+        '#section-tab3 .portal-gis-map-wrap'
+    );
+
+    if (!wrap) return;
+
+    let lastWidth = 0;
+    let lastHeight = 0;
+    let frame = 0;
+
+    function refreshMapSize() {
+        const width = wrap.clientWidth;
+        const height = wrap.clientHeight;
+
+        // 숨겨진 탭에서는 지도 크기를 변경하지 않습니다.
+        if (!width || !height) return;
+
+        // 크기가 같으면 반복 실행하지 않습니다.
+        if (width === lastWidth && height === lastHeight) return;
+
+        lastWidth = width;
+        lastHeight = height;
+
+        window.cancelAnimationFrame(frame);
+
+        frame = window.requestAnimationFrame(function () {
+            if (!portalDetailMap ||
+                !wrap.clientWidth ||
+                !wrap.clientHeight) {
+                return;
+            }
+
+            // 기존 경계 맞춤 함수를 다시 실행하도록 표시합니다.
+            if (portalBoundaryBounds) {
+                portalBoundaryNeedsFit = true;
+            }
+
+            // 기존 지도 크기 조정 및 경계 처리 함수를 사용합니다.
+            initDetailMap();
+        });
+    }
+
+    if (typeof window.ResizeObserver === 'function') {
+        const observer = new window.ResizeObserver(refreshMapSize);
+        observer.observe(wrap);
+    } else {
+        window.addEventListener('resize', refreshMapSize);
+    }
+
+    refreshMapSize();
+})();
+</script>
+<!-- MAP VIEW FIX SCRIPT END -->
 </body>
 </html>
