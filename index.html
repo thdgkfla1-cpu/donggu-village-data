@@ -1339,6 +1339,196 @@
     }
 </style>
 <!-- STEP 10 STYLE END: 민원 분석 및 AI 제안 -->
+
+<!-- STEP 11 STYLE START: 메인페이지 디자인 -->
+<style id="portal-intro-style">
+    /*
+     * 기존 배경 이미지와 화면 전환 유지.
+     * introScreen의 display 및 hidden 속성은 변경하지 않음.
+     */
+    #introScreen {
+        box-sizing: border-box;
+        padding: 48px 20px;
+    }
+
+    /* 배경 그림 위에서도 읽기 쉬운 제목 */
+    #introScreen > div:first-child {
+        width: 100%;
+        max-width: 1000px;
+        margin-bottom: 32px;
+        padding: 20px 24px;
+        border: 1px solid #dce4ec;
+        border-radius: 14px;
+        background-color: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    #introScreen h1 {
+        margin: 0;
+        color: #1e293b;
+        font-size: clamp(24px, 3vw, 36px);
+        line-height: 1.5;
+        letter-spacing: -0.035em;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
+        filter: none;
+    }
+
+    /* 기존 두 카드의 배치 */
+    #introScreen > div:last-child {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+        gap: 24px;
+        width: 100%;
+        max-width: 880px;
+        padding: 0;
+    }
+
+    #introScreen .card-hover-effect {
+        --entry-accent: #047857;
+        width: 100%;
+        min-width: 0;
+        border: 1px solid #dce4ec;
+        border-radius: 16px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+        transform: none;
+        transition: border-color 150ms ease,
+                    box-shadow 150ms ease;
+    }
+
+    #introScreen .card-hover-effect:last-child {
+        --entry-accent: #1d4ed8;
+    }
+
+    #introScreen .card-hover-effect:hover {
+        border-color: var(--entry-accent);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.10);
+        transform: none;
+    }
+
+    #introScreen .card-hover-effect:focus-visible {
+        outline: 3px solid #2563eb;
+        outline-offset: 4px;
+    }
+
+    /* 카드 상단: 에메랄드 / 파란색 단색 구분 */
+    #introScreen .card-hover-effect > div:first-child {
+        padding: 16px 24px;
+        border-radius: 0;
+        background-image: none;
+        background-color: var(--entry-accent);
+    }
+
+    /* 장식용 발광 효과만 숨김 */
+    #introScreen .card-hover-effect .blur-xl,
+    #introScreen .card-hover-effect .blur-2xl {
+        display: none;
+    }
+
+    /* 카드 본문 */
+    #introScreen .card-hover-effect > div:last-child {
+        margin-top: 0;
+        padding: 24px;
+        border-radius: 0;
+    }
+
+    /* 아이콘 영역 */
+    #introScreen .card-hover-effect > div:last-child > div:first-child {
+        margin-bottom: 16px;
+    }
+
+    #introScreen .card-hover-effect > div:last-child > div:first-child > div:last-child {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+        box-shadow: none;
+        transform: none;
+        transition: none;
+    }
+
+    #introScreen .card-hover-effect > div:last-child > div:first-child i {
+        color: var(--entry-accent);
+        font-size: 32px;
+    }
+
+    /* 제목: hover 시에도 글자가 선명하게 유지 */
+    #introScreen .card-hover-effect h2 {
+        max-width: 100%;
+        margin-bottom: 12px;
+        color: #1e293b;
+        -webkit-text-fill-color: currentColor;
+        background-image: none;
+        font-size: 24px;
+        line-height: 1.5;
+        text-align: center;
+        white-space: normal;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
+        transition: none;
+    }
+
+    #introScreen .card-hover-effect p {
+        margin-bottom: 20px;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    /* 하단 화살표 */
+    #introScreen .card-hover-effect > div:last-child > div:last-child > div {
+        width: 40px;
+        height: 40px;
+        border-width: 1px;
+        border-radius: 10px;
+        box-shadow: none;
+    }
+
+    #introScreen .card-hover-effect .fa-arrow-right {
+        transform: none;
+        transition: none;
+    }
+
+    @media (max-width: 767px) {
+        #introScreen {
+            padding: 28px 16px;
+        }
+
+        #introScreen > div:first-child {
+            margin-bottom: 20px;
+            padding: 16px;
+        }
+
+        #introScreen > div:last-child {
+            grid-template-columns: minmax(0, 1fr);
+            max-width: 480px;
+            gap: 16px;
+        }
+
+        #introScreen .card-hover-effect > div:first-child {
+            padding: 14px 20px;
+        }
+
+        #introScreen .card-hover-effect > div:last-child {
+            padding: 20px;
+        }
+
+        #introScreen .card-hover-effect h2 {
+            font-size: 21px;
+        }
+
+        #introScreen .card-hover-effect > div:last-child > div:first-child > div:last-child {
+            width: 56px;
+            height: 56px;
+        }
+
+        #introScreen .card-hover-effect > div:last-child > div:first-child i {
+            font-size: 26px;
+        }
+    }
+</style>
+<!-- STEP 11 STYLE END: 메인페이지 디자인 -->
     
 </head>
 <body class="text-gray-800 relative">
