@@ -907,7 +907,7 @@
 
             <h3 class="portal-gis-filter-title">탐색 조건</h3>
             <p class="portal-gis-note">
-                지역·지표 선택 기능은 준비 중입니다.
+                지도 또는 행정동 목록에서 지역을 선택하세요. 현재 표시 지표는 고령인구 수입니다.
             </p>
 
             <div class="portal-gis-field">
@@ -951,7 +951,7 @@
                     id="detailMapMetricSelect"
                     class="portal-gis-control"
                     disabled>
-                    <option value="">지표 선택 준비 중</option>
+                    <option value="eldPop">고령인구 수(명)</option>
                 </select>
             </div>
 
@@ -4709,6 +4709,15 @@
 
             portalBoundaryState = 'ready';
             portalBoundaryNeedsFit = true;
+            // STEP 5 METRIC HOOK START
+try {
+    if (typeof initDetailElderMetric === 'function') {
+        initDetailElderMetric();
+    }
+} catch (error) {
+    console.warn('지도 지표 초기화 실패:', error.message);
+}
+// STEP 5 METRIC HOOK END
 
             fitDongBoundaryView();
 
@@ -4740,5 +4749,244 @@
     }
 </script>
 <!-- STEP 4 BOUNDARY SCRIPT END -->
+
+    <!-- STEP 5 ELDER SCRIPT START -->
+<script>
+let portalElderLayer = null;
+
+function initDetailElderMetric() {
+    const layer = portalBoundaryLayer;
+
+    // 지도·경계가 준비된 뒤 한 번만 연결합니다.
+    if (!layer || !portalDetailMap || portalMapAuthFailed ||
+        portalElderLayer === layer) return;
+
+    const listeners = [];
+    let infoWindow;
+    let dongSelect;
+    let onDongChange;
+    const originalStyle = layer.getStyle();
+
+    try {
+        dongSelect = document.getElementById('detailMapDongSelect');
+        const legend = document.getElementById('detailMapLegend');
+        const summary = document.getElementById('detailMapSummary');
+
+        if (!dongSelect || !legend || !summary) {
+            throw new Error('지도 선택·범례·요약 영역을 확인해주세요.');
+        }
+
+        // 원자료는 읽기만 하며, 색상 구간만 별도로 정의합니다.
+        const bins = [
+            { max: 1000, color: '#d1fae5', label: '1,000명 미만' },
+            { max: 2000, color: '#6ee7b7', label: '1,000명 이상 ~ 2,000명 미만' },
+            { max: 3000, color: '#34d399', label: '2,000명 이상 ~ 3,000명 미만' },
+            { max: 4000, color: '#059669', label: '3,000명 이상 ~ 4,000명 미만' },
+            { max: Infinity, color: '#064e3b', label: '4,000명 이상' }
+        ];
+
+        const valid = value => Number.isFinite(value) && value >= 0;
+        const format = value =>
+            valid(value) ? value.toLocaleString('ko-KR') : '자료 없음';
+
+        const features = new Map();
+        let selected = '';
+        let hovered = '';
+
+        layer.forEach(feature => {
+            features.set(feature.getProperty('dong_key'), feature);
+        });
+
+        if (!DONG_ORDER.every(name => features.has(name) && dongData[name])) {
+            throw new Error('행정동 경계와 통계 데이터 연결을 확인해주세요.');
+        }
+
+        // 기존 dongData의 고령인구 수로 색상만 결정합니다.
+        function paint() {
+            layer.setStyle(feature => {
+                const name = feature.getProperty('dong_key');
+                const value = dongData[name]?.eldPop;
+                const active = name === selected;
+                const over = name === hovered;
+
+                return {
+                    fillColor: valid(value)
+                        ? bins.find(bin => value < bin.max).color
+                        : '#cbd5e1',
+                    fillOpacity: 0.65,
+                    strokeColor: active
+                        ? '#2563eb'
+                        : (over ? '#0f172a' : '#047857'),
+                    strokeWeight: active ? 4 : (over ? 3 : 1.5),
+                    strokeOpacity: 1,
+                    clickable: true,
+                    zIndex: active ? 3 : (over ? 2 : 1)
+                };
+            });
+        }
+
+        // 요약 카드와 정보창에서 동일한 기존 값을 표시합니다.
+        function makeCard(name) {
+            const data = dongData[name];
+            const card = document.createElement('div');
+
+            card.style.cssText =
+                'padding:12px;font-size:13px;line-height:1.8;color:#334155;';
+
+            const title = document.createElement('strong');
+            title.textContent = name;
+            card.appendChild(title);
+
+            [
+                ['고령인구', data.eldPop, '명'],
+                ['전체 인구', data.pop, '명'],
+                ['세대수', data.households, '세대']
+            ].forEach(([label, value, unit]) => {
+                const row = document.createElement('div');
+                row.textContent =
+                    label + ': ' + format(value) + (valid(value) ? unit : '');
+                card.appendChild(row);
+            });
+
+            return card;
+        }
+
+        infoWindow = new naver.maps.InfoWindow({
+            content: '',
+            borderColor: '#cbd5e1',
+            borderWidth: 1,
+            backgroundColor: '#ffffff',
+            disableAutoPan: true
+        });
+
+        function selectDong(name, coord) {
+            if (name && !features.has(name)) return;
+
+            selected = name;
+            hovered = '';
+            dongSelect.value = name;
+
+            paint();
+            infoWindow.close();
+
+            // '동구 전체'를 선택하면 선택 강조를 해제합니다.
+            if (!name) {
+                summary.textContent =
+                    '지도 또는 행정동 목록에서 지역을 선택해주세요.';
+
+                portalDetailMap.fitBounds(portalBoundaryBounds, {
+                    top: 40,
+                    right: 40,
+                    bottom: 40,
+                    left: 40
+                });
+                return;
+            }
+
+            summary.replaceChildren(makeCard(name));
+
+            const position =
+                coord || features.get(name).getBounds().getCenter();
+
+            if (!coord) portalDetailMap.setCenter(position);
+
+            infoWindow.setContent(makeCard(name));
+            infoWindow.open(portalDetailMap, position);
+        }
+
+        // 범례 생성
+        legend.replaceChildren();
+
+        [...bins, { color: '#cbd5e1', label: '자료 없음' }].forEach(bin => {
+            const row = document.createElement('div');
+            row.style.cssText =
+                'display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px;';
+
+            const swatch = document.createElement('span');
+            swatch.style.cssText =
+                'width:18px;height:12px;flex:none;border:1px solid #94a3b8;';
+            swatch.style.backgroundColor = bin.color;
+
+            const label = document.createElement('span');
+            label.textContent = bin.label;
+
+            row.append(swatch, label);
+            legend.appendChild(row);
+        });
+
+        // 기존 행정동 순서대로 선택 목록을 구성합니다.
+        dongSelect.replaceChildren(new Option('동구 전체', ''));
+
+        DONG_ORDER.forEach(name => {
+            dongSelect.add(new Option(name, name));
+        });
+
+        onDongChange = () => selectDong(dongSelect.value);
+        dongSelect.addEventListener('change', onDongChange);
+
+        // 지도 클릭
+        listeners.push(
+            naver.maps.Event.addListener(layer, 'click', event => {
+                selectDong(
+                    event.feature.getProperty('dong_key'),
+                    event.coord
+                );
+            })
+        );
+
+        // 마우스가 올라간 경계 강조
+        listeners.push(
+            naver.maps.Event.addListener(layer, 'mouseover', event => {
+                hovered = event.feature.getProperty('dong_key');
+                paint();
+            })
+        );
+
+        // 마우스가 떠나도 선택한 동의 강조는 유지합니다.
+        listeners.push(
+            naver.maps.Event.addListener(layer, 'mouseout', event => {
+                if (hovered === event.feature.getProperty('dong_key')) {
+                    hovered = '';
+                }
+                paint();
+            })
+        );
+
+        paint();
+
+        summary.textContent =
+            '지도 또는 행정동 목록에서 지역을 선택해주세요.';
+
+        dongSelect.disabled = false;
+        portalElderLayer = layer;
+
+    } catch (error) {
+        // 연결 실패 시 추가한 이벤트를 정리하고 경계 스타일을 복원합니다.
+        listeners.forEach(listener => {
+            naver.maps.Event.removeListener(listener);
+        });
+
+        if (dongSelect) {
+            if (onDongChange) {
+                dongSelect.removeEventListener('change', onDongChange);
+            }
+            dongSelect.disabled = true;
+        }
+
+        if (infoWindow) infoWindow.close();
+
+        layer.setStyle(originalStyle);
+
+        const summary = document.getElementById('detailMapSummary');
+        if (summary) {
+            summary.textContent =
+                '지표 연결에 실패했습니다. 기존 표에서 확인해주세요.';
+        }
+
+        console.warn('고령인구 지도 연결 실패:', error.message);
+    }
+}
+</script>
+<!-- STEP 5 ELDER SCRIPT END -->
 </body>
 </html>
