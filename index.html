@@ -581,7 +581,51 @@
     }
 </style>
 <!-- STEP 3 GIS STYLE END -->
-    
+    <!-- STEP 7 TABLE STYLE START -->
+<style id="portal-table-map-style">
+    /* 선택한 행 전체와 고정된 동 이름 셀을 함께 강조 */
+    #section-tab3 #tableBody tr.portal-map-selected > td {
+        background-color: #eff6ff !important;
+    }
+
+    #section-tab3 #tableBody tr.portal-map-selected > td:first-child {
+        box-shadow: inset 3px 0 0 #2563eb;
+    }
+
+    /* 기존 글꼴과 색상을 유지하는 동 이름 버튼 */
+    #section-tab3 .portal-dong-select {
+        display: block;
+        width: 100%;
+        min-height: 28px;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+    }
+
+    #section-tab3 .portal-dong-select[aria-pressed="true"] {
+        color: #1d4ed8;
+    }
+
+    #section-tab3 .portal-dong-select:focus-visible {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+    }
+
+    /* 좁은 화면에서 동 이름을 누르기 쉽게 조정 */
+    @media (max-width: 767px) {
+        #section-tab3 .portal-dong-select {
+            min-height: 44px;
+        }
+    }
+</style>
+<!-- STEP 7 TABLE STYLE END -->
 </head>
 <body class="text-gray-800 relative">
 
@@ -4770,6 +4814,7 @@ function initDetailElderMetric() {
     let onDongChange;
     let metricSelect;
     let onMetricChange;
+    let tableSync = null; // STEP 7
     const originalStyle = layer.getStyle();
 
     try {
@@ -4964,6 +5009,7 @@ updateBins();
             selected = name;
             hovered = '';
             dongSelect.value = name;
+            if (tableSync) tableSync.sync(name); // STEP 7
 
             paint();
             infoWindow.close();
@@ -5110,6 +5156,14 @@ renderMetricLegend();
 
         dongSelect.disabled = false;
         metricSelect.disabled = false;
+        
+        // STEP 7 TABLE HOOK START
+        if (typeof initDetailTableSync === 'function') {
+            tableSync = initDetailTableSync(selectDong);
+        if (tableSync) tableSync.sync(selected);
+        }
+        // STEP 7 TABLE HOOK END
+        
         portalElderLayer = layer;
 
     } catch (error) {
@@ -5131,6 +5185,7 @@ renderMetricLegend();
 
     metricSelect.disabled = true;
         }
+        if (tableSync) tableSync.dispose(); // STEP 7
         if (infoWindow) infoWindow.close();
 
         layer.setStyle(originalStyle);
@@ -5146,5 +5201,103 @@ renderMetricLegend();
 }
 </script>
 <!-- STEP 5 ELDER SCRIPT END -->
+    <!-- STEP 7 TABLE SCRIPT START -->
+<script>
+function initDetailTableSync(onSelect) {
+    const body = document.getElementById('tableBody');
+    if (!body) return null;
+
+    const entries = [];
+
+    // 지도에서 선택한 동과 표의 강조 상태를 맞춥니다.
+    function sync(name) {
+        entries.forEach(({ row, button }) => {
+            const active = row.dataset.dong === name;
+
+            row.classList.toggle('portal-map-selected', active);
+            button.setAttribute('aria-pressed', String(active));
+        });
+    }
+
+    // 표 안의 동 이름 버튼만 지도 선택과 연결합니다.
+    function onClick(event) {
+        if (!(event.target instanceof Element)) return;
+
+        const button =
+            event.target.closest('button.portal-dong-select');
+
+        if (!button || !body.contains(button)) return;
+
+        const row = button.closest('tr[data-dong]');
+
+        if (row && DONG_ORDER.includes(row.dataset.dong)) {
+            onSelect(row.dataset.dong);
+        }
+    }
+
+    // 오류 발생 시 원래 셀 내용으로 복원합니다.
+    function dispose() {
+        body.removeEventListener('click', onClick);
+
+        entries.forEach(({ row, cell, originalNodes }) => {
+            row.classList.remove('portal-map-selected');
+            cell.replaceChildren(...originalNodes);
+        });
+    }
+
+    try {
+        // 합계·평균 행을 제외한 실제 13개 행정동만 연결합니다.
+        const rows = Array.from(
+            body.querySelectorAll('tr[data-dong]')
+        ).filter(row => DONG_ORDER.includes(row.dataset.dong));
+
+        if (rows.length !== 13 ||
+            new Set(rows.map(row => row.dataset.dong)).size !== 13) {
+            throw new Error('표의 13개 행정동을 확인해주세요.');
+        }
+
+        rows.forEach(row => {
+            const cell = row.cells[0];
+
+            if (!cell) {
+                throw new Error('행정동 이름 셀을 확인해주세요.');
+            }
+
+            const originalNodes = Array.from(cell.childNodes);
+            const button = document.createElement('button');
+
+            button.type = 'button';
+            button.className = 'portal-dong-select';
+            button.textContent = cell.textContent.trim();
+
+            button.setAttribute(
+                'aria-label',
+                row.dataset.dong + ' 지도에서 선택'
+            );
+            button.setAttribute('aria-pressed', 'false');
+
+            entries.push({
+                row,
+                cell,
+                button,
+                originalNodes
+            });
+
+            cell.replaceChildren(button);
+        });
+
+        body.addEventListener('click', onClick);
+        sync('');
+
+        return { sync, dispose };
+
+    } catch (error) {
+        dispose();
+        console.warn('표와 지도 연결 실패:', error.message);
+        return null;
+    }
+}
+</script>
+<!-- STEP 7 TABLE SCRIPT END -->
 </body>
 </html>
